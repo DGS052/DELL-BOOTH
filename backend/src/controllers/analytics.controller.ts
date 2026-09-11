@@ -39,30 +39,35 @@ nodemailer.createTestAccount().then(account => {
 
 export const captureLead = async (req: Request, res: Response) => {
   try {
-    const { email, selectedIndustry, inferenceVolume, timestamp } = req.body;
+    const { fullName, organization, contactInfo, industry, activeMetric, activePreset, sliderConfig, timestamp } = req.body;
     
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
+    if (!contactInfo) {
+      return res.status(400).json({ error: 'Contact info is required' });
     }
 
-    const leadData = `${email},${selectedIndustry},${inferenceVolume},${timestamp}\n`;
+    const leadData = `${fullName},${organization},${contactInfo},${industry},${activeMetric},${timestamp}\n`;
     
     // Append to local CSV file to ensure leads aren't lost
     const csvPath = path.join(__dirname, '../../leads.csv');
     fs.appendFileSync(csvPath, leadData);
     
-    console.log('New Lead Captured:', { email, selectedIndustry, inferenceVolume });
+    console.log('New Lead Captured:', { fullName, organization, contactInfo, industry });
 
     let previewUrl = null;
 
     // Send Email via Nodemailer if configured
     if (transporter) {
+      // Check if contactInfo is an email or phone number.
+      // If it has an '@', we can try sending to it. Otherwise use a fallback for ethereal.
+      const isEmail = contactInfo.includes('@');
+      const targetEmail = isEmail ? contactInfo : 'lead@teamcomputers.com'; // Will just sit in ethereal inbox
+
       const info = await transporter.sendMail({
-        from: '"Dell AI Factory" <no-reply@dellaifactory.com>',
-        to: email,
-        subject: "Your Detailed ROI Report - Dell AI Factory",
-        text: `Hello,\n\nThank you for exploring the Dell AI Factory Kiosk.\nHere is your requested ROI report for the ${selectedIndustry} environment with a daily inference volume of ${inferenceVolume}.\n\nBest Regards,\nTeam Computers`,
-        html: `<b>Hello,</b><br><br>Thank you for exploring the Dell AI Factory Kiosk.<br>Here is your requested ROI report for the <b>${selectedIndustry}</b> environment with a daily inference volume of <b>${inferenceVolume}</b>.<br><br>Best Regards,<br>Team Computers`
+        from: '"Team Computers & Dell" <no-reply@teamcomputers.com>',
+        to: targetEmail,
+        subject: `Your ${industry || 'Dell AI Factory'} PoC Request Confirmation`,
+        text: `Hello ${fullName},\n\nThank you for requesting an On-Premise AI PoC with Team Computers.\nWe have received your configuration for ${industry || 'the environment'} - ${activeMetric}.\n\nOur enterprise services team will contact you shortly at ${contactInfo}.\n\nBest Regards,\nTeam Computers`,
+        html: `<b>Hello ${fullName || 'Guest'},</b><br><br>Thank you for requesting an On-Premise AI PoC with Team Computers.<br>We have received your configuration for <b>${industry || 'the environment'}</b> - <b>${activeMetric}</b>.<br><br>Our enterprise services team will contact you shortly at <b>${contactInfo}</b>.<br><br>Best Regards,<br>Team Computers`
       });
       previewUrl = nodemailer.getTestMessageUrl(info);
       console.log("Message sent: %s", info.messageId);

@@ -9,6 +9,7 @@ import BFSIMetricsSwitcher from '@/components/charts/BFSIMetricsSwitcher';
 import ManufacturingDashboard from '@/components/charts/ManufacturingDashboard';
 import HealthcareDashboard from '@/components/charts/HealthcareDashboard';
 import ITSecurityDashboard from '@/components/charts/ITSecurityDashboard';
+import OthersDashboard from '@/components/charts/OthersDashboard';
 import ActionPipeline from '@/components/animations/ActionPipeline';
 
 export default function DashboardPage() {
@@ -118,7 +119,7 @@ export default function DashboardPage() {
           <>
             {/* Other Industries fallback */}
             <section className="w-full shrink-0">
-              <ComparativeROI />
+              <OthersDashboard />
             </section>
           </>
         )}

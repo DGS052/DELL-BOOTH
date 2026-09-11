@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BFSI Business Value Calculator — Team Computers</title>
+<meta name="description" content="Illustrative BFSI business value model. Quantify operational savings, digital revenue, resilience and loan automation impact from your own business parameters." />
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --ink-900:#050B1A;
+  --ink-850:#081127;
+  --ink-800:#0B1730;
+  --ink-700:#122448;
+  --ink-600:#1B3160;
+  --line-dark:rgba(120,160,225,.18);
+  --line-light:#E4E9F2;
+
+  --paper:#FFFFFF;
+  --paper-2:#F6F8FC;
+
+  --blue:#1D6BF7;
+  --blue-600:#1553CC;
+  --blue-300:#5CA8FF;
+  --blue-100:#D7E6FF;
+  --cyan:#38E1E6;
+  --gold:#F0B429;
+  --green:#12B886;
+  --red:#F2545B;
+  --violet:#8B7CF6;
+
+  --t-hi:#F2F6FF;
+  --t-mid:#A9BCDD;
+  --t-low:#6E85AC;
+  --t-ink:#0C1A33;
+  --t-body:#4A5B78;
+  --t-faint:#8494AE;
+
+  --r-sm:8px; --r-md:14px; --r-lg:20px; --r-xl:28px;
+  --shadow-card:0 24px 60px -28px rgba(3,10,28,.55);
+  --shadow-soft:0 10px 30px -18px rgba(3,10,28,.45);
+  --maxw:1240px;
+  --sans:"Inter","SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:var(--sans);
+  background:var(--ink-900);
+  color:var(--t-hi);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.028em;line-height:1.12}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input{font:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;padding:11px 18px;background:var(--blue);color:#fff;border-radius:0 0 10px 0;font-size:14px}
+.skip:focus{left:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+section{position:relative}
+.sec-pad{padding:96px 0}
+.sec-head{max-width:760px;margin-bottom:40px}
+.sec-kicker{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:12.5px;letter-spacing:.01em;color:var(--blue-300);
+  margin-bottom:14px;font-weight:500;
+}
+.sec-kicker::before{content:"";width:22px;height:1px;background:var(--blue-300);opacity:.7}
+.sec-title{font-size:clamp(26px,3.1vw,38px)}
+.sec-sub{margin-top:14px;color:var(--t-mid);font-size:16.5px;max-width:68ch}
+
+.on-light .sec-title{color:var(--t-ink)}
+.on-light .sec-sub{color:var(--t-body)}
+.on-light .sec-kicker{color:var(--blue-600)}
+.on-light .sec-kicker::before{background:var(--blue-600)}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position:sticky;top:0;z-index:60;
+  background:rgba(5,11,26,.82);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-dark);
+}
+.nav-in{display:flex;align-items:center;gap:26px;height:66px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.02em}
+.brand-mark{
+  width:30px;height:30px;border-radius:9px;flex:none;
+  background:linear-gradient(140deg,var(--blue) 0%,var(--cyan) 100%);
+  display:grid;place-items:center;color:#04122B;font-size:13px;font-weight:700;
+  box-shadow:0 6px 18px -6px rgba(29,107,247,.8);
+}
+.brand small{display:block;font-size:11.5px;font-weight:400;color:var(--t-low);letter-spacing:0;line-height:1.2}
+.nav-links{display:flex;gap:22px;margin-left:auto;font-size:14.5px;color:var(--t-mid)}
+.nav-links a{padding:6px 0;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+.nav-links a:hover{color:var(--t-hi);border-color:var(--blue-300)}
+.nav-cta{margin-left:8px}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:12px 22px;border-radius:11px;font-size:14.5px;font-weight:550;
+  letter-spacing:-.01em;transition:transform .12s ease,box-shadow .18s ease,background .18s;
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(135deg,var(--blue) 0%,#3E86FF 100%);color:#fff;box-shadow:0 12px 26px -12px rgba(29,107,247,.9)}
+.btn-primary:hover{box-shadow:0 16px 34px -12px rgba(29,107,247,1)}
+.btn-ghost{border:1px solid var(--line-dark);color:var(--t-hi);background:rgba(255,255,255,.03)}
+.btn-ghost:hover{border-color:var(--blue-300);background:rgba(92,168,255,.09)}
+.btn-outline{border:1px solid var(--line-light);color:var(--t-ink);background:#fff}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue-600)}
+.btn-sm{padding:9px 16px;font-size:13.5px;border-radius:9px}
+.btn svg{width:16px;height:16px;flex:none}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line-dark)}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(900px 460px at 78% 18%,rgba(29,107,247,.28),transparent 62%),
+    radial-gradient(700px 420px at 8% 78%,rgba(56,225,230,.11),transparent 66%),
+    linear-gradient(180deg,rgba(5,11,26,.25) 0%,rgba(5,11,26,.86) 88%);
+}
+.hero-in{position:relative;z-index:2;padding:92px 0 84px;display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;padding:7px 14px 7px 10px;
+  border:1px solid var(--line-dark);border-radius:999px;background:rgba(255,255,255,.04);
+  font-size:12.5px;color:var(--t-mid);margin-bottom:26px;
+}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(56,225,230,.16)}
+.hero h1{font-size:clamp(34px,4.6vw,58px);letter-spacing:-.035em;line-height:1.04}
+.hero-sub{margin-top:22px;font-size:18px;color:var(--t-mid);max-width:56ch;line-height:1.6}
+.hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.hero-facts{display:flex;gap:34px;margin-top:44px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--line-dark)}
+.hero-fact b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em}
+.hero-fact span{font-size:12.5px;color:var(--t-low)}
+
+/* live hero panel */
+.hero-panel{
+  border:1px solid var(--line-dark);border-radius:var(--r-xl);
+  background:linear-gradient(165deg,rgba(18,36,72,.9) 0%,rgba(8,17,39,.86) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  padding:26px;box-shadow:var(--shadow-card);
+}
+.hp-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--line-dark)}
+.hp-top span{font-size:12.5px;color:var(--t-low)}
+.hp-total{padding:24px 0 6px}
+.hp-total .amt{font-size:clamp(40px,5vw,60px);font-weight:600;letter-spacing:-.04em;line-height:1;color:#fff}
+.hp-total .amt em{font-style:normal;font-size:.42em;color:var(--gold);margin-left:8px;letter-spacing:-.01em}
+.hp-total .cap{font-size:13px;color:var(--t-mid);margin-top:10px}
+.hp-bars{margin-top:22px;display:flex;flex-direction:column;gap:13px}
+.hp-bar-row{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:13px}
+.hp-bar-row .lb{color:var(--t-mid)}
+.hp-bar-row .vl{color:#fff;font-weight:550}
+.hp-track{grid-column:1/-1;height:6px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.hp-fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.22,.9,.3,1)}
+
+/* ============================================================
+   CALCULATOR
+   ============================================================ */
+.calc-sec{background:linear-gradient(180deg,var(--ink-900) 0%,var(--ink-850) 100%)}
+.calc-grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:26px;align-items:start}
+.card-white{background:var(--paper);border-radius:var(--r-xl);box-shadow:var(--shadow-card);color:var(--t-ink)}
+.calc-panel{padding:28px}
+.calc-panel h3{font-size:21px}
+.badge-model{
+  display:inline-flex;align-items:center;gap:7px;margin-bottom:14px;
+  padding:6px 12px;border-radius:999px;background:var(--blue-100);color:var(--blue-600);
+  font-size:11.5px;font-weight:600;letter-spacing:.005em;
+}
+.calc-note{font-size:13px;color:var(--t-faint);margin-top:8px;line-height:1.5}
+.fields{margin-top:22px;display:flex;flex-direction:column;gap:16px}
+.field label{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--t-body);font-weight:500;margin-bottom:7px}
+.tip{position:relative;display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;border:1px solid #C3CDDE;color:#8A97AC;font-size:10px;font-weight:600;cursor:help;flex:none}
+.tip:hover .tip-box,.tip:focus-visible .tip-box{opacity:1;visibility:visible;transform:translate(-50%,-6px)}
+.tip-box{
+  position:absolute;bottom:100%;left:50%;transform:translate(-50%,0);
+  width:232px;padding:10px 12px;border-radius:10px;background:var(--ink-800);color:var(--t-hi);
+  font-size:12px;font-weight:400;line-height:1.45;letter-spacing:0;text-align:left;
+  opacity:0;visibility:hidden;transition:opacity .15s,transform .15s;z-index:20;
+  box-shadow:0 14px 30px -14px rgba(0,0,0,.7);
+}
+.inp-shell{display:flex;align-items:stretch;border:1px solid var(--line-light);border-radius:12px;background:var(--paper-2);transition:border-color .15s,box-shadow .15s;overflow:hidden}
+.inp-shell:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,107,247,.13);background:#fff}
+.inp-shell.bad{border-color:var(--red);box-shadow:0 0 0 3px rgba(242,84,91,.12)}
+.inp-shell input{
+  flex:1;min-width:0;border:0;background:transparent;padding:12px 12px;
+  font-size:17px;font-weight:600;letter-spacing:-.015em;color:var(--t-ink);
+}
+.inp-shell input:focus{outline:none}
+.unit{display:grid;place-items:center;padding:0 11px;font-size:12.5px;color:var(--t-faint);border-left:1px solid var(--line-light);background:#fff;white-space:nowrap}
+.steps{display:flex;flex-direction:column;border-left:1px solid var(--line-light)}
+.steps button{width:34px;flex:1;display:grid;place-items:center;color:#7E8CA3;background:#fff;transition:background .12s,color .12s}
+.steps button:hover{background:var(--blue-100);color:var(--blue-600)}
+.steps button:first-child{border-bottom:1px solid var(--line-light)}
+.err{font-size:12px;color:var(--red);margin-top:6px;display:none}
+.err.show{display:block}
+.calc-actions{display:flex;gap:10px;margin-top:24px}
+.calc-actions .btn{flex:1}
+.calc-foot{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line-light);font-size:12.5px;color:var(--t-faint);line-height:1.55}
+
+/* results */
+.res-col{display:flex;flex-direction:column;gap:22px}
+.res-hero{
+  position:relative;overflow:hidden;padding:30px;border-radius:var(--r-xl);
+  border:1px solid rgba(120,170,255,.22);
+  background:linear-gradient(140deg,#12295A 0%,#0A1730 62%,#0C1E42 100%);
+}
+.res-hero::before{
+  content:"";position:absolute;right:-90px;top:-110px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(56,225,230,.22),transparent 66%);
+}
+.res-hero-in{position:relative;z-index:2}
+.res-label{font-size:13px;color:var(--t-mid)}
+.res-total{display:flex;align-items:baseline;gap:12px;margin-top:10px;flex-wrap:wrap}
+.res-total .big{font-size:clamp(46px,6.4vw,74px);font-weight:600;letter-spacing:-.045em;line-height:1;color:#fff}
+.res-total .per{font-size:16px;color:var(--t-mid)}
+.res-delta{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:7px 13px;border-radius:999px;
+  background:rgba(18,184,134,.14);border:1px solid rgba(18,184,134,.32);color:#5FE3B8;font-size:13px;
+}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.kpi{padding:16px;border-radius:var(--r-md);background:rgba(255,255,255,.045);border:1px solid var(--line-dark)}
+.kpi .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;margin-bottom:12px}
+.kpi .val{font-size:25px;font-weight:600;letter-spacing:-.03em;color:#fff;line-height:1.1}
+.kpi .nm{font-size:12.5px;color:var(--t-mid);margin-top:5px;line-height:1.35}
+.kpi .sh{font-size:11.5px;color:var(--t-low);margin-top:7px}
+
+/* impact tiles */
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{padding:20px;border-radius:var(--r-lg);background:rgba(255,255,255,.04);border:1px solid var(--line-dark);display:flex;gap:14px}
+.tile .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;background:rgba(29,107,247,.16);color:var(--blue-300)}
+.tile b{display:block;font-size:23px;font-weight:600;letter-spacing:-.03em;color:#fff;line-height:1.15}
+.tile p{font-size:13px;color:var(--t-mid);margin-top:4px}
+.tile em{font-style:normal;font-size:12px;color:var(--t-low);display:block;margin-top:6px}
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+.chart-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px}
+.chart-card{padding:24px;border-radius:var(--r-xl);background:rgba(255,255,255,.035);border:1px solid var(--line-dark)}
+.chart-card.tall{grid-column:1/-1}
+.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:6px}
+.chart-head h4{font-size:16.5px}
+.chart-head p{font-size:13px;color:var(--t-low);margin-top:5px;max-width:52ch}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--t-mid);margin-top:14px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:7px;vertical-align:-1px}
+.chart-box{margin-top:16px}
+.chart-box svg{width:100%;height:auto;display:block;overflow:visible}
+.ax{font-size:11.5px;fill:var(--t-low)}
+.ax-strong{font-size:12px;fill:var(--t-mid)}
+.grid-line{stroke:rgba(140,175,230,.14);stroke-width:1}
+.bar-val{font-size:12.5px;font-weight:600;fill:#fff}
+.bar-r{transition:height .6s cubic-bezier(.22,.9,.3,1),y .6s cubic-bezier(.22,.9,.3,1)}
+
+/* ============================================================
+   BEFORE / AFTER
+   ============================================================ */
+.ba-card{padding:8px;border-radius:var(--r-xl);background:rgba(255,255,255,.035);border:1px solid var(--line-dark)}
+table.ba{width:100%;border-collapse:collapse}
+table.ba th,table.ba td{padding:16px 18px;text-align:left;font-size:14.5px}
+table.ba thead th{font-size:12.5px;color:var(--t-low);font-weight:500;border-bottom:1px solid var(--line-dark)}
+table.ba thead th.r,table.ba td.r{text-align:right}
+table.ba tbody tr+tr td{border-top:1px solid rgba(120,160,225,.1)}
+table.ba td.kpi-name{color:var(--t-hi);font-weight:500}
+table.ba td.cur{color:var(--t-mid)}
+table.ba td.proj{color:#fff;font-weight:600}
+.chip-up{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:rgba(18,184,134,.14);color:#5FE3B8}
+.chip-dn{background:rgba(56,225,230,.13);color:#7FEAF0}
+
+/* ============================================================
+   EXEC SUMMARY
+   ============================================================ */
+.exec-wrap{display:grid;grid-template-columns:1.35fr .65fr;gap:24px;align-items:start}
+.exec-doc{padding:38px 40px;border-radius:var(--r-xl);background:var(--paper);color:var(--t-ink);box-shadow:var(--shadow-card);position:relative}
+.exec-doc::before{content:"";position:absolute;left:0;top:38px;bottom:38px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,var(--blue),var(--cyan))}
+.exec-meta{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:12.5px;color:var(--t-faint);padding-bottom:18px;border-bottom:1px solid var(--line-light);flex-wrap:wrap}
+.exec-doc h3{font-size:23px;margin:20px 0 16px}
+.exec-body{font-family:var(--serif);font-size:17px;line-height:1.72;color:#26364F;max-width:70ch}
+.exec-body p+p{margin-top:15px}
+.exec-body b{font-weight:600;color:var(--t-ink)}
+.exec-points{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-light);display:grid;gap:14px}
+.exec-point{display:flex;gap:12px;font-size:14px;color:var(--t-body);line-height:1.5}
+.exec-point .bl{width:22px;height:22px;border-radius:7px;background:var(--blue-100);color:var(--blue-600);display:grid;place-items:center;flex:none;font-size:11px;font-weight:700}
+.exec-side{display:flex;flex-direction:column;gap:14px}
+.side-card{padding:22px;border-radius:var(--r-lg);border:1px solid var(--line-dark);background:rgba(255,255,255,.04)}
+.side-card h5{font-size:13.5px;font-weight:600;color:var(--t-hi);margin:0 0 14px}
+.side-row{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:9px 0;border-top:1px solid rgba(120,160,225,.11)}
+.side-row:first-of-type{border-top:0}
+.side-row span{color:var(--t-mid)}
+.side-row b{color:#fff;font-weight:600}
+
+/* ============================================================
+   DRIVERS / USE CASES
+   ============================================================ */
+.driver-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.driver{padding:26px;border-radius:var(--r-lg);background:linear-gradient(170deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid var(--line-dark)}
+.driver .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;margin-bottom:18px}
+.driver h4{font-size:17px}
+.driver p{margin-top:9px;font-size:14px;color:var(--t-mid);line-height:1.55}
+.driver .metric{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-dark);font-size:12.5px;color:var(--t-low)}
+.driver .metric b{color:var(--cyan);font-weight:600}
+
+.uc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.uc{padding:22px;border-radius:var(--r-md);background:var(--paper);color:var(--t-ink);box-shadow:var(--shadow-soft);border-top:3px solid var(--blue)}
+.uc .ic{width:34px;height:34px;border-radius:9px;background:var(--blue-100);color:var(--blue-600);display:grid;place-items:center;margin-bottom:14px}
+.uc h4{font-size:15.5px}
+.uc p{margin-top:8px;font-size:13.5px;color:var(--t-body);line-height:1.5}
+.uc .tagv{margin-top:14px;font-size:12px;font-weight:600;color:var(--blue-600)}
+
+/* ============================================================
+   JOURNEY
+   ============================================================ */
+.journey{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:44px}
+.jline{position:absolute;left:6%;right:6%;top:26px;height:2px;background:rgba(120,160,225,.18);overflow:hidden}
+.jline i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width 1.6s cubic-bezier(.3,.85,.35,1)}
+.journey.go .jline i{width:100%}
+.jstep{position:relative;text-align:left;padding-right:18px}
+.jstep .node{
+  width:54px;height:54px;border-radius:16px;display:grid;place-items:center;
+  background:var(--ink-800);border:1px solid var(--line-dark);color:var(--t-mid);
+  font-size:14px;font-weight:600;position:relative;z-index:2;transition:all .45s ease;
+}
+.journey.go .jstep .node{background:linear-gradient(140deg,#12295A,#0B1730);border-color:rgba(92,168,255,.5);color:#fff;box-shadow:0 14px 30px -16px rgba(29,107,247,.9)}
+.jstep h4{font-size:15.5px;margin-top:18px}
+.jstep p{font-size:13px;color:var(--t-low);margin-top:7px;line-height:1.5;max-width:22ch}
+
+/* ============================================================
+   MODULE TABS (additional calculators)
+   ============================================================ */
+.mod-sec{background:linear-gradient(180deg,var(--ink-850) 0%,var(--ink-900) 100%)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;padding:6px;border:1px solid var(--line-dark);border-radius:16px;background:rgba(255,255,255,.03)}
+.tab{
+  flex:1;min-width:190px;display:flex;gap:12px;align-items:center;text-align:left;
+  padding:13px 15px;border-radius:11px;color:var(--t-mid);transition:background .16s,color .16s;
+}
+.tab .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.06);flex:none;transition:background .16s,color .16s}
+.tab b{display:block;font-size:14px;font-weight:550;color:var(--t-hi);letter-spacing:-.01em}
+.tab span{font-size:12px;color:var(--t-low)}
+.tab:hover{background:rgba(255,255,255,.05)}
+.tab.on{background:linear-gradient(140deg,#173464,#0D1E42);color:#fff;box-shadow:0 12px 26px -16px rgba(29,107,247,.9)}
+.tab.on .ic{background:var(--blue);color:#fff}
+.tab.on span{color:var(--blue-300)}
+.mod-panel{display:none}
+.mod-panel.on{display:block}
+.mod-grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:22px;align-items:start}
+.mod-inputs{padding:26px}
+.mod-inputs h4{font-size:18px}
+.mod-inputs .sub{font-size:13px;color:var(--t-faint);margin-top:7px;line-height:1.5}
+.mod-out{padding:28px;border-radius:var(--r-xl);border:1px solid var(--line-dark);background:linear-gradient(150deg,rgba(19,40,84,.72),rgba(8,17,39,.9))}
+.mod-total{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--line-dark)}
+.mod-total .lab{font-size:13px;color:var(--t-mid)}
+.mod-total .big{font-size:clamp(36px,4.6vw,52px);font-weight:600;letter-spacing:-.04em;color:#fff;line-height:1;margin-top:8px}
+.mod-total .note{font-size:12.5px;color:var(--t-low);max-width:34ch;text-align:right}
+.mod-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.mcard{padding:17px;border-radius:var(--r-md);background:rgba(255,255,255,.05);border:1px solid var(--line-dark)}
+.mcard .v{font-size:23px;font-weight:600;letter-spacing:-.03em;color:#fff;line-height:1.1}
+.mcard .n{font-size:12.5px;color:var(--t-mid);margin-top:6px}
+.mcard .d{font-size:11.5px;color:var(--t-low);margin-top:8px;line-height:1.45}
+.mod-split{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+.assump{padding:18px;border-radius:var(--r-md);background:rgba(255,255,255,.03);border:1px dashed var(--line-dark)}
+.assump h5{font-size:12.5px;color:var(--t-mid);font-weight:600;margin:0 0 12px}
+.assump ul{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.assump li{display:flex;justify-content:space-between;gap:14px;font-size:12.5px;color:var(--t-low)}
+.assump li b{color:var(--t-hi);font-weight:550;white-space:nowrap}
+.narr{font-size:14px;color:var(--t-mid);line-height:1.65}
+.narr b{color:#fff;font-weight:600}
+.hbar{display:grid;gap:12px;margin-top:4px}
+.hbar-row .t{display:flex;justify-content:space-between;font-size:12.5px;color:var(--t-mid);margin-bottom:6px}
+.hbar-row .t b{color:#fff;font-weight:600}
+.hbar-track{height:9px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.hbar-fill{height:100%;border-radius:99px;transition:width .65s cubic-bezier(.22,.9,.3,1)}
+
+/* ============================================================
+   SOLUTION RECOMMENDATIONS
+   ============================================================ */
+.sol-intro{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px}
+.crit{padding:18px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1px solid var(--line-dark)}
+.crit b{display:block;font-size:13.5px;color:var(--t-hi);font-weight:600;margin-bottom:7px}
+.crit p{font-size:12.5px;color:var(--t-low);line-height:1.5}
+.sol-list{display:flex;flex-direction:column;gap:12px}
+.sol{border:1px solid var(--line-dark);border-radius:var(--r-lg);background:rgba(255,255,255,.035);overflow:hidden;transition:border-color .2s,background .2s}
+.sol.open{border-color:rgba(92,168,255,.42);background:linear-gradient(165deg,rgba(19,40,84,.5),rgba(255,255,255,.02))}
+.sol-head{width:100%;display:grid;grid-template-columns:38px 1fr auto 20px;gap:16px;align-items:center;padding:20px 22px;text-align:left}
+.sol-head:hover{background:rgba(255,255,255,.03)}
+.sol-n{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(29,107,247,.16);color:var(--blue-300);font-size:13px;font-weight:600;flex:none}
+.sol.open .sol-n{background:var(--blue);color:#fff}
+.sol-q{font-size:16.5px;font-weight:550;letter-spacing:-.018em;color:var(--t-hi);line-height:1.3}
+.sol-t{font-size:12.5px;color:var(--t-low);margin-top:5px}
+.sol-v{text-align:right;white-space:nowrap}
+.sol-v b{display:block;font-size:19px;font-weight:600;letter-spacing:-.025em;color:var(--cyan);line-height:1.1}
+.sol-v span{font-size:11.5px;color:var(--t-low)}
+.sol-chev{color:var(--t-low);transition:transform .24s ease}
+.sol.open .sol-chev{transform:rotate(90deg);color:var(--blue-300)}
+.sol-body{display:none;padding:4px 22px 24px;grid-template-columns:1fr 1.15fr 1.15fr;gap:24px;border-top:1px solid var(--line-dark);margin-top:0;padding-top:22px}
+.sol.open .sol-body{display:grid}
+.sol-blk h6{font-size:12px;font-weight:600;color:var(--blue-300);margin:0 0 12px;letter-spacing:.005em}
+.sol-blk p{font-size:13.5px;color:var(--t-mid);line-height:1.6}
+.stack{display:flex;flex-direction:column;gap:9px}
+.stack-item{display:flex;gap:10px;font-size:13px;color:var(--t-mid);line-height:1.5}
+.stack-item i{width:5px;height:5px;border-radius:50%;background:var(--blue-300);margin-top:8px;flex:none}
+.stack-item b{color:var(--t-hi);font-weight:600}
+.alt{padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--line-dark)}
+.alt+.alt{margin-top:9px}
+.alt b{display:block;font-size:13px;color:var(--t-hi);font-weight:600}
+.alt span{font-size:12px;color:var(--t-low);display:block;margin-top:4px;line-height:1.5}
+.oc{margin-top:16px;padding-top:15px;border-top:1px dashed var(--line-dark);display:flex;flex-wrap:wrap;gap:8px}
+.oc-chip{padding:6px 11px;border-radius:8px;font-size:11.5px;font-weight:600;background:rgba(18,184,134,.13);color:#5FE3B8;border:1px solid rgba(18,184,134,.28)}
+.oc-chip.b{background:rgba(29,107,247,.14);color:#8CBCFF;border-color:rgba(92,168,255,.3)}
+.lead-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:7px;font-size:10.5px;font-weight:700;background:var(--gold);color:#3A2A02;margin-left:8px;vertical-align:2px}
+
+.matrix-card{margin-top:34px;padding:8px;border-radius:var(--r-xl);border:1px solid var(--line-dark);background:rgba(255,255,255,.035);overflow-x:auto}
+table.mx{width:100%;border-collapse:collapse;min-width:820px}
+table.mx th,table.mx td{padding:14px 16px;text-align:left;font-size:13.5px;vertical-align:top}
+table.mx thead th{font-size:12px;color:var(--t-low);font-weight:500;border-bottom:1px solid var(--line-dark)}
+table.mx tbody tr+tr td{border-top:1px solid rgba(120,160,225,.1)}
+table.mx td.dom{color:var(--t-hi);font-weight:550;white-space:nowrap}
+table.mx td.pri{color:#fff;font-weight:550}
+table.mx td.alts,table.mx td.trg{color:var(--t-mid);font-size:13px;line-height:1.5}
+@media (max-width:1080px){
+  .sol-intro{grid-template-columns:1fr 1fr}
+  .sol-body{grid-template-columns:1fr;gap:20px}
+  .sol-head{grid-template-columns:34px 1fr 18px;row-gap:12px}
+  .sol-v{grid-column:2/4;text-align:left}
+}
+@media (max-width:720px){ .sol-intro{grid-template-columns:1fr} }
+
+
+/* ============================================================
+   CONTACT ATTRIBUTION
+   ============================================================ */
+.cta-contact{display:flex;align-items:center;gap:14px;margin-top:28px;padding-top:24px;border-top:1px solid rgba(120,170,255,.22)}
+.cc-av{width:46px;height:46px;border-radius:13px;flex:none;display:grid;place-items:center;font-size:15px;font-weight:700;letter-spacing:-.02em;color:#04122B;background:linear-gradient(140deg,var(--cyan),var(--blue-300));box-shadow:0 10px 24px -12px rgba(56,225,230,.7)}
+.cc-t b{display:block;font-size:15.5px;font-weight:600;letter-spacing:-.02em;color:#fff;line-height:1.25}
+.cc-t span{display:block;font-size:12.5px;color:var(--t-mid);margin-top:3px}
+.cc-t a{display:inline-flex;align-items:center;gap:7px;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--cyan);border-bottom:1px solid rgba(56,225,230,.3);padding-bottom:2px}
+.cc-t a svg{width:14px;height:14px}
+.cc-t a:hover{color:#fff;border-color:#fff}
+.foot-in{align-items:flex-start}
+.foot-c{display:flex;align-items:center;gap:13px}
+.foot-c .cc-av{width:40px;height:40px;border-radius:11px;font-size:13.5px;box-shadow:none}
+.foot-c b{display:block;font-size:14px;font-weight:600;color:var(--t-hi);letter-spacing:-.015em}
+.foot-c span{display:block;font-size:12px;color:var(--t-low);margin-top:2px;line-height:1.45}
+.foot-c a{display:inline-block;margin-top:5px;font-size:13px;font-weight:600;color:var(--blue-300)}
+.foot-c a:hover{color:var(--t-hi)}
+.foot-r{text-align:right;max-width:44ch;font-size:12.5px;line-height:1.6}
+@media (max-width:720px){ .foot-r{text-align:left} }
+
+/* ============================================================
+   CTA / FOOTER / MISC
+   ============================================================ */
+.cta-band{
+  position:relative;overflow:hidden;border-radius:var(--r-xl);padding:52px 48px;
+  background:linear-gradient(130deg,#123A86 0%,#0B1F4A 46%,#0A1730 100%);
+  border:1px solid rgba(120,170,255,.24);
+}
+.cta-band::before{content:"";position:absolute;right:-120px;bottom:-160px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(56,225,230,.22),transparent 65%)}
+.cta-in{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.cta-in h2{font-size:clamp(25px,3vw,35px)}
+.cta-in p{margin-top:14px;color:var(--t-mid);font-size:16px;max-width:50ch}
+.cta-btns{display:flex;flex-direction:column;gap:11px}
+.cta-btns .btn{width:100%}
+.disclaimer{margin-top:34px;padding:22px 24px;border-radius:var(--r-md);border:1px solid var(--line-dark);background:rgba(255,255,255,.025);font-size:13px;color:var(--t-low);line-height:1.65}
+.disclaimer b{color:var(--t-mid)}
+.foot{border-top:1px solid var(--line-dark);padding:30px 0;margin-top:64px}
+.foot-in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--t-low)}
+
+.toast{
+  position:fixed;left:50%;bottom:30px;transform:translate(-50%,26px);z-index:200;
+  display:flex;align-items:center;gap:11px;padding:13px 20px;border-radius:12px;
+  background:var(--ink-700);border:1px solid rgba(120,170,255,.34);color:var(--t-hi);
+  font-size:14px;box-shadow:0 24px 50px -20px rgba(0,0,0,.8);
+  opacity:0;visibility:hidden;transition:all .28s cubic-bezier(.22,.9,.3,1);
+}
+.toast.on{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.28);border-top-color:var(--cyan);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.calc-busy{position:relative;pointer-events:none}
+.calc-busy::after{content:"absolute";position:absolute;inset:0;border-radius:var(--r-xl);background:rgba(5,11,26,.4);backdrop-filter:blur(1px)}
+
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s cubic-bezier(.22,.9,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1080px){
+  .hero-in{grid-template-columns:1fr;gap:44px;padding:70px 0 64px}
+  .calc-grid,.mod-grid,.exec-wrap,.cta-in{grid-template-columns:1fr}
+  .chart-grid{grid-template-columns:1fr}
+  .driver-grid,.uc-grid{grid-template-columns:repeat(2,1fr)}
+  .journey{grid-template-columns:repeat(3,1fr);row-gap:34px}
+  .jline{display:none}
+  .nav-links{display:none}
+}
+@media (max-width:720px){
+  .wrap{padding:0 18px}
+  .sec-pad{padding:64px 0}
+  .kpi-grid,.impact-grid,.mod-cards,.mod-split{grid-template-columns:1fr 1fr}
+  .mod-split{grid-template-columns:1fr}
+  .driver-grid,.uc-grid{grid-template-columns:1fr}
+  .journey{grid-template-columns:repeat(2,1fr)}
+  .exec-doc{padding:26px 22px}
+  .cta-band{padding:32px 22px}
+  .tab{min-width:100%}
+  table.ba th,table.ba td{padding:12px 10px;font-size:13px}
+  .hero-facts{gap:22px}
+}
+@media (max-width:420px){
+  .kpi-grid,.impact-grid,.mod-cards{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+}
+
+/* ============================================================
+   PRINT — business case document
+   ============================================================ */
+.print-only{display:none}
+@media print{
+  @page{size:A4;margin:14mm 13mm}
+  body{background:#fff;color:#101828;font-size:10.5pt}
+  .nav,.hero,.no-print,.foot,.toast,.cta-band{display:none !important}
+  .print-only{display:block}
+  .screen-only{display:none !important}
+  .print-doc{padding:0}
+  .print-doc h1{font-size:20pt;color:#0B1730;letter-spacing:-.02em}
+  .print-doc h2{font-size:12.5pt;color:#123A86;margin:16pt 0 7pt;padding-bottom:4pt;border-bottom:1px solid #D8DFEC}
+  .print-doc .lead{color:#4A5B78;font-size:10pt;margin-top:6pt}
+  .print-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20pt;padding-bottom:10pt;border-bottom:2px solid #123A86}
+  .print-total{display:flex;align-items:baseline;gap:10pt;margin:10pt 0;padding:12pt 14pt;background:#F2F6FD;border-left:3px solid #1D6BF7;border-radius:4pt}
+  .print-total b{font-size:26pt;letter-spacing:-.03em;color:#0B1730;line-height:1}
+  table.pt{width:100%;border-collapse:collapse;margin-top:6pt}
+  table.pt th,table.pt td{border:1px solid #DCE3EF;padding:5pt 7pt;text-align:left;font-size:9.5pt}
+  table.pt th{background:#F2F6FD;color:#123A86;font-weight:600}
+  table.pt td.r,table.pt th.r{text-align:right}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10pt}
+  .print-note{font-size:8.5pt;color:#6B7A93;line-height:1.5;margin-top:10pt;border-top:1px solid #DCE3EF;padding-top:7pt}
+  .print-doc svg{max-width:100%;height:auto}
+  .pchart{border:1px solid #DCE3EF;border-radius:4pt;padding:8pt;margin-top:6pt}
+  .pbreak{page-break-before:always}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="i-branch"><path d="M3 21h18M4 21V9l8-5 8 5v12M9 21v-6h6v6M8 12h.01M12 12h.01M16 12h.01"/></g>
+<g id="i-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></g>
+<g id="i-people"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 11h-6M20 8v6"/></g>
+<g id="i-tx"><path d="M3 12h4l3 8 4-16 3 8h4"/></g>
+<g id="i-mobile"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01"/></g>
+<g id="i-atm"><path d="M2 7h20v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zM2 11h20M6 16h4M2 7l2-4h16l2 4"/></g>
+<g id="i-trend"><path d="M22 7l-8.5 8.5-5-5L2 17M16 7h6v6"/></g>
+<g id="i-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4"/></g>
+<g id="i-coins"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></g>
+<g id="i-clock"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></g>
+<g id="i-gauge"><path d="M3.5 18a10 10 0 1 1 17 0M12 14l4-4"/><circle cx="12" cy="15" r="1.6"/></g>
+<g id="i-chart"><path d="M3 3v18h18M7 15v3M12 10v8M17 6v12"/></g>
+<g id="i-cloud"><path d="M17.5 19a4.5 4.5 0 0 0 .5-8.97A6 6 0 0 0 6.2 10.5 4 4 0 0 0 6.5 19z"/></g>
+<g id="i-cpu"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9zM9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></g>
+<g id="i-lock"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></g>
+<g id="i-db"><ellipse cx="12" cy="5.5" rx="8" ry="3.2"/><path d="M4 5.5v13c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2v-13M4 12c0 1.8 3.6 3.2 8 3.2s8-1.4 8-3.2"/></g>
+<g id="i-zap"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></g>
+<g id="i-server"><rect x="2.5" y="3" width="19" height="7" rx="2"/><rect x="2.5" y="14" width="19" height="7" rx="2"/><path d="M6.5 6.5h.01M6.5 17.5h.01"/></g>
+<g id="i-wallet"><path d="M20 7V5.5A1.5 1.5 0 0 0 18.5 4H5a2.5 2.5 0 0 0 0 5h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2.5 2.5 0 0 1-2.5-2.5V6.5M17 13.5h.01"/></g>
+<g id="i-alert"><path d="M12 3L2 20h20zM12 10v4M12 17h.01"/></g>
+<g id="i-arrow"><path d="M5 12h14M13 6l6 6-6 6"/></g>
+<g id="i-refresh"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v6h-6"/></g>
+<g id="i-download"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></g>
+<g id="i-file"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7zM14 2v5h5M9 13h6M9 17h4"/></g>
+<g id="i-check"><path d="M20 6L9 17l-5-5"/></g>
+<g id="i-plus"><path d="M12 6v12M6 12h12"/></g>
+<g id="i-minus"><path d="M6 12h12"/></g>
+<g id="i-heart"><path d="M12 20s-7-4.4-7-9.4A4.1 4.1 0 0 1 12 7a4.1 4.1 0 0 1 7 3.6c0 5-7 9.4-7 9.4z"/></g>
+<g id="i-layers"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></g>
+<g id="i-target"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></g>
+<g id="i-search"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></g>
+<g id="i-phone"><path d="M15.5 21A12.5 12.5 0 0 1 3 8.5V6a2 2 0 0 1 2-2h2.3a1 1 0 0 1 1 .8l.7 3.2a1 1 0 0 1-.5 1.1L7 10.2a10.5 10.5 0 0 0 6.8 6.8l1.1-1.5a1 1 0 0 1 1.1-.5l3.2.7a1 1 0 0 1 .8 1V19a2 2 0 0 1-2 2z"/></g>
+<g id="i-bolt2"><path d="M4 14h6l-1 7 10-11h-6l1-7z"/></g>
+</defs></svg>
+
+<a class="skip no-print" href="#calculator">Skip to the calculator</a>
+
+<!-- ================= NAV ================= -->
+<header class="nav no-print">
+  <div class="wrap nav-in">
+    <div class="brand">
+      <div class="brand-mark">TC</div>
+      <div>Business Value Advisory<small>Team Computers · BFSI Practice</small></div>
+    </div>
+    <nav class="nav-links">
+      <a href="#calculator">Calculator</a>
+      <a href="#results">Results</a>
+      <a href="#summary">Executive summary</a>
+      <a href="#solutions">Recommendations</a>
+      <a href="#modules">More value models</a>
+      <a href="#usecases">Use cases</a>
+    </nav>
+    <button class="btn btn-primary btn-sm nav-cta" data-scroll="#calculator">Calculate business value</button>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero no-print">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <div>
+      <div class="hero-tag"><i class="dot-live"></i> Illustrative BFSI Business Value Model</div>
+      <h1>Transform BFSI infrastructure into measurable business value</h1>
+      <p class="hero-sub">Quantify the potential impact of digital transformation, automation, resilience and modern infrastructure using your own business parameters.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" data-scroll="#calculator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gauge"/></svg>Calculate business value</button>
+        <button class="btn btn-ghost" data-scroll="#summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-file"/></svg>View executive summary</button>
+      </div>
+      <div class="hero-facts">
+        <div class="hero-fact"><b>6</b><span>Business parameters</span></div>
+        <div class="hero-fact"><b>5</b><span>Value models</span></div>
+        <div class="hero-fact"><b>4</b><span>Benefit drivers</span></div>
+        <div class="hero-fact"><b>0</b><span>Data leaves this page</span></div>
+      </div>
+    </div>
+
+    <aside class="hero-panel" aria-live="polite">
+      <div class="hp-top"><span>Annual business benefit</span><span id="heroProfile">540 branches · 7.8M customers</span></div>
+      <div class="hp-total">
+        <div class="amt">₹<span id="heroTotal">32.0</span><em>Cr / year</em></div>
+        <p class="cap">Modelled from the parameters below. Every value on this page recalculates as you type.</p>
+      </div>
+      <div class="hp-bars" id="heroBars"></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= CALCULATOR + RESULTS ================= -->
+<section class="calc-sec sec-pad screen-only" id="calculator">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Business value calculator</span>
+      <h2 class="sec-title">Enter your business parameters</h2>
+      <p class="sec-sub">Six inputs describe the scale of the bank. The model normalises each against a reference BFSI profile and re-weights the four benefit drivers accordingly. Nothing is sent anywhere — the calculation runs in your browser.</p>
+    </div>
+
+    <div class="calc-grid">
+      <!-- INPUT PANEL -->
+      <div class="card-white calc-panel" id="calcPanel">
+        <div class="badge-model"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><use href="#i-target"/></svg> Illustrative BFSI Business Value Model</div>
+        <h3>Your business profile</h3>
+        <p class="calc-note">Defaults reflect a mid-to-large Indian bank. Replace them with the customer's actual figures for a directional business case.</p>
+
+        <div class="fields" id="fields">
+          <div class="field" data-field="branches">
+            <label for="f-branches">Branches
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Total operating branches including regional and satellite offices. Drives branch operations cost, staffing overhead and distributed infrastructure footprint.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-branches" type="text" inputmode="numeric" value="540" data-key="branches" data-step="10" data-min="1" data-max="20000" data-dec="0" aria-describedby="e-branches">
+              <div class="unit">sites</div>
+              <div class="steps"><button type="button" data-inc="branches" aria-label="Increase branches"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="branches" aria-label="Decrease branches"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-branches"></p>
+          </div>
+
+          <div class="field" data-field="employees">
+            <label for="f-employees">Employees
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Full-time staff across branches, operations, technology and back office. Used to size manual-effort reduction and automation benefit.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-employees" type="text" inputmode="numeric" value="11,500" data-key="employees" data-step="250" data-min="1" data-max="500000" data-dec="0" aria-describedby="e-employees">
+              <div class="unit">staff</div>
+              <div class="steps"><button type="button" data-inc="employees" aria-label="Increase employees"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="employees" aria-label="Decrease employees"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-employees"></p>
+          </div>
+
+          <div class="field" data-field="customers">
+            <label for="f-customers">Customers
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Total unique customer relationships in millions. The single largest weight in the model — customer base drives both cost-to-serve and digital revenue potential.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-customers" type="text" inputmode="decimal" value="7.8" data-key="customers" data-step="0.5" data-min="0.01" data-max="900" data-dec="2" aria-describedby="e-customers">
+              <div class="unit">million</div>
+              <div class="steps"><button type="button" data-inc="customers" aria-label="Increase customers"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="customers" aria-label="Decrease customers"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-customers"></p>
+          </div>
+
+          <div class="field" data-field="transactions">
+            <label for="f-transactions">Daily transactions
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Average transactions processed per day in millions, across branch, ATM, UPI, card, net and mobile channels. Drives capacity headroom and downtime exposure.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-transactions" type="text" inputmode="decimal" value="8.5" data-key="transactions" data-step="0.5" data-min="0.01" data-max="2000" data-dec="2" aria-describedby="e-transactions">
+              <div class="unit">million / day</div>
+              <div class="steps"><button type="button" data-inc="transactions" aria-label="Increase transactions"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="transactions" aria-label="Decrease transactions"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-transactions"></p>
+          </div>
+
+          <div class="field" data-field="mobileUsers">
+            <label for="f-mobileUsers">Mobile banking users
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Customers actively transacting on the mobile app in millions. Cannot exceed total customers. Baseline for digital adoption uplift.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-mobileUsers" type="text" inputmode="decimal" value="3.4" data-key="mobileUsers" data-step="0.25" data-min="0.01" data-max="900" data-dec="2" aria-describedby="e-mobileUsers">
+              <div class="unit">million</div>
+              <div class="steps"><button type="button" data-inc="mobileUsers" aria-label="Increase mobile users"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="mobileUsers" aria-label="Decrease mobile users"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-mobileUsers"></p>
+          </div>
+
+          <div class="field" data-field="atms">
+            <label for="f-atms">ATMs
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">ATM and cash-recycler estate. Used for self-service channel coverage and to size availability exposure across the cash network.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-atms" type="text" inputmode="numeric" value="1,250" data-key="atms" data-step="50" data-min="0" data-max="100000" data-dec="0" aria-describedby="e-atms">
+              <div class="unit">units</div>
+              <div class="steps"><button type="button" data-inc="atms" aria-label="Increase ATMs"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="atms" aria-label="Decrease ATMs"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-atms"></p>
+          </div>
+        </div>
+
+        <div class="calc-actions">
+          <button class="btn btn-primary" id="btnCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bolt2"/></svg>Calculate</button>
+          <button class="btn btn-outline" id="btnReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-refresh"/></svg>Reset</button>
+        </div>
+        <p class="calc-foot">The assumptions used below are illustrative benchmarks and should be validated against actual customer data. Results update live as you edit any field.</p>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="res-col" id="results">
+        <div class="res-hero">
+          <div class="res-hero-in">
+            <p class="res-label">Your estimated business value</p>
+            <div class="res-total">
+              <div class="big">₹<span id="totalVal">32.0</span> Cr</div>
+              <span class="per">per year</span>
+            </div>
+            <div class="res-delta"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trend"/></svg><span id="deltaNote">₹2.67 Cr per month of unrealised value at current scale</span></div>
+
+            <div class="kpi-grid">
+              <div class="kpi">
+                <div class="ic" style="background:rgba(29,107,247,.18);color:#7FB2FF"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gauge"/></svg></div>
+                <div class="val">₹<span id="kOps">18.0</span> Cr</div>
+                <p class="nm">Operational savings</p>
+                <p class="sh" id="kOpsShare">56% of benefit</p>
+              </div>
+              <div class="kpi">
+                <div class="ic" style="background:rgba(56,225,230,.16);color:#6FE7EC"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trend"/></svg></div>
+                <div class="val">₹<span id="kRev">11.0</span> Cr</div>
+                <p class="nm">Digital revenue opportunity</p>
+                <p class="sh" id="kRevShare">34% of benefit</p>
+              </div>
+              <div class="kpi">
+                <div class="ic" style="background:rgba(240,180,41,.16);color:#F5C65B"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></div>
+                <div class="val">₹<span id="kDown">2.0</span> Cr</div>
+                <p class="nm">Downtime loss avoidance</p>
+                <p class="sh" id="kDownShare">6% of benefit</p>
+              </div>
+              <div class="kpi">
+                <div class="ic" style="background:rgba(139,124,246,.18);color:#B0A5FF"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><use href="#i-clock"/></svg></div>
+                <div class="val">₹<span id="kLoan">1.0</span> Cr</div>
+                <p class="nm">Faster loan processing</p>
+                <p class="sh" id="kLoanShare">3% of benefit</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMPACT TILES -->
+        <div class="impact-grid">
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-mobile"/></svg></div><div><b>+46%</b><p>Digital adoption</p><em id="tAdopt">3.40M → 4.96M mobile banking users</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-tx"/></svg></div><div><b>+49%</b><p>Transaction capacity</p><em id="tCap">8.50M → 12.67M transactions per day</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-coins"/></svg></div><div><b>22% lower</b><p>Operational cost</p><em id="tOpex">Run-cost base reduced through consolidation and automation</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-server"/></svg></div><div><b>99.98%</b><p>Application availability</p><em id="tAvail">Under 1 hr 45 min unplanned downtime per year</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-heart"/></svg></div><div><b>71 → 92</b><p>Customer satisfaction</p><em>Composite CSAT index across digital and assisted channels</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-clock"/></svg></div><div><b>3 days → 4 hrs</b><p>Loan processing</p><em>Straight-through processing on standard retail products</em></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHARTS ================= -->
+<section class="sec-pad screen-only" id="charts" style="background:var(--ink-850)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Value visualisation</span>
+      <h2 class="sec-title">Where the value comes from</h2>
+      <p class="sec-sub">Each chart is driven by the same calculation engine and redraws the moment an input changes.</p>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-head"><div><h4>Annual business benefit by driver</h4><p>Contribution of each benefit component to the total annual value, in ₹ crore.</p></div></div>
+        <div class="chart-box" id="chartBenefit"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-head"><div><h4>Digital growth, current vs projected</h4><p>Mobile banking users and daily transaction volume in millions.</p></div></div>
+        <div class="chart-box" id="chartGrowth"></div>
+        <div class="legend"><span><i style="background:#3C5C93"></i>Current</span><span><i style="background:linear-gradient(135deg,#1D6BF7,#38E1E6)"></i>Projected</span></div>
+      </div>
+
+      <div class="chart-card tall">
+        <div class="chart-head"><div><h4>Business impact profile</h4><p>Relative maturity across five dimensions on a 0–100 index, before and after modernisation. Current-state scores are derived from your digital adoption ratio, transaction density per branch and self-service coverage.</p></div></div>
+        <div class="chart-box" id="chartRadar"></div>
+        <div class="legend"><span><i style="background:#3C5C93"></i>Current state</span><span><i style="background:#38E1E6"></i>Post-modernisation</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BEFORE / AFTER ================= -->
+<section class="sec-pad screen-only" id="beforeafter">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Before and after</span>
+      <h2 class="sec-title">Current state against the projected operating model</h2>
+      <p class="sec-sub">Volume metrics scale with your inputs. Service-level metrics reflect the target-state benchmarks used across the model.</p>
+    </div>
+    <div class="ba-card">
+      <table class="ba">
+        <thead><tr><th>Key performance indicator</th><th class="r">Current</th><th class="r">Projected</th><th class="r">Change</th></tr></thead>
+        <tbody id="baBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXECUTIVE SUMMARY ================= -->
+<section class="sec-pad screen-only" id="summary" style="background:linear-gradient(180deg,var(--ink-900),var(--ink-850))">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">For the board pack</span>
+      <h2 class="sec-title">Executive business summary</h2>
+      <p class="sec-sub">Generated from the values you entered. Copy it into a proposal, or print the full business case from the button below.</p>
+    </div>
+
+    <div class="exec-wrap">
+      <article class="exec-doc">
+        <div class="exec-meta">
+          <span>Prepared by Mukund Ulhas Kambli · Lead Solution Architect, Team Computers Pvt. Ltd.</span>
+          <span id="execDate">—</span>
+        </div>
+        <h3>Business value assessment</h3>
+        <div class="exec-body" id="execBody"></div>
+        <div class="exec-points" id="execPoints"></div>
+        <div style="display:flex;gap:10px;margin-top:26px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" id="btnCopy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-file"/></svg>Copy summary</button>
+          <button class="btn btn-outline btn-sm" data-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-download"/></svg>Download business case</button>
+          <span style="font-size:12px;color:var(--t-faint);align-self:center">Opens the print dialog — choose “Save as PDF”.</span>
+        </div>
+      </article>
+
+      <aside class="exec-side">
+        <div class="side-card">
+          <h5>Calculation basis</h5>
+          <div class="side-row"><span>Reference profile</span><b>540 br · 7.8M cust</b></div>
+          <div class="side-row"><span>Scale index, operations</span><b id="sfOps">1.00×</b></div>
+          <div class="side-row"><span>Scale index, digital</span><b id="sfRev">1.00×</b></div>
+          <div class="side-row"><span>Scale index, resilience</span><b id="sfDown">1.00×</b></div>
+          <div class="side-row"><span>Scale index, lending</span><b id="sfLoan">1.00×</b></div>
+        </div>
+        <div class="side-card">
+          <h5>Derived indicators</h5>
+          <div class="side-row"><span>Digital adoption today</span><b id="dAdopt">44%</b></div>
+          <div class="side-row"><span>Digital adoption projected</span><b id="dAdopt2">64%</b></div>
+          <div class="side-row"><span>Transactions per branch / day</span><b id="dTxBr">15,741</b></div>
+          <div class="side-row"><span>Customers per employee</span><b id="dCpe">678</b></div>
+          <div class="side-row"><span>ATMs per 100k customers</span><b id="dAtm">16.0</b></div>
+          <div class="side-row"><span>Benefit per customer / year</span><b id="dBpc">₹41</b></div>
+        </div>
+        <div class="side-card" style="border-color:rgba(240,180,41,.28);background:rgba(240,180,41,.06)">
+          <h5 style="color:var(--gold)">Assumption set</h5>
+          <div class="side-row"><span>Mobile adoption uplift</span><b>+46%</b></div>
+          <div class="side-row"><span>Transaction growth</span><b>+49%</b></div>
+          <div class="side-row"><span>Operational cost reduction</span><b>22%</b></div>
+          <div class="side-row"><span>Target availability</span><b>99.98%</b></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VALUE DRIVERS ================= -->
+<section class="sec-pad screen-only">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Value drivers</span>
+      <h2 class="sec-title">Four levers behind the number</h2>
+    </div>
+    <div class="driver-grid">
+      <div class="driver">
+        <div class="ic" style="background:rgba(56,225,230,.14);color:var(--cyan)"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-heart"/></svg></div>
+        <h4>Customer experience</h4>
+        <p>Faster digital services, fewer failed journeys and improved satisfaction across assisted and self-service channels.</p>
+        <p class="metric">CSAT index <b>71 → 92</b></p>
+      </div>
+      <div class="driver">
+        <div class="ic" style="background:rgba(29,107,247,.16);color:var(--blue-300)"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gauge"/></svg></div>
+        <h4>Operational efficiency</h4>
+        <p>Automation removes manual processing, consolidation reduces the infrastructure estate and its running cost.</p>
+        <p class="metric">Run cost <b>22% lower</b></p>
+      </div>
+      <div class="driver">
+        <div class="ic" style="background:rgba(18,184,134,.14);color:#4FDCB0"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trend"/></svg></div>
+        <h4>Digital growth</h4>
+        <p>Higher mobile and online adoption shifts volume to lower cost-to-serve channels and opens new revenue lines.</p>
+        <p class="metric">Mobile users <b id="dr3">+1.56M</b></p>
+      </div>
+      <div class="driver">
+        <div class="ic" style="background:rgba(240,180,41,.14);color:var(--gold)"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"/></svg></div>
+        <h4>Business resilience</h4>
+        <p>Improved availability, tested recovery and reduced downtime exposure across core banking and payment rails.</p>
+        <p class="metric">Availability <b>99.98%</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= USE CASES ================= -->
+<section class="sec-pad screen-only on-light" id="usecases" style="background:linear-gradient(180deg,#F4F7FC,#E9EFF9)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Where value is created</span>
+      <h2 class="sec-title">Eight places to look inside a bank</h2>
+      <p class="sec-sub">Each area maps to one or more of the benefit drivers in the model above.</p>
+    </div>
+    <div class="uc-grid">
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-db"/></svg></div><h4>Core banking modernisation</h4><p>Move the core off ageing, siloed infrastructure onto a scalable platform with predictable performance at peak.</p><p class="tagv">Operational savings · Resilience</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-mobile"/></svg></div><h4>Digital banking</h4><p>Release features faster on a container platform, and carry more concurrent users without re-architecting each time.</p><p class="tagv">Digital revenue</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></div><h4>UPI and payment infrastructure</h4><p>Absorb festive and month-end peaks with elastic capacity instead of provisioning for the worst day of the year.</p><p class="tagv">Transaction capacity</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-clock"/></svg></div><h4>Loan processing automation</h4><p>Straight-through processing on standard retail products, cutting approval time from days to hours.</p><p class="tagv">Lending velocity</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-alert"/></svg></div><h4>Fraud detection and risk analytics</h4><p>Score transactions in real time on GPU-accelerated infrastructure, lifting detection while cutting false positives.</p><p class="tagv">Loss avoidance</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-refresh"/></svg></div><h4>Disaster recovery</h4><p>Automated, regularly tested failover between DC and DR, with recovery objectives the regulator can be shown.</p><p class="tagv">Downtime avoidance</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-lock"/></svg></div><h4>Cyber resilience</h4><p>Immutable backup copies and an isolated recovery environment so a ransomware event becomes a recovery exercise.</p><p class="tagv">Risk reduction</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cpu"/></svg></div><h4>AI and data analytics</h4><p>A governed data platform and AI-ready compute for propensity models, collections scoring and service automation.</p><p class="tagv">Digital revenue · Efficiency</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RECOMMENDED SOLUTIONS ================= -->
+<section class="sec-pad screen-only" id="solutions" style="background:linear-gradient(180deg,#E9EFF9 0%,var(--ink-900) 16%,var(--ink-900) 100%)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">From value to build</span>
+      <h2 class="sec-title">What we would recommend, and why</h2>
+      <p class="sec-sub">Eight business problems, each with the architecture that resolves it, the OEM options that can deliver it and the outcome it produces. Dell Technologies leads where the estate and operating model favour it; where another OEM is the better fit, that is what we propose. The value figures update live from your calculator inputs.</p>
+    </div>
+
+    <div class="sol-intro">
+      <div class="crit"><b>Existing skills and operating model</b><p>The platform your team can run on day one beats the platform that benchmarks marginally better.</p></div>
+      <div class="crit"><b>Licence and support exposure</b><p>Subscription resets and core minimums now move TCO more than hardware pricing does.</p></div>
+      <div class="crit"><b>Workload latency and scale profile</b><p>Tier-0 core banking, payment bursts and AI inference each pull toward a different design.</p></div>
+      <div class="crit"><b>Regulatory and residency constraints</b><p>RBI recovery evidence, data localisation and audit trails are design inputs, not afterthoughts.</p></div>
+    </div>
+
+    <div class="sol-list" id="solList"></div>
+
+    <div class="matrix-card">
+      <table class="mx">
+        <thead><tr><th>Domain</th><th>Where we lead</th><th>Credible alternatives</th><th>What moves the decision</th></tr></thead>
+        <tbody id="mxBody"></tbody>
+      </table>
+    </div>
+    <p class="calc-foot" style="color:var(--t-low);border-top:0;margin-top:16px">Product families are named for architectural clarity. Specific models, generations and licence editions are confirmed at design stage against current OEM roadmaps, India availability and the customer's commercial terms.</p>
+  </div>
+</section>
+
+<!-- ================= JOURNEY ================= -->
+<section class="sec-pad screen-only" style="background:var(--ink-850)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Engagement approach</span>
+      <h2 class="sec-title">From estimate to measured business value</h2>
+      <p class="sec-sub">The number on this page is a starting hypothesis. These six steps turn it into a validated, tracked business case.</p>
+    </div>
+    <div class="journey" id="journey">
+      <div class="jline"><i></i></div>
+      <div class="jstep"><div class="node">01</div><h4>Assess</h4><p>Current estate, application portfolio and service levels</p></div>
+      <div class="jstep"><div class="node">02</div><h4>Analyse</h4><p>Workload profiling, cost baseline and risk exposure</p></div>
+      <div class="jstep"><div class="node">03</div><h4>Modernise</h4><p>Target architecture and phased migration plan</p></div>
+      <div class="jstep"><div class="node">04</div><h4>Automate</h4><p>Provisioning, recovery and release automation</p></div>
+      <div class="jstep"><div class="node">05</div><h4>Optimise</h4><p>Capacity, licensing and run-cost tuning</p></div>
+      <div class="jstep"><div class="node">06</div><h4>Measure</h4><p>Benefits tracked against the agreed baseline</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ADDITIONAL VALUE MODELS ================= -->
+<section class="mod-sec sec-pad screen-only" id="modules">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">More BFSI value models</span>
+      <h2 class="sec-title">Four further business cases, each with its own calculator</h2>
+      <p class="sec-sub">The headline model answers "what is transformation worth to the bank overall". These four answer the questions a CIO, CISO, CRO or head of retail lending will ask next. Every input is editable and every output recalculates live.</p>
+    </div>
+
+    <div class="tabs" id="modTabs" role="tablist"></div>
+    <div id="modPanels"></div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="sec-pad screen-only" style="padding-top:24px">
+  <div class="wrap">
+    <div class="cta-band">
+      <div class="cta-in">
+        <div>
+          <h2>Ready to quantify your transformation opportunity?</h2>
+          <p>Use your actual BFSI business data to build a customised business-value assessment, validated against your cost baseline, application portfolio and regulatory commitments.</p>
+          <div class="cta-contact">
+            <div class="cc-av">MK</div>
+            <div class="cc-t">
+              <b>Mukund Ulhas Kambli</b>
+              <span>Lead Solution Architect &middot; Team Computers Pvt. Ltd.</span>
+              <a href="tel:+918793344466"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><use href="#i-phone"/></svg>+91 87933 44466</a>
+            </div>
+          </div>
+        </div>
+        <div class="cta-btns">
+          <button class="btn btn-primary" id="btnRecalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-refresh"/></svg>Recalculate</button>
+          <button class="btn btn-ghost" data-scroll="#summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-file"/></svg>Generate executive summary</button>
+          <button class="btn btn-ghost" data-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-download"/></svg>Download business case</button>
+          <span style="font-size:12px;color:var(--t-low);text-align:center">The business case prints to PDF from your browser.</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="disclaimer"><b>Disclaimer:</b> This calculator uses illustrative assumptions and benchmark values for demonstration and presales discussions. Actual business benefits, ROI, savings and revenue impact will vary based on the organisation's operating model, transaction volumes, technology environment, application portfolio and transformation strategy. Figures shown are not a commitment, quotation or guarantee of outcome, and do not represent the results of any named institution.</p>
+  </div>
+</section>
+
+<footer class="foot screen-only">
+  <div class="wrap foot-in">
+    <div class="foot-c">
+      <div class="cc-av">MK</div>
+      <div>
+        <b>Mukund Ulhas Kambli</b>
+        <span>Lead Solution Architect &middot; Team Computers Pvt. Ltd. &middot; BFSI Business Value Advisory</span>
+        <a href="tel:+918793344466">+91 87933 44466</a>
+      </div>
+    </div>
+    <div class="foot-r">Illustrative business value model. All calculations run locally in your browser &mdash; no data leaves this page.</div>
+  </div>
+</footer>
+
+<!-- ================= PRINT BUSINESS CASE ================= -->
+<footer style="text-align:center; padding: 24px 0; color: var(--t-low); font-size: 13.5px; border-top: 1px solid var(--line-dark); margin-top: 40px;">
+  Powered by Team Computers
+</footer>
+<div class="print-only print-doc" id="printDoc"></div>
+
+<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<script>
+"use strict";
+/* ============================================================
+   0 · UTILITIES
+   ============================================================ */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const IN = (n,d=0)=>new Intl.NumberFormat('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
+
+function num(v,d=0){ if(!isFinite(v)) return '—'; return IN(v,d); }
+function cr(v){ const a=Math.abs(v); if(a>=1000) return IN(v,0); if(a>=100) return IN(v,1); return IN(v,2).replace(/\.00$/,'.0'); }
+function crShort(v){ const a=Math.abs(v); return IN(v, a>=100?0:1); }
+function mn(v){ return IN(v,2)+'M'; }
+function pct(v,d=0){ return IN(v,d)+'%'; }
+function parseNum(s){ if(typeof s==='number') return s; const c=String(s).replace(/[^0-9.\-]/g,''); const n=parseFloat(c); return isNaN(n)?NaN:n; }
+function svgIc(id,size,sw){ return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round"><use href="#'+id+'"/></svg>'; }
+
+function toast(msg,busy){
+  const t=$('#toast'); $('#toastMsg').textContent=msg;
+  $('#toastIcon').innerHTML = busy ? '<span class="spin"></span>' : svgIc('i-check',16,2.4);
+  t.classList.add('on'); clearTimeout(toast._t);
+  toast._t=setTimeout(()=>t.classList.remove('on'), busy?1400:2600);
+}
+
+/* smooth count-up on any element holding a number */
+function countTo(el,to,dec,dur){
+  if(!el) return;
+  const from = parseFloat(String(el.dataset.v||el.textContent).replace(/,/g,''))||0;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || Math.abs(to-from)<0.005){
+    el.textContent=IN(to,dec); el.dataset.v=to; return;
+  }
+  const t0=performance.now(), D=dur||760;
+  cancelAnimationFrame(el._raf);
+  const tick=t=>{
+    const p=clamp((t-t0)/D,0,1), e=1-Math.pow(1-p,3);
+    el.textContent=IN(from+(to-from)*e,dec);
+    if(p<1) el._raf=requestAnimationFrame(tick); else el.dataset.v=to;
+  };
+  el._raf=requestAnimationFrame(tick);
+}
+
+/* ============================================================
+   1 · CORE MODEL
+   ============================================================ */
+const REF   = {branches:540, employees:11500, customers:7.8, transactions:8.5, mobileUsers:3.4, atms:1250};
+const BASE  = {ops:18, rev:11, down:2, loan:1};          // ₹ Cr at the reference profile
+const ASM   = {mobileGrowth:0.46, txGrowth:0.49, opexCut:0.22, availability:99.98, csatNow:71, csatNext:92};
+
+const state = Object.assign({}, REF);
+
+function model(s){
+  const rB=s.branches/REF.branches, rE=s.employees/REF.employees, rC=s.customers/REF.customers,
+        rT=s.transactions/REF.transactions, rM=s.mobileUsers/REF.mobileUsers;
+
+  const sf = {
+    ops : 0.25*rB + 0.25*rE + 0.30*rC + 0.20*rT,
+    rev : 0.35*rC + 0.35*rM + 0.30*rT,
+    down: 0.70*rT + 0.30*rC,
+    loan: 0.40*rC + 0.30*rE + 0.30*rB
+  };
+
+  const v = {
+    ops : BASE.ops  * sf.ops,
+    rev : BASE.rev  * sf.rev,
+    down: BASE.down * sf.down,
+    loan: BASE.loan * sf.loan
+  };
+  v.total = v.ops + v.rev + v.down + v.loan;
+
+  const projMobile = s.mobileUsers * (1+ASM.mobileGrowth);
+  const projTx     = s.transactions * (1+ASM.txGrowth);
+  const adoptNow   = clamp(s.mobileUsers/s.customers,0,1);
+  const adoptNext  = clamp(projMobile/s.customers,0,0.98);
+
+  const d = {
+    projMobile, projTx, adoptNow, adoptNext,
+    txPerBranch : s.transactions*1e6/Math.max(s.branches,1),
+    txPerBranchNext : projTx*1e6/Math.max(s.branches,1),
+    custPerEmp  : s.customers*1e6/Math.max(s.employees,1),
+    atmsPer100k : s.atms/Math.max(s.customers*10,0.0001),
+    opexBase    : v.ops/ASM.opexCut,
+    benefitPerCust : v.total*1e7/Math.max(s.customers*1e6,1),
+    monthly     : v.total/12,
+    selfServe   : clamp((s.atms*2200*365)/Math.max(s.transactions*1e6*365,1),0,1)
+  };
+
+  // Derived 0–100 maturity index used by the radar chart
+  const idx = {
+    now:{
+      cx        : clamp(28+60*d.adoptNow, 20, 78),
+      digital   : clamp(d.adoptNow*100, 10, 85),
+      efficiency: clamp(25+45*(d.custPerEmp/1200), 20, 80),
+      resilience: clamp(40+14*Math.min(d.atmsPer100k/20,1), 34, 58),
+      capacity  : clamp(78-40*(d.txPerBranch/20000), 24, 82)
+    }
+  };
+  idx.next = {
+    cx        : clamp(idx.now.cx + (100-idx.now.cx)*0.72, 0, 95),
+    digital   : clamp(d.adoptNext*100, idx.now.digital+8, 92),
+    efficiency: clamp(idx.now.efficiency + (100-idx.now.efficiency)*0.58, 0, 93),
+    resilience: 94,
+    capacity  : clamp(idx.now.capacity + (100-idx.now.capacity)*0.62, 0, 94)
+  };
+
+  return {s:Object.assign({},s), sf, v, d, idx};
+}
+
+/* ============================================================
+   2 · CHART BUILDERS (hand-drawn SVG, no libraries)
+   ============================================================ */
+const C_BLUE='#1D6BF7', C_CYAN='#38E1E6', C_GOLD='#F0B429', C_VIOLET='#8B7CF6', C_MUTE='#3C5C93';
+
+function niceMax(v){
+  if(v<=0) return 1;
+  const p=Math.pow(10,Math.floor(Math.log10(v))), n=v/p;
+  const step = n<=1?1 : n<=1.5?1.5 : n<=2?2 : n<=3?3 : n<=4?4 : n<=5?5 : n<=7.5?7.5 : 10;
+  return step*p;
+}
+
+function barChart(el,data){
+  const W=580,H=300,PL=54,PR=14,PT=26,PB=64;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const max=niceMax(Math.max.apply(null,data.map(d=>d.v))*1.15)||1;
+  const bw=Math.min(74, iw/data.length*0.52), gap=iw/data.length;
+  let g='';
+  for(let i=0;i<=4;i++){
+    const y=PT+ih-ih*i/4, val=max*i/4;
+    g+='<line class="grid-line" x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'"/>'
+     + '<text class="ax" x="'+(PL-10)+'" y="'+(y+4)+'" text-anchor="end">'+IN(val, max<12?1:0)+'</text>';
+  }
+  data.forEach((d,i)=>{
+    const h=Math.max(2, ih*(d.v/max)), x=PL+gap*i+(gap-bw)/2, y=PT+ih-h;
+    const gid='bg'+i+'-'+Math.random().toString(36).slice(2,7);
+    g+='<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'
+     + '<stop offset="0%" stop-color="'+d.c+'" stop-opacity=".95"/><stop offset="100%" stop-color="'+d.c+'" stop-opacity=".38"/></linearGradient></defs>'
+     + '<rect class="bar-r" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="6" fill="url(#'+gid+')"/>'
+     + '<text class="bar-val" x="'+(x+bw/2)+'" y="'+(y-9)+'" text-anchor="middle">₹'+crShort(d.v)+' Cr</text>';
+    String(d.l).split('|').forEach((ln,k)=>{
+      g+='<text class="ax-strong" x="'+(x+bw/2)+'" y="'+(PT+ih+24+k*15)+'" text-anchor="middle">'+ln+'</text>';
+    });
+  });
+  g+='<line class="grid-line" x1="'+PL+'" y1="'+(PT+ih)+'" x2="'+(W-PR)+'" y2="'+(PT+ih)+'" stroke-opacity=".5"/>';
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Annual business benefit by driver">'+g+'</svg>';
+}
+
+function groupChart(el,groups){
+  const W=560,H=300,PL=52,PR=14,PT=26,PB=58;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const max=niceMax(Math.max.apply(null,groups.map(g=>Math.max(g.a,g.b)))*1.18)||1;
+  const gw=iw/groups.length, bw=Math.min(58,gw*0.26);
+  let g='';
+  for(let i=0;i<=4;i++){
+    const y=PT+ih-ih*i/4;
+    g+='<line class="grid-line" x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'"/>'
+     + '<text class="ax" x="'+(PL-10)+'" y="'+(y+4)+'" text-anchor="end">'+IN(max*i/4,1)+'</text>';
+  }
+  groups.forEach((gr,i)=>{
+    const cx=PL+gw*i+gw/2;
+    [['a',C_MUTE,-bw-6],['b','url(#gGrad)',6]].forEach(([k,fill,off])=>{
+      const val=gr[k], h=Math.max(2,ih*(val/max)), x=cx+off, y=PT+ih-h;
+      g+='<rect class="bar-r" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="6" fill="'+fill+'"/>'
+       + '<text class="bar-val" x="'+(x+bw/2)+'" y="'+(y-9)+'" text-anchor="middle">'+IN(val,2)+'</text>';
+    });
+    g+='<text class="ax-strong" x="'+cx+'" y="'+(PT+ih+26)+'" text-anchor="middle">'+gr.l+'</text>'
+     + '<text class="ax" x="'+cx+'" y="'+(PT+ih+43)+'" text-anchor="middle">'+gr.u+'</text>';
+  });
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Digital growth current versus projected">'
+    +'<defs><linearGradient id="gGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="'+C_BLUE+'"/><stop offset="100%" stop-color="'+C_CYAN+'"/></linearGradient></defs>'+g+'</svg>';
+}
+
+function radarChart(el,axes,now,next){
+  const W=700,H=380,cx=W/2,cy=H/2+6,R=126,n=axes.length;
+  const pt=(i,r)=>{const a=-Math.PI/2+i*2*Math.PI/n; return [cx+Math.cos(a)*r, cy+Math.sin(a)*r];};
+  let g='';
+  for(let ring=1;ring<=4;ring++){
+    const pts=[]; for(let i=0;i<n;i++) pts.push(pt(i,R*ring/4).map(v=>v.toFixed(1)).join(','));
+    g+='<polygon points="'+pts.join(' ')+'" fill="none" class="grid-line"/>';
+  }
+  for(let i=0;i<n;i++){ const p=pt(i,R); g+='<line class="grid-line" x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'"/>'; }
+  const poly=(vals,fill,stroke,op)=>{
+    const pts=vals.map((v,i)=>pt(i,R*clamp(v,0,100)/100).map(x=>x.toFixed(1)).join(',')).join(' ');
+    let s='<polygon points="'+pts+'" fill="'+fill+'" fill-opacity="'+op+'" stroke="'+stroke+'" stroke-width="2" stroke-linejoin="round"/>';
+    vals.forEach((v,i)=>{const p=pt(i,R*clamp(v,0,100)/100); s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3.4" fill="'+stroke+'"/>';});
+    return s;
+  };
+  g+=poly(now,C_MUTE,C_MUTE,.32)+poly(next,C_CYAN,C_CYAN,.18);
+  axes.forEach((a,i)=>{
+    const p=pt(i,R+34), anchor = Math.abs(p[0]-cx)<12 ? 'middle' : (p[0]>cx?'start':'end');
+    g+='<text class="ax-strong" x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" text-anchor="'+anchor+'">'+a+'</text>'
+     + '<text class="ax" x="'+p[0].toFixed(1)+'" y="'+(p[1]+16).toFixed(1)+'" text-anchor="'+anchor+'">'+Math.round(now[i])+' → '+Math.round(next[i])+'</text>';
+  });
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Business impact profile radar">'+g+'</svg>';
+}
+
+/* ============================================================
+   3 · RENDER THE CORE MODEL
+   ============================================================ */
+let M = model(state);
+
+const HERO_BARS=[
+  {k:'ops', l:'Operational savings', c:'linear-gradient(90deg,#1D6BF7,#5CA8FF)'},
+  {k:'rev', l:'Digital revenue',     c:'linear-gradient(90deg,#159FB4,#38E1E6)'},
+  {k:'down',l:'Downtime avoidance',  c:'linear-gradient(90deg,#C98A12,#F0B429)'},
+  {k:'loan',l:'Loan processing',     c:'linear-gradient(90deg,#6C5CE0,#8B7CF6)'}
+];
+
+function renderHero(){
+  const v=M.v;
+  countTo($('#heroTotal'), v.total, v.total>=100?0:1);
+  $('#heroProfile').textContent = num(M.s.branches)+' branches · '+IN(M.s.customers,1)+'M customers';
+  const box=$('#heroBars');
+  if(!box.dataset.built){
+    box.innerHTML = HERO_BARS.map(b=>
+      '<div class="hp-bar-row"><span class="lb">'+b.l+'</span><span class="vl" data-hv="'+b.k+'">—</span>'
+      +'<span class="hp-track"><span class="hp-fill" data-f="'+b.k+'" style="background:'+b.c+'"></span></span></div>').join('');
+    box.dataset.built='1';
+  }
+  HERO_BARS.forEach(b=>{
+    $('[data-hv="'+b.k+'"]',box).textContent='₹'+crShort(v[b.k])+' Cr';
+    $('[data-f="'+b.k+'"]',box).style.width=(v.total>0? clamp(v[b.k]/v.total*100,1.5,100):0)+'%';
+  });
+}
+
+function renderResults(){
+  const {v,d}=M;
+  countTo($('#totalVal'), v.total, v.total>=100?0:1);
+  [['kOps','ops','kOpsShare'],['kRev','rev','kRevShare'],['kDown','down','kDownShare'],['kLoan','loan','kLoanShare']]
+    .forEach(([id,k,sh])=>{
+      countTo($('#'+id), v[k], v[k]>=100?0:1);
+      $('#'+sh).textContent = pct(v.total>0? v[k]/v.total*100:0)+' of benefit';
+    });
+  $('#deltaNote').textContent = '₹'+crShort(d.monthly)+' Cr per month of unrealised value at current scale';
+  $('#tAdopt').textContent = mn(M.s.mobileUsers)+' → '+mn(d.projMobile)+' mobile banking users';
+  $('#tCap').textContent   = mn(M.s.transactions)+' → '+mn(d.projTx)+' transactions per day';
+  $('#tOpex').textContent  = 'Against an addressable run-cost base of about ₹'+crShort(d.opexBase)+' Cr';
+  $('#dr3').textContent    = '+'+IN(d.projMobile-M.s.mobileUsers,2)+'M';
+
+  $('#sfOps').textContent  = IN(M.sf.ops,2)+'×';
+  $('#sfRev').textContent  = IN(M.sf.rev,2)+'×';
+  $('#sfDown').textContent = IN(M.sf.down,2)+'×';
+  $('#sfLoan').textContent = IN(M.sf.loan,2)+'×';
+  $('#dAdopt').textContent = pct(d.adoptNow*100);
+  $('#dAdopt2').textContent= pct(d.adoptNext*100);
+  $('#dTxBr').textContent  = num(d.txPerBranch);
+  $('#dCpe').textContent   = num(d.custPerEmp);
+  $('#dAtm').textContent   = IN(d.atmsPer100k,1);
+  $('#dBpc').textContent   = '₹'+num(d.benefitPerCust);
+}
+
+function renderCharts(){
+  const {v,d,idx}=M;
+  barChart($('#chartBenefit'),[
+    {l:'Operational|savings',   v:v.ops,  c:C_BLUE},
+    {l:'Digital revenue|opportunity', v:v.rev, c:C_CYAN},
+    {l:'Downtime loss|avoidance', v:v.down, c:C_GOLD},
+    {l:'Faster loan|processing',  v:v.loan, c:C_VIOLET}
+  ]);
+  groupChart($('#chartGrowth'),[
+    {l:'Mobile banking users', u:'million', a:M.s.mobileUsers, b:d.projMobile},
+    {l:'Daily transactions',   u:'million per day', a:M.s.transactions, b:d.projTx}
+  ]);
+  const ax=['Customer experience','Digital adoption','Operational efficiency','Resilience','Transaction capacity'];
+  radarChart($('#chartRadar'),ax,
+    [idx.now.cx,idx.now.digital,idx.now.efficiency,idx.now.resilience,idx.now.capacity],
+    [idx.next.cx,idx.next.digital,idx.next.efficiency,idx.next.resilience,idx.next.capacity]);
+}
+
+function baRows(){
+  const {s,d}=M;
+  return [
+    ['Mobile banking users', mn(s.mobileUsers), mn(d.projMobile), 'up','+46%'],
+    ['Daily transactions', mn(s.transactions), mn(d.projTx), 'up','+49%'],
+    ['Digital adoption', pct(d.adoptNow*100), pct(d.adoptNext*100), 'up','+'+IN((d.adoptNext-d.adoptNow)*100,0)+' pts'],
+    ['Transactions per branch, per day', num(d.txPerBranch), num(d.txPerBranchNext), 'up','+49%'],
+    ['Customer satisfaction index', '71', '92', 'up','+21 pts'],
+    ['Loan approval time', '3 days', '4 hours', 'dn','94% faster'],
+    ['Operational cost base', '100%', '78%', 'dn','22% lower'],
+    ['Application availability', 'Legacy estate', '99.98%', 'up','&lt;1h 45m / year']
+  ];
+}
+function renderBA(){
+  $('#baBody').innerHTML = baRows().map(r=>
+    '<tr><td class="kpi-name">'+r[0]+'</td><td class="cur r">'+r[1]+'</td><td class="proj r">'+r[2]+'</td>'
+    +'<td class="r"><span class="chip-up'+(r[3]==='dn'?' chip-dn':'')+'">'+r[4]+'</span></td></tr>').join('');
+}
+
+function execText(){
+  const {s,v,d}=M;
+  const p1='Based on the entered business profile — <b>'+num(s.branches)+' branches</b>, <b>'+num(s.employees)+' employees</b>, <b>'
+    +IN(s.customers,2)+'M customers</b> and <b>'+IN(s.transactions,2)+'M daily transactions</b> — the organisation could potentially increase mobile banking users from '
+    +mn(s.mobileUsers)+' to approximately <b>'+mn(d.projMobile)+'</b> and increase daily transaction capacity from '+mn(s.transactions)+' to approximately <b>'+mn(d.projTx)
+    +'</b>. The estimated annual business value is approximately <b>₹'+crShort(v.total)+' Cr</b>, driven by operational savings, digital revenue opportunities, reduced downtime exposure and faster loan processing.';
+  const p2='Operational savings of ₹'+crShort(v.ops)+' Cr represent a 22% reduction against an addressable run-cost base of roughly ₹'+crShort(d.opexBase)
+    +' Cr. Digital revenue opportunity of ₹'+crShort(v.rev)+' Cr follows an increase in digital adoption from '+pct(d.adoptNow*100)+' to '+pct(d.adoptNext*100)
+    +' of the customer base. Resilience improvements avoid an estimated ₹'+crShort(v.down)+' Cr of downtime exposure at a target availability of 99.98%, and lending automation contributes ₹'
+    +crShort(v.loan)+' Cr by compressing approval time from three days to four hours.';
+  const p3='Across the base, this equates to about <b>₹'+num(d.benefitPerCust)+' of annual value per customer relationship</b>, or ₹'+crShort(d.monthly)
+    +' Cr for every month the current operating model is retained. The next step is to validate these benchmarks against the actual cost baseline, application portfolio and service-level commitments before committing to a business case.';
+  return [p1,p2,p3];
+}
+function renderExec(){
+  const {s,v,d}=M;
+  $('#execBody').innerHTML = execText().map(p=>'<p>'+p+'</p>').join('');
+  $('#execDate').textContent = new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const pts=[
+    ['1','Operational savings of ₹'+crShort(v.ops)+' Cr are the largest single driver at '+pct(v.total>0?v.ops/v.total*100:0)+' of total value.'],
+    ['2','Digital adoption moves from '+pct(d.adoptNow*100)+' to '+pct(d.adoptNext*100)+', shifting volume to lower cost-to-serve channels.'],
+    ['3','Transaction headroom rises to '+mn(d.projTx)+' per day, or '+num(d.txPerBranchNext)+' per branch, without adding branch infrastructure.'],
+    ['4','Downtime exposure worth ₹'+crShort(v.down)+' Cr is addressed by moving to a 99.98% availability target across core and payment platforms.']
+  ];
+  $('#execPoints').innerHTML = pts.map(p=>'<div class="exec-point"><span class="bl">'+p[0]+'</span><span>'+p[1]+'</span></div>').join('');
+}
+
+function renderAll(){
+  M = model(state);
+  renderHero(); renderResults(); renderCharts(); renderBA(); renderExec();
+  if($('#solList') && $('#solList').children.length) updateSolutions();
+}
+
+/* ============================================================
+   4 · INPUT HANDLING + VALIDATION
+   ============================================================ */
+function cfgOf(inp){
+  return {key:inp.dataset.key, step:parseFloat(inp.dataset.step), min:parseFloat(inp.dataset.min),
+          max:parseFloat(inp.dataset.max), dec:parseInt(inp.dataset.dec,10)};
+}
+function setErr(inp,msg){
+  const shell=inp.closest('.inp-shell'), e=$('#'+inp.getAttribute('aria-describedby'));
+  shell.classList.toggle('bad',!!msg);
+  if(e){ e.textContent=msg||''; e.classList.toggle('show',!!msg); }
+}
+function commit(inp,raw){
+  const c=cfgOf(inp); let n=parseNum(raw);
+  if(isNaN(n)){ setErr(inp,'Enter a number.'); return false; }
+  if(n<c.min){ setErr(inp,'Minimum is '+IN(c.min,c.dec)+'. Value adjusted.'); n=c.min; }
+  else if(n>c.max){ setErr(inp,'Maximum is '+IN(c.max,c.dec)+'. Value adjusted.'); n=c.max; }
+  else setErr(inp,'');
+  state[c.key]=n;
+  if(c.key==='mobileUsers' && state.mobileUsers>state.customers){
+    setErr(inp,'Mobile users cannot exceed the customer base — capped at '+IN(state.customers,2)+'M.');
+    state.mobileUsers=state.customers;
+  }
+  if(c.key==='customers' && state.mobileUsers>state.customers){
+    state.mobileUsers=state.customers;
+    const mi=$('#f-mobileUsers'); mi.value=IN(state.mobileUsers,2);
+    setErr(mi,'Adjusted to match the customer base.');
+  }
+  renderAll(); return true;
+}
+function format(inp){ const c=cfgOf(inp); inp.value=IN(state[c.key],c.dec); }
+
+$$('#fields input').forEach(inp=>{
+  inp.addEventListener('input',()=>commit(inp,inp.value));
+  inp.addEventListener('blur',()=>{ if(commit(inp,inp.value)) format(inp); });
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='ArrowUp'||e.key==='ArrowDown'){ e.preventDefault(); nudge(cfgOf(inp).key, e.key==='ArrowUp'?1:-1); }
+    if(e.key==='Enter'){ inp.blur(); }
+  });
+});
+function nudge(key,dir){
+  const inp=$('#f-'+key), c=cfgOf(inp);
+  const n=clamp(Math.round((state[key]+dir*c.step)*100)/100, c.min, c.max);
+  state[key]=n; inp.value=IN(n,c.dec); commit(inp,String(n)); format(inp);
+}
+$$('[data-inc]').forEach(b=>b.addEventListener('click',()=>nudge(b.dataset.inc,1)));
+$$('[data-dec]').forEach(b=>b.addEventListener('click',()=>nudge(b.dataset.dec,-1)));
+
+$('#btnReset').addEventListener('click',()=>{
+  Object.assign(state,REF);
+  $$('#fields input').forEach(i=>{ setErr(i,''); format(i); });
+  renderAll(); toast('Reset to the reference BFSI profile.');
+});
+function runCalc(){
+  const p=$('#calcPanel'); p.classList.add('calc-busy'); toast('Recalculating business value…',true);
+  setTimeout(()=>{
+    p.classList.remove('calc-busy');
+    ['#totalVal','#kOps','#kRev','#kDown','#kLoan'].forEach(id=>{ const el=$(id); if(el) el.dataset.v=0; });
+    renderAll();
+    document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+    toast('Business value updated for your parameters.');
+  },520);
+}
+$('#btnCalc').addEventListener('click',runCalc);
+$('#btnRecalc').addEventListener('click',()=>{ $('#calculator').scrollIntoView({behavior:'smooth'}); setTimeout(runCalc,420); });
+
+$('#btnCopy').addEventListener('click',async()=>{
+  const txt='Business value assessment — Team Computers, BFSI Business Value Advisory\n\n'
+    + execText().map(p=>p.replace(/<[^>]+>/g,'')).join('\n\n')
+    + '\n\nIllustrative model. Assumptions require validation against actual customer data.';
+  try{ await navigator.clipboard.writeText(txt); toast('Executive summary copied to clipboard.'); }
+  catch(e){ toast('Copy blocked by the browser — select the text manually.'); }
+});
+
+/* ============================================================
+   5 · ADDITIONAL BFSI VALUE MODELS
+   ============================================================ */
+const MODULES=[
+{
+  id:'cyber', icon:'i-lock', name:'Cyber resilience', sub:'Ransomware recovery value',
+  title:'Cyber resilience and ransomware recovery',
+  blurb:'What immutable backup copies, an isolated recovery environment and orchestrated failover are worth, expressed as expected annual loss avoided.',
+  totalLabel:'Estimated annual cyber resilience value',
+  totalNote:'Expected-value basis: modelled loss per incident multiplied by the annual likelihood of a major event.',
+  inputs:[
+    {k:'revenue', l:'Annual revenue', u:'₹ Cr', v:4800, step:100, min:1, max:900000, dec:0, tip:'Total annual revenue. Used to derive the revenue exposed for every hour core services are unavailable.'},
+    {k:'rtoNow', l:'Current recovery time', u:'hours', v:72, step:4, min:1, max:2000, dec:0, tip:'Realistic time to restore core banking after a destructive event today, including forensic hold, rebuild and data validation.'},
+    {k:'rtoTarget', l:'Target recovery time', u:'hours', v:4, step:1, min:0.5, max:2000, dec:1, tip:'Recovery objective after modernisation, using immutable copies and a pre-staged clean recovery environment.'},
+    {k:'records', l:'Customer records held', u:'million', v:7.8, step:0.5, min:0.01, max:900, dec:2, tip:'Records in scope for breach notification and remediation cost.'},
+    {k:'criticalApps', l:'Business-critical applications', u:'apps', v:45, step:5, min:1, max:5000, dec:0, tip:'Applications inside the recovery scope. Drives the manual effort spent on DR runbooks and regulatory recovery testing.'},
+    {k:'prob', l:'Annual likelihood of a major incident', u:'%', v:18, step:1, min:0, max:100, dec:0, tip:'Probability of one destructive cyber event per year. Sector reporting for large financial institutions typically sits in the 12–25% range.'}
+  ],
+  assumptions:[['Revenue exposed during an outage','35%'],['Records compromised in a major incident','1.2%'],['Remediation cost per record','₹6,500'],['Breach exposure reduced by recovery controls','60%'],['Regulatory and remediation cost per incident','₹4.5 Cr'],['DR runbook and test effort per application','₹1.6 L / year']],
+  compute(x){
+    const hourly=x.revenue*1e7/8760, exposed=hourly*0.35;
+    const hoursSaved=Math.max(x.rtoNow-x.rtoTarget,0);
+    const dt=exposed*hoursSaved*(x.prob/100)/1e7;
+    const breach=x.records*1e6*0.012*6500*0.60*(x.prob/100)/1e7;
+    const reg=4.5*0.45*(x.prob/100);
+    const drOps=x.criticalApps*0.016;
+    const total=dt+breach+reg+drOps;
+    const faster=x.rtoNow>0?(1-x.rtoTarget/x.rtoNow)*100:0;
+    return {total,
+      cards:[
+        {v:pct(clamp(faster,0,100),1), n:'Faster recovery', d:num(x.rtoNow)+' hrs → '+IN(x.rtoTarget,1)+' hrs to restore core services'},
+        {v:'₹'+crShort(dt)+' Cr', n:'Downtime loss avoided', d:'₹'+crShort(exposed*hoursSaved/1e7)+' Cr exposure per incident, weighted by likelihood'},
+        {v:'₹'+crShort(breach)+' Cr', n:'Breach exposure reduced', d:num(x.records*1e6*0.012)+' records at risk per incident'}
+      ],
+      bars:[
+        {l:'Breach exposure reduction', v:breach, c:C_BLUE},
+        {l:'Downtime loss avoided', v:dt, c:C_CYAN},
+        {l:'DR test and runbook effort', v:drOps, c:C_VIOLET},
+        {l:'Regulatory and remediation', v:reg, c:C_GOLD}
+      ],
+      narr:'Cutting recovery from <b>'+num(x.rtoNow)+' hours to '+IN(x.rtoTarget,1)+' hours</b> removes <b>'+num(hoursSaved)+' hours</b> of revenue exposure from every destructive event. At a '+num(x.prob)+'% annual likelihood, the modelled expected value across downtime, breach remediation, regulatory cost and recovery-testing effort is <b>₹'+crShort(total)+' Cr per year</b> — the figure to compare against the cost of an isolated recovery environment.'
+    };
+  }
+},
+{
+  id:'dc', icon:'i-server', name:'Data centre modernisation', sub:'Five-year TCO comparison',
+  title:'Data centre modernisation, five-year TCO',
+  blurb:'Legacy three-tier estate against a consolidated modern platform, across hardware, power, facilities, operations and licensing.',
+  totalLabel:'Five-year TCO saving',
+  totalNote:'Legacy run-and-refresh cost against modernised platform cost, including migration services.',
+  inputs:[
+    {k:'servers', l:'Physical servers', u:'units', v:320, step:10, min:1, max:50000, dec:0, tip:'Production and non-production physical server estate in scope for refresh or consolidation.'},
+    {k:'vms', l:'Virtual machines', u:'VMs', v:2400, step:100, min:1, max:500000, dec:0, tip:'Total virtual machines to migrate. Drives migration services effort.'},
+    {k:'racks', l:'Racks occupied', u:'racks', v:26, step:1, min:1, max:5000, dec:0, tip:'Racks currently consumed across DC and DR, including networking and storage.'},
+    {k:'powerRate', l:'Power tariff', u:'₹ / kWh', v:9.5, step:0.5, min:1, max:60, dec:2, tip:'Blended commercial or colocation power rate including transmission and demand charges.'},
+    {k:'adminFte', l:'Infrastructure administrators', u:'FTE', v:14, step:1, min:1, max:2000, dec:0, tip:'Full-time staff running compute, storage, virtualisation and backup operations.'},
+    {k:'licenseCr', l:'Annual platform licensing', u:'₹ Cr', v:12, step:1, min:0, max:5000, dec:2, tip:'Annual virtualisation, operating system and management licensing spend across the estate.'}
+  ],
+  assumptions:[['Horizon','5 years'],['Consolidation ratio','3.2 : 1'],['Legacy rack power / PUE','6.5 kW · 1.80'],['Modern rack power / PUE','9.0 kW · 1.45'],['Facility cost per rack','₹2.4 L / year'],['Administrator cost','₹18 L / year'],['Operations effort reduction','40%'],['Licence optimisation','25%']],
+  compute(x){
+    const H=5;
+    const L={
+      hw:x.servers*6.2e5/1e7,
+      maint:x.servers*6.2e5*0.12*H/1e7,
+      power:x.racks*6.5*8760*1.8*x.powerRate*H/1e7,
+      fac:x.racks*2.4e5*H/1e7,
+      ops:x.adminFte*1.8e6*H/1e7,
+      lic:x.licenseCr*H
+    };
+    const nodes=Math.max(1,Math.ceil(x.servers/3.2)), nRacks=Math.max(1,Math.ceil(x.racks*0.35));
+    const N={
+      hw:nodes*1.15e6/1e7,
+      maint:nodes*1.15e6*0.09*H/1e7,
+      power:nRacks*9*8760*1.45*x.powerRate*H/1e7,
+      fac:nRacks*2.4e5*H/1e7,
+      ops:x.adminFte*0.6*1.8e6*H/1e7,
+      lic:x.licenseCr*0.75*H,
+      svc:0.35+x.vms*8000/1e7
+    };
+    const sum=o=>Object.keys(o).reduce((a,k)=>a+o[k],0);
+    const lT=sum(L), nT=sum(N), total=lT-nT;
+    const runL=(L.maint+L.power+L.fac+L.ops+L.lic)/H, runN=(N.maint+N.power+N.fac+N.ops+N.lic)/H;
+    const annual=runL-runN, invest=N.hw+N.svc;
+    const payback=annual>0?invest/annual*12:0;
+    const kwhL=x.racks*6.5*8760*1.8, kwhN=nRacks*9*8760*1.45;
+    return {total,
+      cards:[
+        {v:pct(lT>0?total/lT*100:0,1), n:'Lower five-year TCO', d:'₹'+crShort(lT)+' Cr legacy against ₹'+crShort(nT)+' Cr modernised'},
+        {v:num(Math.round(payback))+' mo', n:'Payback period', d:'₹'+crShort(invest)+' Cr investment against ₹'+crShort(annual)+' Cr of annual run saving'},
+        {v:pct((1-nRacks/x.racks)*100,0), n:'Smaller footprint', d:num(x.racks)+' racks → '+num(nRacks)+' racks · '+pct((1-kwhN/kwhL)*100,0)+' less energy'}
+      ],
+      bars:[
+        {l:'Licensing optimisation', v:L.lic-N.lic, c:C_BLUE},
+        {l:'Hardware and maintenance', v:(L.hw+L.maint)-(N.hw+N.maint), c:C_CYAN},
+        {l:'Operations effort', v:L.ops-N.ops, c:C_VIOLET},
+        {l:'Power and facilities', v:(L.power+L.fac)-(N.power+N.fac), c:C_GOLD},
+        {l:'Migration services', v:-N.svc, c:'#F2545B'}
+      ],
+      narr:'Consolidating <b>'+num(x.servers)+' servers onto '+num(nodes)+' modern nodes</b> at 3.2:1 releases '+num(x.racks-nRacks)+' racks and '+IN(x.adminFte*0.4,1)+' FTE of operations effort. Five-year cost falls from <b>₹'+crShort(lT)+' Cr to ₹'+crShort(nT)+' Cr</b>, a saving of <b>₹'+crShort(total)+' Cr</b>, with the migration investment recovered in about '+num(Math.round(payback))+' months.'
+    };
+  }
+},
+{
+  id:'loan', icon:'i-clock', name:'Lending automation', sub:'Loan origination throughput',
+  title:'Loan origination and credit automation',
+  blurb:'What straight-through processing is worth in retail lending, across processing cost and the applications recovered from abandonment.',
+  totalLabel:'Estimated annual lending value',
+  totalNote:'Processing cost released plus risk-adjusted net interest income on incremental disbursement.',
+  inputs:[
+    {k:'appsMonth', l:'Loan applications per month', u:'applications', v:42000, step:1000, min:1, max:5000000, dec:0, tip:'Retail loan applications received across all channels each month.'},
+    {k:'tatDays', l:'Current turnaround time', u:'days', v:3, step:0.5, min:0.2, max:120, dec:1, tip:'Average time from application to sanction today. The target state assumes four hours on standard products.'},
+    {k:'costPerApp', l:'Processing cost per application', u:'₹', v:1850, step:50, min:1, max:200000, dec:0, tip:'Fully loaded origination cost: verification, bureau checks, underwriting effort, field visits and documentation.'},
+    {k:'approvalRate', l:'Approval rate', u:'%', v:46, step:1, min:1, max:100, dec:0, tip:'Share of applications that convert to a sanctioned loan.'},
+    {k:'ticketLakh', l:'Average ticket size', u:'₹ Lakh', v:6.5, step:0.5, min:0.1, max:5000, dec:2, tip:'Average sanctioned amount per retail loan.'},
+    {k:'nim', l:'Net interest margin', u:'%', v:3.2, step:0.1, min:0.1, max:30, dec:2, tip:'Net interest margin earned on the incremental book.'}
+  ],
+  assumptions:[['Target turnaround','4 hours'],['Processing cost reduction','32%'],['Application abandonment today','14%'],['Abandonment reduced by faster decisions','40%'],['Credit-loss adjustment on incremental book','12%']],
+  compute(x){
+    const apps=x.appsMonth*12;
+    const costNow=apps*x.costPerApp/1e7;
+    const costSave=costNow*0.32;
+    const recovered=apps*0.14*0.40;
+    const extraLoans=recovered*x.approvalRate/100;
+    const disb=extraLoans*x.ticketLakh*1e5/1e7;
+    const income=disb*(x.nim/100)*0.88;
+    const total=costSave+income;
+    const faster=(1-(4/(x.tatDays*24)))*100;
+    return {total,
+      cards:[
+        {v:pct(clamp(faster,0,100),0), n:'Faster decisions', d:IN(x.tatDays,1)+' days → 4 hours on standard retail products'},
+        {v:'₹'+crShort(costSave)+' Cr', n:'Processing cost released', d:'32% off a ₹'+crShort(costNow)+' Cr annual origination cost base'},
+        {v:'₹'+crShort(disb)+' Cr', n:'Incremental disbursement', d:num(Math.round(extraLoans))+' additional loans recovered from abandonment'}
+      ],
+      bars:[
+        {l:'Processing cost released', v:costSave, c:C_BLUE},
+        {l:'Net interest income on new book', v:income, c:C_CYAN}
+      ],
+      narr:'At <b>'+num(apps)+' applications a year</b>, cutting turnaround from '+IN(x.tatDays,1)+' days to four hours recovers roughly <b>'+num(Math.round(recovered))+' abandoned applications</b>, of which '+num(Math.round(extraLoans))+' convert. That adds <b>₹'+crShort(disb)+' Cr of disbursement</b> and, after a 12% credit-loss adjustment, <b>₹'+crShort(income)+' Cr</b> of net interest income — alongside ₹'+crShort(costSave)+' Cr of processing cost released.'
+    };
+  }
+},
+{
+  id:'fraud', icon:'i-alert', name:'Fraud and risk analytics', sub:'Real-time detection value',
+  title:'Fraud detection and AI risk analytics',
+  blurb:'Real-time scoring on accelerated infrastructure: losses prevented, review effort released and genuine customers no longer declined.',
+  totalLabel:'Estimated annual fraud and risk value',
+  totalNote:'Detection uplift, false-positive reduction and recovered genuine transactions.',
+  inputs:[
+    {k:'dailyTx', l:'Daily transactions', u:'million', v:8.5, step:0.5, min:0.01, max:2000, dec:2, tip:'Transactions scored per day across UPI, cards, net banking and mobile.'},
+    {k:'avgTx', l:'Average transaction value', u:'₹', v:2400, step:100, min:1, max:5000000, dec:0, tip:'Blended average value per transaction across all channels.'},
+    {k:'fraudBps', l:'Fraud loss rate', u:'basis points', v:1.8, step:0.1, min:0, max:500, dec:2, tip:'Fraud losses as basis points of total transaction value. One basis point is 0.01%.'},
+    {k:'alertsDay', l:'Manual review alerts per day', u:'alerts', v:4200, step:100, min:0, max:1000000, dec:0, tip:'Transactions held or declined for manual review each day.'},
+    {k:'analysts', l:'Fraud analysts', u:'FTE', v:48, step:2, min:1, max:5000, dec:0, tip:'Full-time analysts in the fraud and transaction-monitoring team.'},
+    {k:'analystCost', l:'Cost per analyst', u:'₹ Lakh / yr', v:9.5, step:0.5, min:1, max:500, dec:2, tip:'Fully loaded annual cost per fraud analyst.'}
+  ],
+  assumptions:[['Detection uplift from real-time AI scoring','34%'],['False-positive reduction','62%'],['Share of analyst effort on false positives','80%'],['Genuine customers within held alerts','18%'],['Service and attrition cost per wrongful decline','₹340']],
+  compute(x){
+    const annualTx=x.dailyTx*1e6*365;
+    const valCr=annualTx*x.avgTx/1e7;
+    const fraudNow=valCr*x.fraudBps/1e4;
+    const fraudAvoided=fraudNow*0.34;
+    const analystCr=x.analysts*x.analystCost*1e5/1e7;
+    const fpSave=analystCr*0.80*0.62;
+    const declines=x.alertsDay*365*0.18;
+    const friction=declines*340/1e7*0.62;
+    const total=fraudAvoided+fpSave+friction;
+    return {total,
+      cards:[
+        {v:'₹'+crShort(fraudAvoided)+' Cr', n:'Fraud loss avoided', d:'34% uplift against a ₹'+crShort(fraudNow)+' Cr annual loss base'},
+        {v:'62% fewer', n:'False positives', d:IN(x.analysts*0.8*0.62,1)+' FTE of review effort released for higher-value investigation'},
+        {v:'₹'+crShort(friction)+' Cr', n:'Customer friction avoided', d:num(Math.round(declines))+' genuine transactions held each year today'}
+      ],
+      bars:[
+        {l:'Fraud loss avoided', v:fraudAvoided, c:C_BLUE},
+        {l:'Customer friction avoided', v:friction, c:C_CYAN},
+        {l:'Review effort released', v:fpSave, c:C_VIOLET}
+      ],
+      narr:'Scoring <b>'+num(Math.round(annualTx/1e6))+'M transactions a year</b> worth ₹'+crShort(valCr)+' Cr in real time lifts detection against a modelled ₹'+crShort(fraudNow)+' Cr loss base. Combined with a 62% cut in false positives, the total modelled value is <b>₹'+crShort(total)+' Cr per year</b>, before counting the reputational benefit of fewer wrongly declined customers.'
+    };
+  }
+}
+];
+
+const modState={};
+MODULES.forEach(m=>{ modState[m.id]={}; m.inputs.forEach(i=>modState[m.id][i.k]=i.v); });
+
+function modInputHTML(m,i){
+  const id='m-'+m.id+'-'+i.k;
+  return '<div class="field">'
+   +'<label for="'+id+'">'+i.l+'<span class="tip" tabindex="0" role="note">i<span class="tip-box">'+i.tip+'</span></span></label>'
+   +'<div class="inp-shell"><input id="'+id+'" type="text" inputmode="decimal" value="'+IN(i.v,i.dec)+'" '
+   +'data-mod="'+m.id+'" data-mk="'+i.k+'" data-step="'+i.step+'" data-min="'+i.min+'" data-max="'+i.max+'" data-dec="'+i.dec+'">'
+   +'<div class="unit">'+i.u+'</div>'
+   +'<div class="steps"><button type="button" data-mstep="1" data-mod="'+m.id+'" data-mk="'+i.k+'" aria-label="Increase '+i.l+'">'+svgIc('i-plus',13,2.4)+'</button>'
+   +'<button type="button" data-mstep="-1" data-mod="'+m.id+'" data-mk="'+i.k+'" aria-label="Decrease '+i.l+'">'+svgIc('i-minus',13,2.4)+'</button></div></div></div>';
+}
+
+function buildModules(){
+  $('#modTabs').innerHTML = MODULES.map((m,i)=>
+    '<button class="tab'+(i===0?' on':'')+'" role="tab" data-tab="'+m.id+'" aria-selected="'+(i===0)+'">'
+    +'<span class="ic">'+svgIc(m.icon,16,1.9)+'</span><span><b>'+m.name+'</b><span>'+m.sub+'</span></span></button>').join('');
+
+  $('#modPanels').innerHTML = MODULES.map((m,i)=>
+    '<div class="mod-panel'+(i===0?' on':'')+'" id="panel-'+m.id+'" role="tabpanel">'
+    +'<div class="mod-grid">'
+      +'<div class="card-white mod-inputs">'
+        +'<div class="badge-model">'+svgIc('i-target',13,2)+' Illustrative model</div>'
+        +'<h4>'+m.title+'</h4><p class="sub">'+m.blurb+'</p>'
+        +'<div class="fields">'+m.inputs.map(i=>modInputHTML(m,i)).join('')+'</div>'
+        +'<div class="calc-actions"><button class="btn btn-outline" data-mreset="'+m.id+'">'+svgIc('i-refresh',16,1.8)+'Reset this model</button></div>'
+      +'</div>'
+      +'<div class="mod-out">'
+        +'<div class="mod-total"><div><p class="lab">'+m.totalLabel+'</p><div class="big">₹<span data-mtotal="'+m.id+'">0</span> Cr</div></div><p class="note">'+m.totalNote+'</p></div>'
+        +'<div class="mod-cards" data-mcards="'+m.id+'"></div>'
+        +'<div class="mod-split">'
+          +'<div><h5 style="font-size:12.5px;color:var(--t-mid);margin:0 0 14px">Value composition</h5><div class="hbar" data-mbars="'+m.id+'"></div></div>'
+          +'<div class="assump"><h5>Assumptions applied</h5><ul>'+m.assumptions.map(a=>'<li><span>'+a[0]+'</span><b>'+a[1]+'</b></li>').join('')+'</ul></div>'
+        +'</div>'
+        +'<p class="narr" style="margin-top:22px" data-mnarr="'+m.id+'"></p>'
+      +'</div>'
+    +'</div></div>').join('');
+
+  MODULES.forEach(m=>renderModule(m.id));
+
+  $$('#modTabs .tab').forEach(t=>t.addEventListener('click',()=>{
+    $$('#modTabs .tab').forEach(x=>{x.classList.remove('on');x.setAttribute('aria-selected','false');});
+    t.classList.add('on'); t.setAttribute('aria-selected','true');
+    $$('.mod-panel').forEach(p=>p.classList.remove('on'));
+    $('#panel-'+t.dataset.tab).classList.add('on');
+    renderModule(t.dataset.tab);
+  }));
+
+  $$('#modPanels input').forEach(inp=>{
+    const upd=()=>{
+      const c={min:parseFloat(inp.dataset.min),max:parseFloat(inp.dataset.max),dec:parseInt(inp.dataset.dec,10)};
+      let n=parseNum(inp.value);
+      const shell=inp.closest('.inp-shell');
+      if(isNaN(n)){ shell.classList.add('bad'); return; }
+      shell.classList.toggle('bad', n<c.min||n>c.max);
+      modState[inp.dataset.mod][inp.dataset.mk]=clamp(n,c.min,c.max);
+      renderModule(inp.dataset.mod);
+    };
+    inp.addEventListener('input',upd);
+    inp.addEventListener('blur',()=>{ upd(); inp.value=IN(modState[inp.dataset.mod][inp.dataset.mk],parseInt(inp.dataset.dec,10)); inp.closest('.inp-shell').classList.remove('bad'); });
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter') inp.blur(); });
+  });
+
+  $$('[data-mstep]').forEach(b=>b.addEventListener('click',()=>{
+    const inp=$('#m-'+b.dataset.mod+'-'+b.dataset.mk);
+    const st=parseFloat(inp.dataset.step), mn2=parseFloat(inp.dataset.min), mx=parseFloat(inp.dataset.max), dc=parseInt(inp.dataset.dec,10);
+    const n=clamp(Math.round((modState[b.dataset.mod][b.dataset.mk]+parseInt(b.dataset.mstep,10)*st)*100)/100, mn2, mx);
+    modState[b.dataset.mod][b.dataset.mk]=n; inp.value=IN(n,dc); renderModule(b.dataset.mod);
+  }));
+
+  $$('[data-mreset]').forEach(b=>b.addEventListener('click',()=>{
+    const m=MODULES.find(x=>x.id===b.dataset.mreset);
+    m.inputs.forEach(i=>{ modState[m.id][i.k]=i.v; const el=$('#m-'+m.id+'-'+i.k); el.value=IN(i.v,i.dec); el.closest('.inp-shell').classList.remove('bad'); });
+    renderModule(m.id); toast(m.name+' model reset to reference values.');
+  }));
+}
+
+function renderModule(id){
+  const m=MODULES.find(x=>x.id===id), r=m.compute(modState[id]);
+  countTo($('[data-mtotal="'+id+'"]'), r.total, Math.abs(r.total)>=100?0:1);
+  $('[data-mcards="'+id+'"]').innerHTML = r.cards.map(c=>
+    '<div class="mcard"><div class="v">'+c.v+'</div><p class="n">'+c.n+'</p><p class="d">'+c.d+'</p></div>').join('');
+  const mx=Math.max.apply(null,r.bars.map(b=>Math.abs(b.v)))||1;
+  $('[data-mbars="'+id+'"]').innerHTML = r.bars.map(b=>
+    '<div class="hbar-row"><div class="t"><span>'+b.l+'</span><b>'+(b.v<0?'−':'')+'₹'+crShort(Math.abs(b.v))+' Cr</b></div>'
+    +'<div class="hbar-track"><div class="hbar-fill" style="width:'+clamp(Math.abs(b.v)/mx*100,2,100)+'%;background:linear-gradient(90deg,'+b.c+'aa,'+b.c+')"></div></div></div>').join('');
+  $('[data-mnarr="'+id+'"]').innerHTML = r.narr;
+  if($('#solList') && $('#solList').children.length) updateSolutions();
+}
+
+/* ============================================================
+   5b · SOLUTION RECOMMENDATIONS
+   ============================================================ */
+function modTotal(id){ const m=MODULES.find(x=>x.id===id); return m.compute(modState[id]).total; }
+
+const SOLUTIONS=[
+{
+  q:'Core banking cannot hold its service levels at month-end and festive peaks',
+  t:'Availability · Cost to serve · Capacity headroom',
+  cause:'A three-tier estate assembled over several refresh cycles: mixed server generations, siloed arrays sized for average load, manual scaling and an approaching end-of-support cliff. Capacity is provisioned for the worst day of the year and idle for the rest of it.',
+  stack:[
+    ['Dell PowerEdge R-series','current-generation AMD EPYC or Intel Xeon two-socket nodes, consolidating roughly 3:1 against the incumbent estate'],
+    ['Dell PowerStore or PowerMax','unified tier-0 block for the core database, with inline reduction and synchronous replication to DR'],
+    ['Dell VxRail','where the bank is standardised on VMware and wants lifecycle automation held by one vendor'],
+    ['Dell PowerFlex','where compute and storage need to scale independently, typical for core plus channel workloads on one fabric'],
+    ['Dell PowerSwitch leaf-spine','25/100GbE fabric sized for east-west core traffic'],
+    ['Dell APEX','if the CFO prefers a consumption model over capex for the refresh']
+  ],
+  alts:[
+    ['Nutanix Cloud Infrastructure on Dell PowerEdge or XC','When the bank wants relief from per-core virtualisation licensing and a single control plane across DC, DR and edge branches.'],
+    ['Cisco UCS X-Series with NetApp AFF','When there is an existing FlexPod estate and a strong Cisco networking standard, or when validated-design assurance is a procurement requirement.'],
+    ['HPE ProLiant with Alletra Storage MP','When GreenLake consumption terms or existing HPE support contracts are commercially decisive.'],
+    ['Lenovo ThinkSystem or ThinkAgile HX','When aggressive hardware pricing on a like-for-like refresh is the primary driver.']
+  ],
+  out:['99.98% target availability','3:1 consolidation','22% lower run cost'],
+  vk:()=>'₹'+crShort(M.v.ops)+' Cr', vl:'Operational savings per year'
+},
+{
+  q:'UPI and payment volumes force the bank to over-provision for the peak',
+  t:'Transaction capacity · Elasticity',
+  cause:'Payment and channel applications scale vertically on fixed infrastructure. Every festive or month-end surge is met by buying headroom that sits unused for eleven months, and each new rail requires a fresh sizing exercise.',
+  stack:[
+    ['Dell PowerFlex','disaggregated compute and storage so payment nodes are added without touching the storage tier'],
+    ['Red Hat OpenShift on PowerEdge','containerised payment services with horizontal autoscaling and blue-green release'],
+    ['Dell PowerSwitch Z-series spine','non-blocking fabric for the scale-out tier'],
+    ['NVIDIA BlueField DPUs','optional offload of network and security processing off the application cores']
+  ],
+  alts:[
+    ['Nutanix with NKP','When the platform team wants Kubernetes and virtualisation under one operational model rather than two.'],
+    ['Azure Local for burst capacity','When the bank is Microsoft-aligned and wants regulated burst without a second data centre build.'],
+    ['OpenShift Virtualization','When the medium-term direction is to run VMs and containers on one platform and retire the separate hypervisor licence.'],
+    ['Cisco UCS with ACI','When network policy automation across DC and DR is the binding constraint.']
+  ],
+  out:['+49% transaction capacity','Peak absorbed without refresh','Release cycle in days'],
+  vk:()=>mn(M.d.projTx), vl:'Projected daily transaction capacity'
+},
+{
+  q:'Ransomware recovery is untested and would be measured in days',
+  t:'Cyber resilience · Regulatory exposure',
+  cause:'Backups sit in the same authentication domain as production, retention is mutable, and there is no pre-staged clean environment to recover into. Recovery time is an estimate rather than a tested figure, which is the first thing a regulator will probe after an incident.',
+  stack:[
+    ['Dell PowerProtect Data Domain','deduplicated backup target with retention lock, so copies cannot be altered or deleted inside the retention window'],
+    ['Dell PowerProtect Data Manager','policy-driven protection across VMs, databases, Kubernetes and SaaS'],
+    ['Dell Cyber Recovery vault','physically and logically isolated vault on a separate domain, synchronised through a controlled air gap'],
+    ['Dell CyberSense','content-based analytics that detect corruption and identify the last known-good copy'],
+    ['Dell ObjectScale','S3 object lock for long-retention regulatory copies']
+  ],
+  alts:[
+    ['Cohesity','When a single platform for backup, archive and data security across a heterogeneous estate is preferred, including the NetBackup install base.'],
+    ['Rubrik Security Cloud','When data-security posture, sensitive-data discovery and identity recovery are wanted alongside backup.'],
+    ['Veeam with a hardened repository and object lock','When the bank wants software independence from the storage layer and the lowest licence entry point.'],
+    ['Commvault with a cleanroom recovery target','When recovery rehearsal into an isolated environment is a formal audit commitment.']
+  ],
+  out:['RTO 72 hrs → 4 hrs','Immutable, isolated copies','Evidenced recovery testing'],
+  vk:()=>'₹'+crShort(modTotal('cyber'))+' Cr', vl:'Expected annual loss avoided'
+},
+{
+  q:'Disaster recovery cannot be evidenced to the regulator',
+  t:'Resilience · Compliance',
+  cause:'Failover depends on manual runbooks and the knowledge of a few individuals. Full switchover is rarely tested end to end because the business cannot accept the risk, so RPO and RTO drift away from what is documented.',
+  stack:[
+    ['Dell PowerStore metro volume or PowerMax SRDF','synchronous replication between DC and DR with automated failover for tier-0 data'],
+    ['VMware Live Recovery','orchestrated, testable recovery plans with non-disruptive rehearsal against a live DR site'],
+    ['Dell PowerProtect replication','a third, retained copy so DR failure is not a single point of dependency'],
+    ['Dell CloudIQ','telemetry and drift detection across both sites']
+  ],
+  alts:[
+    ['Nutanix with synchronous replication and recovery plans','When the estate is already Nutanix, this removes the need for separate replication licensing.'],
+    ['Zerto','When near-zero RPO with journal-based rewind is required across mixed hypervisors.'],
+    ['NetApp SnapMirror active sync','Where ONTAP is the storage standard and application-consistent replication is already in use.'],
+    ['Azure Local or Google Cloud VMware Engine as a third site','When a cloud-hosted DR tier is more defensible than building a third facility.']
+  ],
+  out:['Testable failover on demand','RPO and RTO evidence pack','Downtime exposure reduced'],
+  vk:()=>'₹'+crShort(M.v.down)+' Cr', vl:'Downtime loss avoided per year'
+},
+{
+  q:'Storage has sprawled across generations with unpredictable latency',
+  t:'Cost to serve · Performance consistency',
+  cause:'Multiple arrays from multiple refresh cycles, each with its own capacity island, tooling and support contract. There is no tiering policy, so cold data occupies the most expensive tier and tier-0 workloads contend with everything else.',
+  stack:[
+    ['Dell PowerStore','unified block and file with inline data reduction, consolidating several arrays into one platform'],
+    ['Dell PowerMax','for mainframe-attached and the most latency-sensitive core banking volumes'],
+    ['Dell PowerScale','scale-out file for documents, images and AI training data'],
+    ['Dell APEX Block Storage','where a consumption model suits an unpredictable growth curve']
+  ],
+  alts:[
+    ['NetApp AFF or ASA with ONTAP','When SnapMirror, FabricPool tiering to object and an existing ONTAP skill base are already embedded.'],
+    ['Pure Storage FlashArray with Evergreen','When predictable non-disruptive upgrades and a flat effective capacity price are the priority.'],
+    ['HPE Alletra Storage MP','When a single hardware platform serving block and file under GreenLake terms is preferred.'],
+    ['Dell PowerFlex or Ceph-based software-defined storage','When the direction is to decouple storage from any single array vendor.']
+  ],
+  out:['Footprint and power reduced','Consistent sub-millisecond latency','Single management plane'],
+  vk:()=>'₹'+crShort(modTotal('dc'))+' Cr', vl:'Five-year TCO saving'
+},
+{
+  q:'Fraud scoring runs in batch, so losses are detected after settlement',
+  t:'Loss avoidance · Customer friction',
+  cause:'Scoring models run on CPU-only infrastructure against yesterday\u2019s data. Latency budgets force simplified rules, which raises false positives and blocks genuine customers while sophisticated fraud passes through.',
+  stack:[
+    ['Dell PowerEdge XE-series or R-series with GPUs','NVIDIA L40S for high-throughput inference, H200 where model size and memory bandwidth demand it'],
+    ['NVIDIA AI Enterprise','supported runtime with Triton inference serving and RAPIDS for feature engineering'],
+    ['Dell PowerScale','a shared feature and training data layer so models score against current data'],
+    ['Dell AI Factory with NVIDIA','validated reference architecture, which shortens the design and assurance cycle materially'],
+    ['Red Hat OpenShift AI','model lifecycle, versioning and audit trail, which matters for model-risk governance']
+  ],
+  alts:[
+    ['HPE Private Cloud AI with NVIDIA','When a pre-integrated, opinionated AI stack with GreenLake commercials is preferred.'],
+    ['Lenovo ThinkSystem GPU-dense servers','When per-GPU acquisition cost dominates the business case.'],
+    ['Cisco UCS AI servers with NVIDIA','Where the Cisco fabric standard extends into the AI estate.'],
+    ['NVIDIA DGX or HGX B200 systems','When the bank is building a shared AI platform beyond fraud, covering collections, propensity and service automation.']
+  ],
+  out:['Real-time scoring at authorisation','62% fewer false positives','Higher detection rate'],
+  vk:()=>'₹'+crShort(modTotal('fraud'))+' Cr', vl:'Annual fraud and risk value'
+},
+{
+  q:'Loan decisions take days because underwriting is still manual',
+  t:'Lending velocity · Cost per application',
+  cause:'Documents arrive as scans and are keyed by hand. Bureau, KYC and income verification are separate integrations with separate queues, so a standard retail application waits on people rather than on data.',
+  stack:[
+    ['Dell PowerEdge with GPU inference','document AI for extraction, classification and verification at ingestion'],
+    ['NVIDIA NIM microservices','packaged inference endpoints for extraction and summarisation, deployable on-premises for data residency'],
+    ['Dell PowerScale or ObjectScale','the document repository with retention and audit controls the regulator expects'],
+    ['Red Hat OpenShift','the orchestration layer for the decisioning workflow and its integrations']
+  ],
+  alts:[
+    ['Azure AI Document Intelligence in a hybrid pattern','When the bank already has an Azure landing zone and accepts cloud processing for non-resident data classes.'],
+    ['Red Hat OpenShift AI on Nutanix','When the lending platform sits on an existing Nutanix estate.'],
+    ['AWS document and decisioning services','For a cloud-first digital lending subsidiary rather than the regulated core.']
+  ],
+  out:['3 days → 4 hours','32% lower cost per application','Fewer abandoned applications'],
+  vk:()=>'₹'+crShort(modTotal('loan'))+' Cr', vl:'Annual lending value'
+},
+{
+  q:'Virtualisation licensing has reset the run cost of the entire estate',
+  t:'Licence exposure · Platform strategy',
+  cause:'Subscription repackaging and core minimums have moved a predictable line item into the largest single variable in the infrastructure budget, often without any change in the workload being run. This is now the most common trigger for a platform review in Indian BFSI.',
+  stack:[
+    ['Right-size and stay on VMware Cloud Foundation','consolidate onto fewer, higher-core-density PowerEdge nodes so the licensed core count falls; sensible where VCF automation and skills are deeply embedded'],
+    ['Migrate to Nutanix AHV','on existing hardware or Dell PowerEdge, removing the hypervisor licence line while keeping an enterprise support model'],
+    ['Azure Local','where the bank is Microsoft-aligned and can consolidate Windows Server and hypervisor entitlements'],
+    ['OpenShift Virtualization','where the application estate is moving to containers and a single platform for both is the end state']
+  ],
+  alts:[
+    ['Bring-your-own-licence into a hosted or cloud platform','Preserves existing entitlement value where a migration window is not available in this cycle.'],
+    ['Phased dual-platform operation','Move non-production and tier-2 workloads first, keep the core in place until the next refresh, and avoid a single high-risk cutover.'],
+    ['Do nothing this cycle, but re-baseline the contract','A negotiated renewal with a documented alternative on the table is itself a commercial lever.']
+  ],
+  out:['25% licence optimisation','No workload disruption','Exit optionality retained'],
+  vk:()=>{const m=MODULES.find(x=>x.id==='dc'),r=m.compute(modState.dc),b=r.bars.find(x=>x.l.indexOf('Licensing')===0);return '₹'+crShort(b?b.v:0)+' Cr';}, vl:'Five-year licence saving'
+}
+];
+
+const MATRIX=[
+  ['Server compute','Dell PowerEdge','HPE ProLiant · Lenovo ThinkSystem · Cisco UCS X-Series','Core density against licence count; existing support estate'],
+  ['Hyperconverged','Dell VxRail · PowerFlex','Nutanix NCI · Azure Local · Lenovo ThinkAgile HX','Hypervisor strategy and licence exposure'],
+  ['Primary storage','Dell PowerStore · PowerMax','NetApp AFF and ASA · Pure FlashArray · HPE Alletra MP','Tier-0 latency, replication model, existing skills'],
+  ['File and object','Dell PowerScale · ObjectScale','NetApp StorageGRID · Pure FlashBlade','AI data pipeline and retention requirements'],
+  ['Data protection','Dell PowerProtect with Cyber Recovery','Cohesity · Rubrik · Veeam · Commvault','Immutability, clean-room recovery, audit evidence'],
+  ['Virtualisation','VMware Cloud Foundation','Nutanix AHV · Azure Local · OpenShift Virtualization','Licence cost against migration risk'],
+  ['Container platform','Red Hat OpenShift','Nutanix NKP · VMware Tanzu · AKS and EKS','Developer workflow and regulated deployment controls'],
+  ['AI infrastructure','Dell AI Factory with NVIDIA','HPE Private Cloud AI · Lenovo · Cisco AI servers','Inference latency, GPU supply, power and cooling envelope'],
+  ['Data centre network','Dell PowerSwitch','Cisco Nexus and ACI · Arista','Policy automation and incumbent network standard'],
+  ['Hybrid and consumption','Dell APEX','Azure Local · AWS Outposts · Google Cloud VMware Engine','Capex against opex, and data-residency obligations']
+];
+
+function buildSolutions(){
+  $('#solList').innerHTML = SOLUTIONS.map((s,i)=>
+   '<div class="sol'+(i===0?' open':'')+'" data-sol="'+i+'">'
+   +'<button class="sol-head" aria-expanded="'+(i===0)+'" aria-controls="solb-'+i+'">'
+     +'<span class="sol-n">'+String(i+1).padStart(2,'0')+'</span>'
+     +'<span><span class="sol-q">'+s.q+'</span><span class="sol-t">'+s.t+'</span></span>'
+     +'<span class="sol-v"><b data-sv="'+i+'">—</b><span>'+s.vl+'</span></span>'
+     +'<span class="sol-chev">'+svgIc('i-arrow',18,2)+'</span>'
+   +'</button>'
+   +'<div class="sol-body" id="solb-'+i+'">'
+     +'<div class="sol-blk"><h6>Why it happens</h6><p>'+s.cause+'</p>'
+       +'<div class="oc">'+s.out.map((o,k)=>'<span class="oc-chip'+(k===0?'':' b')+'">'+o+'</span>').join('')+'</div></div>'
+     +'<div class="sol-blk"><h6>Recommended architecture<span class="lead-badge">Where we lead</span></h6><div class="stack">'
+       +s.stack.map(t=>'<span class="stack-item"><i></i><span><b>'+t[0]+'</b> — '+t[1]+'</span></span>').join('')+'</div></div>'
+     +'<div class="sol-blk"><h6>Credible alternatives, and when to choose them</h6>'
+       +s.alts.map(a=>'<div class="alt"><b>'+a[0]+'</b><span>'+a[1]+'</span></div>').join('')+'</div>'
+   +'</div></div>').join('');
+
+  $('#mxBody').innerHTML = MATRIX.map(r=>
+    '<tr><td class="dom">'+r[0]+'</td><td class="pri">'+r[1]+'</td><td class="alts">'+r[2]+'</td><td class="trg">'+r[3]+'</td></tr>').join('');
+
+  $$('#solList .sol-head').forEach(h=>h.addEventListener('click',()=>{
+    const sol=h.closest('.sol'), open=sol.classList.contains('open');
+    $$('#solList .sol').forEach(x=>{ x.classList.remove('open'); $('.sol-head',x).setAttribute('aria-expanded','false'); });
+    if(!open){ sol.classList.add('open'); h.setAttribute('aria-expanded','true'); }
+  }));
+  updateSolutions();
+}
+function updateSolutions(){
+  SOLUTIONS.forEach((s,i)=>{ const el=$('[data-sv="'+i+'"]'); if(el) el.textContent=s.vk(); });
+}
+
+/* ============================================================
+   6 · PRINTABLE BUSINESS CASE
+   ============================================================ */
+function buildPrint(){
+  const {s,v,d,sf}=M;
+  const row=(a,b)=>'<tr><td>'+a+'</td><td class="r">'+b+'</td></tr>';
+  const profile=[
+    ['Branches',num(s.branches)],['Employees',num(s.employees)],['Customers',IN(s.customers,2)+' million'],
+    ['Daily transactions',IN(s.transactions,2)+' million'],['Mobile banking users',IN(s.mobileUsers,2)+' million'],['ATMs',num(s.atms)]
+  ].map(r=>row(r[0],r[1])).join('');
+  const assume=[
+    ['Mobile banking adoption uplift','+46%'],['Daily transaction growth','+49%'],['Operational cost reduction','22%'],
+    ['Target application availability','99.98%'],['Customer satisfaction index','71 → 92'],['Loan approval time','3 days → 4 hours'],
+    ['Reference profile','540 branches · 11,500 employees · 7.8M customers · 8.5M daily transactions']
+  ].map(r=>row(r[0],r[1])).join('');
+  const benefit=[
+    ['Operational savings','25% branches · 25% employees · 30% customers · 20% transactions',IN(sf.ops,3)+'×','₹'+crShort(v.ops)+' Cr'],
+    ['Digital revenue opportunity','35% customers · 35% mobile users · 30% transactions',IN(sf.rev,3)+'×','₹'+crShort(v.rev)+' Cr'],
+    ['Downtime loss avoidance','70% transactions · 30% customers',IN(sf.down,3)+'×','₹'+crShort(v.down)+' Cr'],
+    ['Faster loan processing','40% customers · 30% employees · 30% branches',IN(sf.loan,3)+'×','₹'+crShort(v.loan)+' Cr']
+  ].map(r=>'<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td class="r">'+r[2]+'</td><td class="r"><b>'+r[3]+'</b></td></tr>').join('');
+  const ba=baRows().map(r=>'<tr><td>'+r[0]+'</td><td class="r">'+r[1]+'</td><td class="r"><b>'+r[2]+'</b></td><td class="r">'+r[4]+'</td></tr>').join('');
+  const mods=MODULES.map(m=>{
+    const r=m.compute(modState[m.id]);
+    return '<tr><td><b>'+m.title+'</b></td><td>'+m.cardsNote+'</td><td class="r"><b>₹'+crShort(r.total)+' Cr</b></td></tr>';
+  }).join('');
+
+  const sols=SOLUTIONS.map(x=>'<tr><td><b>'+x.q+'</b><br><span style="color:#6B7A93">'+x.vl+': '+x.vk()+'</span></td>'
+    +'<td>'+x.stack.slice(0,3).map(t=>t[0]).join('<br>')+'</td>'
+    +'<td>'+x.alts.slice(0,3).map(a=>a[0]).join('<br>')+'</td>'
+    +'<td class="r">'+x.out.join('<br>')+'</td></tr>').join('');
+  const mx=MATRIX.map(r=>'<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td></tr>').join('');
+
+  const c1=document.createElement('div'), c2=document.createElement('div');
+  barChart(c1,[{l:'Operational|savings',v:v.ops,c:'#1D6BF7'},{l:'Digital revenue|opportunity',v:v.rev,c:'#0E9AA7'},
+               {l:'Downtime loss|avoidance',v:v.down,c:'#C98A12'},{l:'Faster loan|processing',v:v.loan,c:'#6C5CE0'}]);
+  groupChart(c2,[{l:'Mobile banking users',u:'million',a:s.mobileUsers,b:d.projMobile},
+                 {l:'Daily transactions',u:'million per day',a:s.transactions,b:d.projTx}]);
+
+  $('#printDoc').innerHTML =
+   '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15pt;">'
+   +'<img src="team-computers-logo.png" style="height: 40px; object-fit: contain;" />'
+   +'<img src="dell-logo.png" style="height: 40px; object-fit: contain;" /></div>'
+   +'<div class="print-hdr"><div><h1>BFSI business value assessment</h1>'
+   +'<p class="lead">Illustrative business value model · Team Computers Pvt. Ltd., BFSI Business Value Advisory</p></div>'
+   +'<div style="text-align:right;font-size:9pt;color:#6B7A93;line-height:1.5">'+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})
+   +'<br>Confidential — for discussion<br><b style="color:#0B1730">Mukund Ulhas Kambli</b><br>Lead Solution Architect<br>+91 87933 44466</div></div>'
+
+   +'<div class="print-total"><span>Total estimated annual business benefit</span><b>₹'+crShort(v.total)+' Cr</b><span>per year</span></div>'
+
+   +'<h2>1 · Business profile as entered</h2><div class="pgrid">'
+   +'<table class="pt"><tr><th>Parameter</th><th class="r">Value</th></tr>'+profile+'</table>'
+   +'<table class="pt"><tr><th>Assumption</th><th class="r">Benchmark</th></tr>'+assume+'</table></div>'
+
+   +'<h2>2 · Annual benefit breakdown</h2>'
+   +'<table class="pt"><tr><th>Benefit driver</th><th>Weighting against reference profile</th><th class="r">Scale index</th><th class="r">Annual value</th></tr>'
+   +benefit+'<tr><td colspan="3"><b>Total annual business benefit</b></td><td class="r"><b>₹'+crShort(v.total)+' Cr</b></td></tr></table>'
+
+   +'<div class="pgrid" style="margin-top:10pt"><div class="pchart">'+c1.innerHTML+'</div><div class="pchart">'+c2.innerHTML+'</div></div>'
+
+   +'<div class="pbreak"></div><h2>3 · Current state against projected operating model</h2>'
+   +'<table class="pt"><tr><th>Key performance indicator</th><th class="r">Current</th><th class="r">Projected</th><th class="r">Change</th></tr>'+ba+'</table>'
+
+   +'<h2>4 · Executive summary</h2>'+execText().map(p=>'<p style="font-size:10pt;line-height:1.6;margin-top:6pt">'+p+'</p>').join('')
+
+   +'<h2>5 · Adjacent value models</h2>'
+   +'<table class="pt"><tr><th>Model</th><th>Basis</th><th class="r">Estimated annual value</th></tr>'+mods+'</table>'
+
+   +'<div class="pbreak"></div><h2>6 · Recommended architecture by business problem</h2>'
+   +'<table class="pt"><tr><th style="width:26%">Business problem</th><th style="width:32%">Recommended lead</th><th style="width:26%">Credible alternatives</th><th class="r">Outcome</th></tr>'+sols+'</table>'
+   +'<h2>7 · OEM positioning by domain</h2>'
+   +'<table class="pt"><tr><th>Domain</th><th>Where we lead</th><th>Credible alternatives</th><th>What moves the decision</th></tr>'+mx+'</table>'
+
+   +'<p class="print-note"><b>Disclaimer.</b> This assessment uses illustrative assumptions and benchmark values for demonstration and presales discussion. Actual business benefits, ROI, savings and revenue impact will vary based on the organisation\u2019s operating model, transaction volumes, technology environment, application portfolio and transformation strategy. Figures are not a commitment, quotation or guarantee of outcome, and do not represent the results of any named institution. Values in ₹ crore unless stated otherwise.</p>'
+   +'<p class="print-note" style="border-top:0;padding-top:2pt"><b>Prepared by.</b> Mukund Ulhas Kambli, Lead Solution Architect, Team Computers Pvt. Ltd. &nbsp;·&nbsp; +91 87933 44466</p>';
+}
+MODULES.forEach(m=>{ m.cardsNote = m.totalNote; });
+
+$$('[data-print]').forEach(b=>b.addEventListener('click',()=>{
+  buildPrint(); toast('Preparing the business case…',true);
+  setTimeout(()=>window.print(),380);
+}));
+
+/* ============================================================
+   7 · HERO BACKGROUND — banking network, lightweight canvas
+   ============================================================ */
+(function heroNet(){
+  const cv=$('#heroCanvas'); if(!cv) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const ctx=cv.getContext('2d'); let W=0,Hh=0,dpr=1,nodes=[],links=[],pulses=[],raf=0,vis=true;
+
+  function build(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    const r=cv.getBoundingClientRect(); W=r.width; Hh=r.height;
+    cv.width=W*dpr; cv.height=Hh*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    const count=W<720?18:34;
+    nodes=[]; for(let i=0;i<count;i++){
+      nodes.push({x:Math.random()*W, y:Math.random()*Hh, vx:(Math.random()-.5)*.12, vy:(Math.random()-.5)*.12,
+                  r:Math.random()<.16?3.2:1.6, hub:Math.random()<.16});
+    }
+    links=[]; for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++) links.push([i,j]);
+    pulses=[];
+  }
+  function spawn(){
+    if(pulses.length>7||!links.length) return;
+    const near=links.filter(l=>dist(nodes[l[0]],nodes[l[1]])<190);
+    if(!near.length) return;
+    const l=near[(Math.random()*near.length)|0];
+    pulses.push({a:l[0],b:l[1],t:0,sp:0.004+Math.random()*0.006});
+  }
+  const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+
+  function frame(){
+    ctx.clearRect(0,0,W,Hh);
+    nodes.forEach(n=>{
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1; if(n.y<0||n.y>Hh) n.vy*=-1;
+    });
+    ctx.lineWidth=1;
+    links.forEach(([i,j])=>{
+      const a=nodes[i],b=nodes[j],d=dist(a,b);
+      if(d>190) return;
+      ctx.strokeStyle='rgba(92,168,255,'+(0.16*(1-d/190)).toFixed(3)+')';
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    });
+    pulses.forEach(p=>{
+      const a=nodes[p.a],b=nodes[p.b]; p.t+=p.sp;
+      const x=a.x+(b.x-a.x)*p.t, y=a.y+(b.y-a.y)*p.t;
+      const g=ctx.createRadialGradient(x,y,0,x,y,7);
+      g.addColorStop(0,'rgba(56,225,230,.95)'); g.addColorStop(1,'rgba(56,225,230,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,7,0,6.2832); ctx.fill();
+    });
+    pulses=pulses.filter(p=>p.t<1);
+    nodes.forEach(n=>{
+      ctx.fillStyle=n.hub?'rgba(56,225,230,.8)':'rgba(140,185,255,.5)';
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,6.2832); ctx.fill();
+      if(n.hub){ ctx.strokeStyle='rgba(56,225,230,.28)'; ctx.beginPath(); ctx.arc(n.x,n.y,8,0,6.2832); ctx.stroke(); }
+    });
+    if(Math.random()<0.045) spawn();
+    raf=requestAnimationFrame(frame);
+  }
+  build(); frame();
+  addEventListener('resize',()=>{cancelAnimationFrame(raf);build();frame();});
+  new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting && !vis){ vis=true; frame(); }
+      else if(!e.isIntersecting && vis){ vis=false; cancelAnimationFrame(raf); }
+    });
+  },{threshold:0}).observe(cv);
+})();
+
+/* ============================================================
+   8 · SCROLL, REVEAL, INIT
+   ============================================================ */
+$$('[data-scroll]').forEach(b=>b.addEventListener('click',()=>{
+  const t=$(b.dataset.scroll); if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+}));
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}),{threshold:.18});
+$$('.driver,.uc,.tile,.chart-card').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
+
+const jo=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add('go'); jo.unobserve(e.target); }
+}),{threshold:.4});
+if($('#journey')) jo.observe($('#journey'));
+
+buildModules();
+buildSolutions();
+renderAll();
+$$('#fields input').forEach(format);
+</script>
+
+<style>
+@media print{
+  .ax{fill:#6B7A93 !important}
+  .ax-strong{fill:#2B3A54 !important}
+  .bar-val{fill:#0B1730 !important}
+  .grid-line{stroke:#DCE3EF !important}
+}
+</style>
+</body>
+</html>

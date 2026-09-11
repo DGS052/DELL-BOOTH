@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infrastructure Modernization Assessment</title>
+<style>
+:root{
+  --ink:#101820;
+  --ink-soft:#3d4a54;
+  --paper:#eef1f0;
+  --panel:#ffffff;
+  --line:#d7ddd9;
+  --dell-blue:#0076CE;
+  --dell-navy:#00285A;
+  --gain:#0F8B5F;
+  --warn:#B5451B;
+  --mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+  --sans: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+  --serif: 'IBM Plex Serif', Georgia, serif;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); line-height:1.45;
+}
+.wrap{max-width:1240px; margin:0 auto; padding:32px 24px 80px;}
+
+header.top{
+  display:flex; align-items:baseline; justify-content:space-between;
+  border-bottom:3px solid var(--ink); padding-bottom:18px; margin-bottom:28px; gap:24px; flex-wrap:wrap;
+}
+header.top .brand{font-family:var(--serif); font-size:14px; letter-spacing:.02em; color:var(--dell-blue); font-weight:600;}
+header.top h1{font-family:var(--serif); font-size:30px; margin:4px 0 0; font-weight:600; color:var(--ink);}
+header.top .sub{font-size:13px; color:var(--ink-soft); max-width:420px; text-align:right;}
+
+.grid{display:grid; grid-template-columns: 380px 1fr; gap:28px;}
+@media (max-width:920px){ .grid{grid-template-columns:1fr;} }
+
+/* INPUT PANEL */
+.panel{
+  background:var(--panel); border:1px solid var(--line); border-radius:2px;
+}
+.panel-head{
+  padding:16px 20px; border-bottom:1px solid var(--line);
+  font-family:var(--serif); font-size:16px; font-weight:600;
+}
+.panel-body{padding:18px 20px 22px;}
+
+.field{margin-bottom:16px;}
+.field label{
+  display:block; font-size:12.5px; color:var(--ink-soft); margin-bottom:5px;
+}
+.field .hint{font-size:11px; color:#8a938d; margin-top:3px;}
+.field input[type=number], .field select{
+  width:100%; padding:9px 10px; border:1px solid #c4cbc6; border-radius:2px;
+  font-size:14px; font-family:var(--mono); background:#fbfcfb; color:var(--ink);
+}
+.field input[type=number]:focus, .field select:focus{outline:2px solid var(--dell-blue); outline-offset:1px;}
+.field.pair{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+
+.seg{display:flex; gap:6px;}
+.seg button{
+  flex:1; padding:8px 6px; font-size:12.5px; border:1px solid #c4cbc6; background:#fbfcfb;
+  cursor:pointer; border-radius:2px; color:var(--ink-soft); font-family:var(--sans);
+}
+.seg button.active{background:var(--dell-blue); border-color:var(--dell-blue); color:#fff; font-weight:600;}
+
+.section-tag{
+  font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--dell-navy);
+  font-weight:700; margin:22px 0 10px; padding-top:14px; border-top:1px dashed var(--line);
+}
+.section-tag:first-child{margin-top:0; padding-top:0; border-top:none;}
+
+/* OUTPUT SIDE */
+.compare{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;}
+@media (max-width:640px){ .compare{grid-template-columns:1fr;} }
+
+.stack{
+  border:1px solid var(--line); border-radius:2px; background:var(--panel); overflow:hidden;
+}
+.stack.optimized{border-color:var(--dell-blue);}
+.stack-head{padding:14px 18px; display:flex; justify-content:space-between; align-items:center;}
+.stack.current .stack-head{background:#e7e3dd;}
+.stack.optimized .stack-head{background:var(--dell-navy); color:#fff;}
+.stack-head .label{font-family:var(--serif); font-size:15px; font-weight:600;}
+.stack-head .tag{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; opacity:.75;}
+
+.metric-row{
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding:11px 18px; border-top:1px solid #eceeec;
+}
+.metric-row .k{font-size:12.5px; color:var(--ink-soft);}
+.metric-row .v{font-family:var(--mono); font-size:16px; font-weight:600;}
+.stack.optimized .v{color:var(--dell-navy);}
+
+.delta-strip{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line); margin-bottom:20px; border-radius:2px; overflow:hidden;
+}
+.delta-cell{background:#fff; padding:16px 14px; text-align:center;}
+.delta-cell .num{font-family:var(--mono); font-size:26px; font-weight:700; color:var(--gain);}
+.delta-cell .lbl{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+
+.scorewrap{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;}
+@media (max-width:640px){ .scorewrap{grid-template-columns:1fr;} }
+.scorecard{border:1px solid var(--line); background:#fff; padding:16px 18px; border-radius:2px;}
+.scorecard h3{font-family:var(--serif); font-size:14px; margin:0 0 10px; display:flex; justify-content:space-between; align-items:center;}
+.scorecard h3 .big{font-family:var(--mono); font-size:22px; color:var(--dell-navy);}
+.bar-row{display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:11.5px;}
+.bar-row .bl{width:120px; color:var(--ink-soft); flex-shrink:0;}
+.bar-track{flex:1; height:6px; background:#eceeec; border-radius:3px; overflow:hidden;}
+.bar-fill{height:100%; background:var(--dell-blue);}
+.bar-row .bv{width:28px; text-align:right; font-family:var(--mono); flex-shrink:0;}
+
+.reco{
+  border:1px solid var(--dell-blue); background:#f2f8fc; padding:18px 20px; border-radius:2px; margin-bottom:20px;
+}
+.reco h3{font-family:var(--serif); margin:0 0 10px; font-size:15px; color:var(--dell-navy);}
+.reco ul{margin:0; padding-left:18px; font-size:13px;}
+.reco li{margin-bottom:6px;}
+.reco li b{color:var(--dell-navy);}
+
+.formula-toggle{
+  font-size:11.5px; color:var(--dell-blue); cursor:pointer; text-decoration:underline;
+  background:none; border:none; padding:0; font-family:var(--sans);
+}
+.formula-box{
+  display:none; margin-top:8px; padding:10px 12px; background:#0e1620; color:#c9d6de;
+  font-family:var(--mono); font-size:11px; border-radius:2px; overflow-x:auto; white-space:pre;
+}
+.formula-box.open{display:block;}
+
+footer.note{margin-top:26px; font-size:11.5px; color:#8a938d; border-top:1px solid var(--line); padding-top:14px;}
+
+.export-btn{
+  display:inline-flex; align-items:center; gap:8px; background:var(--dell-navy); color:#fff;
+  border:none; padding:11px 20px; font-size:13px; font-weight:600; border-radius:2px; cursor:pointer;
+  font-family:var(--sans);
+}
+.export-btn:hover{background:#001d42;}
+.export-bar{display:flex; justify-content:flex-end; margin-bottom:16px;}
+
+/* ============ PRINT REPORT (hidden on screen, shown only when printing) ============ */
+#print-report{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #print-report, #print-report *{visibility:visible;}
+  #print-report{
+    display:block; position:absolute; top:0; left:0; width:100%;
+    background:#fff; color:#101820; padding:0; font-family:var(--sans);
+  }
+  @page{ margin:16mm 14mm; }
+}
+#print-report .pr-head{
+  display:flex; justify-content:space-between; align-items:center;
+  border-bottom:3px solid #101820; padding-bottom:14px; margin-bottom:20px;
+}
+#print-report .pr-head img{height:34px;}
+#print-report .pr-head .meta{text-align:right; font-size:11px; color:#5a6570;}
+#print-report .pr-head .meta b{color:#101820; display:block; font-size:13px; font-family:var(--serif);}
+#print-report h2.pr-title{font-family:var(--serif); font-size:20px; margin:0 0 4px;}
+#print-report .pr-sub{font-size:11.5px; color:#5a6570; margin-bottom:22px;}
+#print-report .pr-section-title{
+  font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#00285A; font-weight:700;
+  margin:22px 0 10px; border-bottom:1px solid #d7ddd9; padding-bottom:6px;
+}
+#print-report table{width:100%; border-collapse:collapse; margin-bottom:6px;}
+#print-report td{padding:6px 4px; font-size:12px; border-bottom:1px solid #eceeec;}
+#print-report td.k{color:#3d4a54; width:55%;}
+#print-report td.v{font-family:var(--mono); font-weight:600; text-align:right;}
+#print-report .pr-two{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+#print-report .pr-delta{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:14px 0 6px; text-align:center;
+}
+#print-report .pr-delta div{border:1px solid #d7ddd9; padding:10px 6px; border-radius:2px;}
+#print-report .pr-delta .n{font-family:var(--mono); font-size:18px; font-weight:700; color:#0F8B5F;}
+#print-report .pr-delta .l{font-size:9.5px; color:#5a6570;}
+#print-report .pr-reco ul{margin:0; padding-left:16px; font-size:11.5px; line-height:1.7;}
+#print-report .pr-scores{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:6px;}
+#print-report .pr-scores .sc-num{font-family:var(--mono); font-size:26px; font-weight:700; color:#00285A;}
+#print-report .pr-foot{margin-top:26px; padding-top:12px; border-top:1px solid #d7ddd9; font-size:10px; color:#8a938d;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="brand">DELL TECHNOLOGIES · COE READINESS LAB</div>
+      <h1>Infrastructure Modernization Assessment</h1>
+    </div>
+    <div class="sub">Live calculator — answer the CIO questions at left; current-state and Dell-optimized architecture recalculate automatically.</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- ============ INPUT PANEL ============ -->
+    <div class="panel">
+      <div class="panel-head">CIO Discovery Questions</div>
+      <div class="panel-body">
+
+        <div class="section-tag">Environment scale</div>
+        <div class="field">
+          <label for="users">Number of active users</label>
+          <input type="number" id="users" placeholder="e.g. 5000" min="0">
+        </div>
+        <div class="field">
+          <label for="apps">Number of business applications</label>
+          <input type="number" id="apps" placeholder="e.g. 120" min="0">
+        </div>
+        <div class="field pair">
+          <div>
+            <label for="servers">Current server count</label>
+            <input type="number" id="servers" placeholder="e.g. 80" min="0">
+          </div>
+          <div>
+            <label for="util">Current avg. utilization %</label>
+            <input type="number" id="util" placeholder="35" min="1" max="100">
+          </div>
+        </div>
+        <div class="field">
+          <label for="storage">Current storage capacity (TB)</label>
+          <input type="number" id="storage" placeholder="e.g. 200" min="0">
+        </div>
+        <div class="field">
+          <label for="age">Average server age (years)</label>
+          <input type="number" id="age" placeholder="5" min="0">
+        </div>
+
+        <div class="section-tag">Workload &amp; growth</div>
+        <div class="field">
+          <label>AI / ML / GenAI workload requirement?</label>
+          <div class="seg" id="seg-ai">
+            <button data-val="yes">Yes</button>
+            <button data-val="no" class="active">No</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="growth">3‑year growth projection (%)</label>
+          <input type="number" id="growth" placeholder="20" min="0">
+        </div>
+
+        <div class="section-tag">Cost &amp; facility</div>
+        <div class="field pair">
+          <div>
+            <label for="rate">Electricity cost ($/kWh)</label>
+            <input type="number" id="rate" placeholder="0.12" step="0.01" min="0">
+          </div>
+          <div>
+            <label for="pue">Current DC PUE</label>
+            <input type="number" id="pue" placeholder="1.6" step="0.1" min="1">
+          </div>
+        </div>
+
+        <div class="section-tag">Security &amp; compliance (for Cyber Score)</div>
+        <div class="field">
+          <label>Regulatory framework in scope</label>
+          <select id="compliance">
+            <option value="none">None specified</option>
+            <option value="hipaa">HIPAA</option>
+            <option value="pci">PCI‑DSS</option>
+            <option value="gdpr">GDPR</option>
+            <option value="fedramp">FedRAMP</option>
+            <option value="other">Other / multiple</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>MFA enforced organization‑wide?</label>
+          <div class="seg" id="seg-mfa">
+            <button data-val="yes">Yes</button>
+            <button data-val="no" class="active">No</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Immutable / air‑gapped backup in place?</label>
+          <div class="seg" id="seg-backup">
+            <button data-val="yes">Yes</button>
+            <button data-val="no" class="active">No</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Network segmentation / Zero Trust maturity</label>
+          <select id="segmentation">
+            <option value="none">Not implemented</option>
+            <option value="partial">Partial</option>
+            <option value="full">Fully implemented</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============ OUTPUT PANEL ============ -->
+    <div>
+
+      <div class="export-bar">
+        <button class="export-btn" onclick="exportPdf()">⬇ Download PDF Report</button>
+      </div>
+
+      <div class="compare">
+        <div class="stack current">
+          <div class="stack-head"><span class="label">Current State</span><span class="tag">As‑is</span></div>
+          <div class="metric-row"><span class="k">Servers</span><span class="v" id="cur-servers">–</span></div>
+          <div class="metric-row"><span class="k">Utilization</span><span class="v" id="cur-util">–</span></div>
+          <div class="metric-row"><span class="k">IT load power</span><span class="v" id="cur-kw">–</span></div>
+          <div class="metric-row"><span class="k">Facility power (× PUE)</span><span class="v" id="cur-fac-kw">–</span></div>
+          <div class="metric-row"><span class="k">Annual power cost</span><span class="v" id="cur-cost">–</span></div>
+          <div class="metric-row"><span class="k">Data‑center footprint</span><span class="v" id="cur-footprint">–</span></div>
+        </div>
+        <div class="stack optimized">
+          <div class="stack-head"><span class="label">Dell Optimized</span><span class="tag">Recommended</span></div>
+          <div class="metric-row"><span class="k">Servers</span><span class="v" id="opt-servers">–</span></div>
+          <div class="metric-row"><span class="k">Utilization</span><span class="v" id="opt-util">–</span></div>
+          <div class="metric-row"><span class="k">IT load power</span><span class="v" id="opt-kw">–</span></div>
+          <div class="metric-row"><span class="k">Facility power (× PUE)</span><span class="v" id="opt-fac-kw">–</span></div>
+          <div class="metric-row"><span class="k">Annual power cost</span><span class="v" id="opt-cost">–</span></div>
+          <div class="metric-row"><span class="k">Data‑center footprint</span><span class="v" id="opt-footprint">–</span></div>
+        </div>
+      </div>
+
+      <div class="delta-strip">
+        <div class="delta-cell"><div class="num" id="d-servers">–</div><div class="lbl">Server reduction</div></div>
+        <div class="delta-cell"><div class="num" id="d-power">–</div><div class="lbl">Power cost reduction</div></div>
+        <div class="delta-cell"><div class="num" id="d-footprint">–</div><div class="lbl">Footprint reduction</div></div>
+      </div>
+
+      <div class="scorewrap">
+        <div class="scorecard">
+          <h3>AI Readiness Score <span class="big" id="ai-score">–</span></h3>
+          <div class="bar-row"><span class="bl">Compute headroom</span><div class="bar-track"><div class="bar-fill" id="ai-b1"></div></div><span class="bv" id="ai-v1">–</span></div>
+          <div class="bar-row"><span class="bl">AI intent / demand</span><div class="bar-track"><div class="bar-fill" id="ai-b2"></div></div><span class="bv" id="ai-v2">–</span></div>
+          <div class="bar-row"><span class="bl">App portfolio scale</span><div class="bar-track"><div class="bar-fill" id="ai-b3"></div></div><span class="bv" id="ai-v3">–</span></div>
+          <div class="bar-row"><span class="bl">Data platform depth</span><div class="bar-track"><div class="bar-fill" id="ai-b4"></div></div><span class="bv" id="ai-v4">–</span></div>
+          <div class="bar-row"><span class="bl">Infra modernity</span><div class="bar-track"><div class="bar-fill" id="ai-b5"></div></div><span class="bv" id="ai-v5">–</span></div>
+          <button class="formula-toggle" onclick="toggleFormula('ai-formula')">show formulas</button>
+          <div class="formula-box" id="ai-formula"></div>
+        </div>
+        <div class="scorecard">
+          <h3>Cyber Resilience Score <span class="big" id="cy-score">–</span></h3>
+          <div class="bar-row"><span class="bl">MFA coverage</span><div class="bar-track"><div class="bar-fill" id="cy-b1"></div></div><span class="bv" id="cy-v1">–</span></div>
+          <div class="bar-row"><span class="bl">Immutable backup</span><div class="bar-track"><div class="bar-fill" id="cy-b2"></div></div><span class="bv" id="cy-v2">–</span></div>
+          <div class="bar-row"><span class="bl">Segmentation / ZT</span><div class="bar-track"><div class="bar-fill" id="cy-b3"></div></div><span class="bv" id="cy-v3">–</span></div>
+          <div class="bar-row"><span class="bl">Compliance alignment</span><div class="bar-track"><div class="bar-fill" id="cy-b4"></div></div><span class="bv" id="cy-v4">–</span></div>
+          <div class="bar-row"><span class="bl">Patch / infra modernity</span><div class="bar-track"><div class="bar-fill" id="cy-b5"></div></div><span class="bv" id="cy-v5">–</span></div>
+          <button class="formula-toggle" onclick="toggleFormula('cy-formula')">show formulas</button>
+          <div class="formula-box" id="cy-formula"></div>
+        </div>
+      </div>
+
+      <div class="reco">
+        <h3>Recommended Dell Architecture</h3>
+        <ul id="reco-list"><li>Enter environment details to generate a recommendation.</li></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>Storage &amp; Consolidation Detail</span>
+          <button class="formula-toggle" onclick="toggleFormula('main-formula')">show all calculation logic</button>
+        </div>
+        <div class="panel-body">
+          <div class="metric-row" style="border-top:none;"><span class="k">Optimized usable storage needed (Dell PowerStore/PowerFlex, dedupe+compression)</span><span class="v" id="opt-storage">–</span></div>
+          <div class="metric-row"><span class="k">GPU nodes (if AI workload)</span><span class="v" id="opt-gpu">–</span></div>
+          <div class="formula-box" id="main-formula"></div>
+        </div>
+      </div>
+
+      <footer class="note">
+        Model uses conservative, published Dell PowerEdge/PowerStore consolidation benchmarks (server refresh performance ratio, dedupe ratio, PUE deltas). Treat outputs as directional sizing for workshop/demo use — validate with a formal Dell Technologies sizing engagement before procurement.
+      </footer>
+
+      <div style="text-align: center; margin-top: 32px; margin-bottom: 32px;">
+        <a href="http://localhost:3000/" style="display: inline-block; background-color: #0076CE; color: white; padding: 14px 28px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 15px; font-family: system-ui, -apple-system, sans-serif; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Want to explore your industry specific usecases?</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ HIDDEN PRINT REPORT (populated by exportPdf(), visible only in print/PDF output) ============ -->
+  <div id="print-report">
+    <div class="pr-head">
+      <img src="data:image/png;base64,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" alt="Team Computers">
+      <div class="meta"><b>Infrastructure Modernization Assessment</b>Dell Technologies Alliance Partner<br><span id="pr-date"></span></div>
+    </div>
+    <h2 class="pr-title">Current State vs. Dell‑Optimized Architecture</h2>
+    <div class="pr-sub" id="pr-inputs-sub"></div>
+
+    <div class="pr-section-title">Environment Comparison</div>
+    <div class="pr-two">
+      <table>
+        <tr><td class="k" colspan="2" style="font-weight:700;color:#101820;">CURRENT STATE</td></tr>
+        <tr><td class="k">Servers</td><td class="v" id="pr-cur-servers"></td></tr>
+        <tr><td class="k">Utilization</td><td class="v" id="pr-cur-util"></td></tr>
+        <tr><td class="k">IT load power</td><td class="v" id="pr-cur-kw"></td></tr>
+        <tr><td class="k">Facility power (× PUE)</td><td class="v" id="pr-cur-fackw"></td></tr>
+        <tr><td class="k">Annual power cost</td><td class="v" id="pr-cur-cost"></td></tr>
+        <tr><td class="k">Data‑center footprint</td><td class="v" id="pr-cur-footprint"></td></tr>
+      </table>
+      <table>
+        <tr><td class="k" colspan="2" style="font-weight:700;color:#00285A;">DELL OPTIMIZED</td></tr>
+        <tr><td class="k">Servers</td><td class="v" id="pr-opt-servers"></td></tr>
+        <tr><td class="k">Utilization</td><td class="v" id="pr-opt-util"></td></tr>
+        <tr><td class="k">IT load power</td><td class="v" id="pr-opt-kw"></td></tr>
+        <tr><td class="k">Facility power (× PUE)</td><td class="v" id="pr-opt-fackw"></td></tr>
+        <tr><td class="k">Annual power cost</td><td class="v" id="pr-opt-cost"></td></tr>
+        <tr><td class="k">Data‑center footprint</td><td class="v" id="pr-opt-footprint"></td></tr>
+      </table>
+    </div>
+
+    <div class="pr-delta">
+      <div><div class="n" id="pr-d-servers"></div><div class="l">SERVER REDUCTION</div></div>
+      <div><div class="n" id="pr-d-power"></div><div class="l">POWER COST REDUCTION</div></div>
+      <div><div class="n" id="pr-d-footprint"></div><div class="l">FOOTPRINT REDUCTION</div></div>
+    </div>
+
+    <div class="pr-section-title">Readiness Scores</div>
+    <div class="pr-scores">
+      <div><div class="sc-num" id="pr-ai-score"></div><div style="font-size:11px;color:#5a6570;">AI Readiness Score / 100</div></div>
+      <div><div class="sc-num" id="pr-cy-score"></div><div style="font-size:11px;color:#5a6570;">Cyber Resilience Score / 100</div></div>
+    </div>
+
+    <div class="pr-section-title">Storage &amp; AI Sizing</div>
+    <table>
+      <tr><td class="k">Optimized usable storage (Dell PowerStore/PowerFlex)</td><td class="v" id="pr-opt-storage"></td></tr>
+      <tr><td class="k">GPU nodes required</td><td class="v" id="pr-opt-gpu"></td></tr>
+    </table>
+
+    <div class="pr-section-title">Recommended Dell Architecture</div>
+    <div class="pr-reco"><ul id="pr-reco-list"></ul></div>
+
+    <div class="pr-foot">Generated by the Team Computers × Dell Technologies Infrastructure Modernization Lab. Figures are directional sizing based on conservative published consolidation, PUE and dedupe benchmarks — validate with a formal Dell Technologies sizing engagement before procurement.</div>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   CONSTANTS  (edit these to re-calibrate the model to your region/fleet)
+   ====================================================================== */
+const C = {
+  LEGACY_KW_PER_SERVER: 0.55,     // avg draw of a legacy 2-socket server at load
+  DELL_KW_PER_SERVER: 0.85,       // avg draw of a modern Dell PowerEdge (denser, more powerful)
+  GPU_NODE_KW: 10.2,              // Dell PowerEdge XE9680 (8x H100 class) per node
+  HOURS_PER_YEAR: 8760,
+  SQFT_LEGACY: 7,                 // sq ft per legacy rack server incl. aisle share
+  SQFT_DELL: 3.5,                 // sq ft per Dell MX/PowerEdge dense node
+  SQFT_GPU: 8,                    // sq ft per GPU node (larger chassis/cooling)
+  STORAGE_REDUCTION: 4,           // dedupe+compression ratio, PowerStore/PowerFlex conservative
+  PERF_FACTOR: 2.7,               // one new Dell server ≈ 2.7x compute of one ~5yr old server
+  TARGET_UTIL_STD: 70,            // optimized utilization target, standard workload
+  TARGET_UTIL_AI: 75,             // optimized utilization target, AI-inclusive
+  DEFAULT_UTIL: 35,
+  DEFAULT_AGE: 5,
+  DEFAULT_RATE: 0.12,
+  DEFAULT_PUE_CUR: 1.6,
+  DEFAULT_PUE_OPT: 1.3,
+  DEFAULT_GROWTH: 20,
+};
+
+/* segmented control state */
+let aiWorkload = 'no', mfa = 'no', backup = 'no';
+let lastResult = null;
+function wireSeg(id, setter){
+  document.querySelectorAll('#'+id+' button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      setter(b.dataset.val);
+      calculate();
+    });
+  });
+}
+wireSeg('seg-ai', v=>aiWorkload=v);
+wireSeg('seg-mfa', v=>mfa=v);
+wireSeg('seg-backup', v=>backup=v);
+
+document.querySelectorAll('input, select').forEach(el=>el.addEventListener('input', calculate));
+
+function toggleFormula(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+function fmtInt(n){ return isFinite(n) ? Math.round(n).toLocaleString() : '–'; }
+function fmtMoney(n){ return isFinite(n) ? '$'+Math.round(n).toLocaleString() : '–'; }
+function fmtKw(n){ return isFinite(n) ? n.toFixed(1)+' kW' : '–'; }
+function fmtPct(n){ return isFinite(n) ? Math.round(n)+'%' : '–'; }
+
+function num(id, dflt){
+  const v = parseFloat(document.getElementById(id).value);
+  return isFinite(v) && v > 0 ? v : dflt;
+}
+
+function calculate(){
+  const users     = num('users', 0);
+  const apps      = num('apps', 0);
+  const servers   = num('servers', 0);
+  const storage   = num('storage', 0);
+  const util      = Math.min(100, num('util', C.DEFAULT_UTIL));
+  const age       = num('age', C.DEFAULT_AGE);
+  const growth    = num('growth', C.DEFAULT_GROWTH);
+  const rate      = num('rate', C.DEFAULT_RATE);
+  const pueCur    = num('pue', C.DEFAULT_PUE_CUR);
+  const compliance = document.getElementById('compliance').value;
+  const segmentation = document.getElementById('segmentation').value;
+
+  if (servers === 0){
+    return; // nothing entered yet
+  }
+
+  /* -------------------- CURRENT STATE -------------------- */
+  // Excel: =Servers*LEGACY_KW_PER_SERVER
+  const curKw = servers * C.LEGACY_KW_PER_SERVER;
+  // Excel: =CurKw*PUE
+  const curFacKw = curKw * pueCur;
+  // Excel: =CurFacKw*8760*Rate
+  const curCost = curFacKw * C.HOURS_PER_YEAR * rate;
+  // Excel: =Servers*SQFT_LEGACY
+  const curFootprint = servers * C.SQFT_LEGACY;
+
+  /* -------------------- OPTIMIZED (DELL) STATE -------------------- */
+  const targetUtil = aiWorkload === 'yes' ? C.TARGET_UTIL_AI : C.TARGET_UTIL_STD;
+  // Excel: =ROUNDUP((Servers*CurUtil)/(TargetUtil*PERF_FACTOR),0)  -- conserves effective compute
+  const coreServers = Math.max(2, Math.ceil((servers * util) / (targetUtil * C.PERF_FACTOR)));
+  // Excel: =IF(AI="Yes", MAX(2,ROUNDUP(Users/2500,0)), 0)
+  const gpuNodes = aiWorkload === 'yes' ? Math.max(2, Math.ceil(users / 2500)) : 0;
+  const totalOptServers = coreServers + gpuNodes;
+
+  // Excel: =(CoreServers*DELL_KW_PER_SERVER)+(GpuNodes*GPU_NODE_KW)
+  const optKw = coreServers * C.DELL_KW_PER_SERVER + gpuNodes * C.GPU_NODE_KW;
+  const pueOpt = C.DEFAULT_PUE_OPT;
+  const optFacKw = optKw * pueOpt;
+  const optCost = optFacKw * C.HOURS_PER_YEAR * rate;
+  const optFootprint = coreServers * C.SQFT_DELL + gpuNodes * C.SQFT_GPU;
+
+  // Excel: =(CurrentStorageTB*(1+Growth%))/STORAGE_REDUCTION
+  const optStorage = storage > 0 ? (storage * (1 + growth/100)) / C.STORAGE_REDUCTION : 0;
+
+  /* -------------------- DELTAS -------------------- */
+  const pctServers = servers > 0 ? (servers - totalOptServers)/servers*100 : 0;
+  const pctPower = curCost > 0 ? (curCost - optCost)/curCost*100 : 0;
+  const pctFootprint = curFootprint > 0 ? (curFootprint - optFootprint)/curFootprint*100 : 0;
+
+  /* -------------------- AI READINESS SCORE (0-100, 5x20) -------------------- */
+  // a. Compute headroom: more current headroom below 100% = more room to consolidate/host new workloads
+  const aiA = Math.min(20, (100 - util) / 65 * 20);
+  // b. AI intent
+  const aiB = aiWorkload === 'yes' ? 20 : 8;
+  // c. App portfolio scale (caps at 200 apps -> 20 pts)
+  const aiC = Math.min(20, apps / 10);
+  // d. Data platform depth (caps at 50TB -> 20 pts)
+  const aiD = Math.min(20, storage / 50 * 20);
+  // e. Infra modernity (newer fleet scores higher; -4pts per yr above 3yr old)
+  const aiE = Math.max(0, 20 - (age - 3) * 4);
+  const aiScore = aiA + aiB + aiC + aiD + aiE;
+
+  /* -------------------- CYBER RESILIENCE SCORE (0-100, 5x20) -------------------- */
+  const cyA = mfa === 'yes' ? 20 : 5;
+  const cyB = backup === 'yes' ? 20 : 5;
+  const cyC = segmentation === 'full' ? 20 : segmentation === 'partial' ? 12 : 4;
+  // Compliance: if a framework is in scope, score depends on whether core controls (MFA+backup) exist
+  const cyD = compliance === 'none' ? 15 : (mfa === 'yes' && backup === 'yes' ? 20 : 8);
+  const cyE = Math.max(0, 20 - (age - 3) * 4);
+  const cyScore = cyA + cyB + cyC + cyD + cyE;
+
+  /* -------------------- RENDER -------------------- */
+  document.getElementById('cur-servers').textContent = fmtInt(servers);
+  document.getElementById('cur-util').textContent = fmtPct(util);
+  document.getElementById('cur-kw').textContent = fmtKw(curKw);
+  document.getElementById('cur-fac-kw').textContent = fmtKw(curFacKw);
+  document.getElementById('cur-cost').textContent = fmtMoney(curCost);
+  document.getElementById('cur-footprint').textContent = fmtInt(curFootprint)+' sq ft';
+
+  document.getElementById('opt-servers').textContent = fmtInt(totalOptServers) + (gpuNodes>0 ? ` (${coreServers} core + ${gpuNodes} GPU)` : '');
+  document.getElementById('opt-util').textContent = fmtPct(targetUtil);
+  document.getElementById('opt-kw').textContent = fmtKw(optKw);
+  document.getElementById('opt-fac-kw').textContent = fmtKw(optFacKw);
+  document.getElementById('opt-cost').textContent = fmtMoney(optCost);
+  document.getElementById('opt-footprint').textContent = fmtInt(optFootprint)+' sq ft';
+  document.getElementById('opt-storage').textContent = storage>0 ? fmtInt(optStorage)+' TB usable' : '–';
+  document.getElementById('opt-gpu').textContent = gpuNodes>0 ? gpuNodes+' × PowerEdge XE9680' : 'Not required';
+
+  document.getElementById('d-servers').textContent = fmtPct(pctServers);
+  document.getElementById('d-power').textContent = fmtPct(pctPower);
+  document.getElementById('d-footprint').textContent = fmtPct(pctFootprint);
+
+  document.getElementById('ai-score').textContent = Math.round(aiScore)+'/100';
+  setBar('ai-b1','ai-v1',aiA); setBar('ai-b2','ai-v2',aiB); setBar('ai-b3','ai-v3',aiC);
+  setBar('ai-b4','ai-v4',aiD); setBar('ai-b5','ai-v5',aiE);
+
+  document.getElementById('cy-score').textContent = Math.round(cyScore)+'/100';
+  setBar('cy-b1','cy-v1',cyA); setBar('cy-b2','cy-v2',cyB); setBar('cy-b3','cy-v3',cyC);
+  setBar('cy-b4','cy-v4',cyD); setBar('cy-b5','cy-v5',cyE);
+
+  renderReco(servers, totalOptServers, gpuNodes, storage, optStorage, compliance, mfa, backup, growth);
+
+  // stash latest computed state for PDF export
+  lastResult = {
+    users, apps, servers, storage, util, age, growth, rate, pueCur, compliance, segmentation, aiWorkload, mfa, backup,
+    curKw, curFacKw, curCost, curFootprint,
+    targetUtil, coreServers, gpuNodes, totalOptServers, optKw, optFacKw, optCost, optFootprint, optStorage,
+    pctServers, pctPower, pctFootprint, aiScore, cyScore
+  };
+
+  document.getElementById('main-formula').textContent =
+`CURRENT STATE
+Current Power (kW)        = Servers × ${C.LEGACY_KW_PER_SERVER}
+Current Facility Power     = Current Power × PUE
+Current Annual Cost        = Facility Power × 8760 × $/kWh
+Current Footprint (sqft)   = Servers × ${C.SQFT_LEGACY}
+
+DELL OPTIMIZED STATE
+Target Utilization         = IF(AI="Yes", ${C.TARGET_UTIL_AI}%, ${C.TARGET_UTIL_STD}%)
+Core Servers                = ROUNDUP( (Servers × CurrentUtil%) / (TargetUtil% × ${C.PERF_FACTOR}) , 0 )   [min 2]
+GPU Nodes                   = IF(AI="Yes", MAX(2, ROUNDUP(Users/2500,0)), 0)
+Optimized Power (kW)        = (CoreServers × ${C.DELL_KW_PER_SERVER}) + (GpuNodes × ${C.GPU_NODE_KW})
+Optimized Facility Power    = Optimized Power × ${C.DEFAULT_PUE_OPT} (modern PUE)
+Optimized Annual Cost       = Facility Power × 8760 × $/kWh
+Optimized Footprint (sqft)  = (CoreServers × ${C.SQFT_DELL}) + (GpuNodes × ${C.SQFT_GPU})
+Optimized Storage (TB)      = CurrentStorage × (1+Growth%) / ${C.STORAGE_REDUCTION}
+
+REDUCTIONS
+% Server Reduction   = (CurrentServers − OptimizedServers) / CurrentServers
+% Power Cost Saving   = (CurrentCost − OptimizedCost) / CurrentCost
+% Footprint Reduction = (CurrentFootprint − OptimizedFootprint) / CurrentFootprint`;
+
+  document.getElementById('ai-formula').textContent =
+`Compute headroom   = MIN(20, (100 − Util%) / 65 × 20)
+AI intent          = IF(AI="Yes", 20, 8)
+App portfolio scale = MIN(20, Apps / 10)
+Data platform depth = MIN(20, StorageTB / 50 × 20)
+Infra modernity     = MAX(0, 20 − (AvgAge−3) × 4)
+AI Readiness Score  = SUM(above)  [0-100]`;
+
+  document.getElementById('cy-formula').textContent =
+`MFA coverage        = IF(MFA="Yes", 20, 5)
+Immutable backup    = IF(Backup="Yes", 20, 5)
+Segmentation / ZT    = IF(Full,20, IF(Partial,12, 4))
+Compliance alignment = IF(NoFramework,15, IF(MFA=Yes AND Backup=Yes,20,8))
+Patch/infra modernity= MAX(0, 20 − (AvgAge−3) × 4)
+Cyber Score          = SUM(above)  [0-100]`;
+}
+
+function setBar(barId, valId, v){
+  document.getElementById(barId).style.width = Math.max(0,Math.min(100, v/20*100))+'%';
+  document.getElementById(valId).textContent = Math.round(v)+'/20';
+}
+
+function renderReco(servers, optServers, gpuNodes, storage, optStorage, compliance, mfa, backup, growth){
+  const items = [];
+  items.push(servers > 40
+    ? `<b>Compute:</b> Dell PowerEdge MX7000 modular chassis — consolidates ${servers} legacy servers onto ~${optServers - gpuNodes} PowerEdge MX750c/MX760c sleds.`
+    : `<b>Compute:</b> Dell PowerEdge R760 rack servers — right-sized cluster of ~${optServers - gpuNodes} nodes replacing ${servers} legacy hosts.`);
+  if (gpuNodes > 0){
+    items.push(`<b>AI acceleration:</b> ${gpuNodes} × Dell PowerEdge XE9680 (8-way GPU) running NVIDIA AI Enterprise, deployed per the Dell Validated Design for Generative AI.`);
+  }
+  if (storage > 0){
+    items.push(storage > 500
+      ? `<b>Storage:</b> Dell PowerFlex — scale-out software-defined storage sized to ~${fmtInt(optStorage)} TB usable after dedupe/compression.`
+      : `<b>Storage:</b> Dell PowerStore — unified block/file array sized to ~${fmtInt(optStorage)} TB usable after dedupe/compression.`);
+  }
+  if (compliance !== 'none' || backup === 'no'){
+    items.push(`<b>Data protection:</b> Dell PowerProtect Data Manager + Cyber Recovery vault — required given ${compliance !== 'none' ? compliance.toUpperCase()+' compliance scope' : 'current backup gap'}.`);
+  }
+  items.push(`<b>Networking:</b> Dell PowerSwitch with SmartFabric Services for automated, zero-touch fabric provisioning.`);
+  items.push(growth >= 20
+    ? `<b>Consumption model:</b> Dell APEX flexible consumption — matches ${growth}% projected 3‑yr growth without upfront capital risk.`
+    : `<b>Consumption model:</b> Traditional CapEx refresh — steady growth (${growth}%) doesn't require APEX elasticity.`);
+  items.push(`<b>Management:</b> Dell OpenManage Enterprise for unified lifecycle management across compute, storage and network.`);
+
+  document.getElementById('reco-list').innerHTML = items.map(i=>`<li>${i}</li>`).join('');
+  lastRecoHtml = items.map(i=>`<li>${i}</li>`).join('');
+}
+let lastRecoHtml = '';
+
+function exportPdf(){
+  if (!lastResult){
+    alert('Enter your environment details first — the report needs at least the server count filled in.');
+    return;
+  }
+  const r = lastResult;
+  document.getElementById('pr-date').textContent = 'Generated ' + new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('pr-inputs-sub').textContent =
+    `Environment: ${fmtInt(r.users)} users · ${fmtInt(r.apps)} applications · ${fmtInt(r.storage)} TB storage · AI workload: ${r.aiWorkload==='yes'?'Yes':'No'}`;
+
+  document.getElementById('pr-cur-servers').textContent = fmtInt(r.servers);
+  document.getElementById('pr-cur-util').textContent = fmtPct(r.util);
+  document.getElementById('pr-cur-kw').textContent = fmtKw(r.curKw);
+  document.getElementById('pr-cur-fackw').textContent = fmtKw(r.curFacKw);
+  document.getElementById('pr-cur-cost').textContent = fmtMoney(r.curCost);
+  document.getElementById('pr-cur-footprint').textContent = fmtInt(r.curFootprint)+' sq ft';
+
+  document.getElementById('pr-opt-servers').textContent = fmtInt(r.totalOptServers) + (r.gpuNodes>0 ? ` (${r.coreServers} core + ${r.gpuNodes} GPU)` : '');
+  document.getElementById('pr-opt-util').textContent = fmtPct(r.targetUtil);
+  document.getElementById('pr-opt-kw').textContent = fmtKw(r.optKw);
+  document.getElementById('pr-opt-fackw').textContent = fmtKw(r.optFacKw);
+  document.getElementById('pr-opt-cost').textContent = fmtMoney(r.optCost);
+  document.getElementById('pr-opt-footprint').textContent = fmtInt(r.optFootprint)+' sq ft';
+
+  document.getElementById('pr-d-servers').textContent = fmtPct(r.pctServers);
+  document.getElementById('pr-d-power').textContent = fmtPct(r.pctPower);
+  document.getElementById('pr-d-footprint').textContent = fmtPct(r.pctFootprint);
+
+  document.getElementById('pr-ai-score').textContent = Math.round(r.aiScore)+'/100';
+  document.getElementById('pr-cy-score').textContent = Math.round(r.cyScore)+'/100';
+
+  document.getElementById('pr-opt-storage').textContent = r.storage>0 ? fmtInt(r.optStorage)+' TB usable' : 'Not specified';
+  document.getElementById('pr-opt-gpu').textContent = r.gpuNodes>0 ? r.gpuNodes+' × PowerEdge XE9680' : 'Not required';
+
+  document.getElementById('pr-reco-list').innerHTML = lastRecoHtml;
+
+  window.print();
+}
+</script>
+</body>
+</html>

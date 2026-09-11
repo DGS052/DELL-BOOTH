@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { Download } from 'lucide-react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,6 +13,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { useBoothStore } from '@/store/useBoothStore';
+import { generateDossierPdf } from '../../lib/generateDossierPdf';
 
 ChartJS.register(
   CategoryScale,
@@ -29,6 +31,7 @@ export default function ComparativeROI() {
   const [submitted, setSubmitted] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
+  const chartRef = useRef<any>(null);
   const { selectedIndustry } = useBoothStore();
 
   // Dell On-Premise Math (Flat Cumulative)
@@ -108,6 +111,45 @@ export default function ComparativeROI() {
     }
   };
 
+  const handleDownload = useCallback(() => {
+    const chartBase64 = chartRef.current?.toBase64Image();
+    const formatCurrency = (val: number) => '$' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+    generateDossierPdf({
+      industryTitle: selectedIndustry || 'Cross-Industry',
+      reportSubtitle: 'AI Infrastructure ROI Assessment',
+      metricLabel: 'Comparative ROI: Cloud vs On-Premise',
+      comparisonRows: [
+        {
+          label: 'Year 1 Cumulative Cost',
+          currentValue: formatCurrency(cloudYear1),
+          optimizedValue: formatCurrency(dellYear1)
+        },
+        {
+          label: 'Year 2 Cumulative Cost',
+          currentValue: formatCurrency(cloudYear2),
+          optimizedValue: formatCurrency(dellYear2)
+        },
+        {
+          label: 'Year 3 Cumulative Cost',
+          currentValue: formatCurrency(cloudYear3),
+          optimizedValue: formatCurrency(dellYear3)
+        }
+      ],
+      kpiBadges: [
+        {
+          label: '3-Year Savings',
+          value: formatCurrency(cloudYear3 - dellYear3)
+        },
+        {
+          label: 'Daily Inferences',
+          value: volume.toLocaleString()
+        }
+      ],
+      chartImageBase64: chartBase64,
+    });
+  }, [cloudYear1, cloudYear2, cloudYear3, dellYear1, dellYear2, dellYear3, volume, selectedIndustry]);
+
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -176,18 +218,27 @@ export default function ComparativeROI() {
       {/* Chart Panel (70%) */}
       <div className="w-full md:w-[70%] h-full flex flex-col">
         <div className="flex-1 min-h-[300px]">
-          <Bar data={data} options={options} />
+          <Bar ref={chartRef} data={data} options={options} />
         </div>
         
-        {/* Lead Capture Section */}
-        <div className="mt-6 flex justify-center items-center shrink-0 min-h-[60px]">
+        {/* Actions Section */}
+        <div className="mt-6 flex flex-wrap justify-center items-center shrink-0 min-h-[60px] gap-4">
           {!showEmailForm && !submitted && (
-            <button
-              onClick={() => setShowEmailForm(true)}
-              className="bg-[#0076CE] hover:bg-[#0082E6] text-white font-bold py-3 px-8 rounded-xl shadow-[0_0_15px_rgba(0,118,206,0.3)] transition-all active:scale-95"
-            >
-              Send Detailed ROI Report to My Email
-            </button>
+            <>
+              <button
+                onClick={() => setShowEmailForm(true)}
+                className="bg-[#0076CE] hover:bg-[#0082E6] text-white font-bold py-3 px-8 rounded-xl shadow-[0_0_15px_rgba(0,118,206,0.3)] transition-all active:scale-95"
+              >
+                Send Detailed ROI Report to My Email
+              </button>
+              <button 
+                onClick={handleDownload}
+                className="flex items-center gap-1.5 px-3 py-3 rounded-xl text-sm text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 transition-all duration-200"
+              >
+                <Download className="w-4 h-4" />
+                Download Executive Dossier
+              </button>
+            </>
           )}
 
           {showEmailForm && !submitted && (

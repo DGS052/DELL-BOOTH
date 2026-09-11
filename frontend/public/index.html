@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Manufacturing Business Value Calculator — Team Computers</title>
+<meta name="description" content="Illustrative manufacturing business value model. Quantify the impact of IT/OT convergence, edge analytics, yield improvement and supply chain resilience." />
+<style>
+/* ============================================================
+   TOKENS — Adapted for Manufacturing (Industrial / Rugged feel)
+   ============================================================ */
+:root{
+  --ink-900:#0A0F0D; /* Very dark slate/green undertone */
+  --ink-850:#0F1714;
+  --ink-800:#15211D;
+  --ink-700:#1C2E29;
+  --ink-600:#264039;
+  --line-dark:rgba(180,210,200,.15);
+  --line-light:#E0EAE5;
+
+  --paper:#FFFFFF;
+  --paper-2:#F4F7F6;
+
+  /* Industrial Accent Colors */
+  --amber:#FF8A00;
+  --amber-600:#E67A00;
+  --amber-300:#FFB055;
+  --amber-100:#FFE0B2;
+  
+  --teal:#009688;
+  --teal-600:#00796B;
+  --teal-300:#4DB6AC;
+  
+  --rust:#D84315;
+  --steel:#607D8B;
+
+  --t-hi:#F0F6F4;
+  --t-mid:#9EAEAA;
+  --t-low:#70827D;
+  --t-ink:#0E1714;
+  --t-body:#455A54;
+  --t-faint:#869994;
+
+  --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:24px;
+  --shadow-card:0 24px 60px -28px rgba(10,15,13,.65);
+  --shadow-soft:0 10px 30px -18px rgba(10,15,13,.35);
+  --maxw:1240px;
+  --sans:"Inter","SF Pro Display","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:var(--sans);
+  background:var(--ink-900);
+  color:var(--t-hi);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.028em;line-height:1.12}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+input{font:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.skip{position:absolute;left:-9999px;top:0;z-index:99;padding:11px 18px;background:var(--amber);color:#fff;border-radius:0 0 10px 0;font-size:14px}
+.skip:focus{left:0}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+section{position:relative}
+.sec-pad{padding:96px 0}
+.sec-head{max-width:760px;margin-bottom:40px}
+.sec-kicker{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:12.5px;letter-spacing:.01em;color:var(--amber-300);
+  margin-bottom:14px;font-weight:600;text-transform:uppercase;
+}
+.sec-kicker::before{content:"";width:22px;height:2px;background:var(--amber-300);opacity:.8}
+.sec-title{font-size:clamp(26px,3.1vw,38px)}
+.sec-sub{margin-top:14px;color:var(--t-mid);font-size:16.5px;max-width:68ch}
+
+.on-light .sec-title{color:var(--t-ink)}
+.on-light .sec-sub{color:var(--t-body)}
+.on-light .sec-kicker{color:var(--amber-600)}
+.on-light .sec-kicker::before{background:var(--amber-600)}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position:sticky;top:0;z-index:60;
+  background:rgba(10,15,13,.85);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-dark);
+}
+.nav-in{display:flex;align-items:center;gap:26px;height:66px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.02em}
+.brand-mark{
+  width:30px;height:30px;border-radius:6px;flex:none;
+  background:linear-gradient(140deg,var(--amber) 0%,#FF5722 100%);
+  display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800;
+  box-shadow:0 6px 18px -6px rgba(255,138,0,.6);
+}
+.brand small{display:block;font-size:11.5px;font-weight:400;color:var(--t-low);letter-spacing:0;line-height:1.2}
+.nav-links{display:flex;gap:22px;margin-left:auto;font-size:14.5px;color:var(--t-mid)}
+.nav-links a{padding:6px 0;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+.nav-links a:hover{color:var(--t-hi);border-color:var(--amber-300)}
+.nav-cta{margin-left:8px}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:12px 22px;border-radius:6px;font-size:14.5px;font-weight:600;
+  letter-spacing:-.01em;transition:transform .12s ease,box-shadow .18s ease,background .18s;
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(135deg,var(--amber) 0%,#F57C00 100%);color:#fff;box-shadow:0 10px 24px -10px rgba(255,138,0,.8)}
+.btn-primary:hover{box-shadow:0 14px 30px -10px rgba(255,138,0,1)}
+.btn-ghost{border:1px solid var(--line-dark);color:var(--t-hi);background:rgba(255,255,255,.03)}
+.btn-ghost:hover{border-color:var(--amber-300);background:rgba(255,176,85,.09)}
+.btn-outline{border:1px solid var(--line-light);color:var(--t-ink);background:#fff}
+.btn-outline:hover{border-color:var(--amber);color:var(--amber-600)}
+.btn-sm{padding:9px 16px;font-size:13.5px;border-radius:4px}
+.btn svg{width:16px;height:16px;flex:none}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line-dark)}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(800px 400px at 80% 20%,rgba(255,138,0,.15),transparent 65%),
+    radial-gradient(600px 400px at 10% 80%,rgba(0,150,136,.12),transparent 65%),
+    linear-gradient(180deg,rgba(10,15,13,.4) 0%,rgba(10,15,13,.92) 85%);
+}
+.hero-in{position:relative;z-index:2;padding:92px 0 84px;display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;padding:7px 14px 7px 10px;
+  border:1px solid var(--line-dark);border-radius:4px;background:rgba(255,255,255,.04);
+  font-size:12.5px;color:var(--t-mid);margin-bottom:26px;text-transform:uppercase;letter-spacing:.05em;
+}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px rgba(255,138,0,.16)}
+.hero h1{font-size:clamp(34px,4.6vw,58px);letter-spacing:-.035em;line-height:1.04}
+.hero-sub{margin-top:22px;font-size:18px;color:var(--t-mid);max-width:56ch;line-height:1.6}
+.hero-cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.hero-facts{display:flex;gap:34px;margin-top:44px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--line-dark)}
+.hero-fact b{display:block;font-size:22px;font-weight:600;letter-spacing:-.02em}
+.hero-fact span{font-size:12.5px;color:var(--t-low);text-transform:uppercase;letter-spacing:.03em}
+
+/* live hero panel */
+.hero-panel{
+  border:1px solid var(--line-dark);border-radius:var(--r-lg);
+  background:linear-gradient(165deg,rgba(28,46,41,.9) 0%,rgba(15,23,20,.9) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  padding:26px;box-shadow:var(--shadow-card);
+}
+.hp-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--line-dark)}
+.hp-top span{font-size:12.5px;color:var(--t-low);text-transform:uppercase;letter-spacing:.04em}
+.hp-total{padding:24px 0 6px}
+.hp-total .amt{font-size:clamp(40px,5vw,60px);font-weight:600;letter-spacing:-.04em;line-height:1;color:#fff}
+.hp-total .amt em{font-style:normal;font-size:.42em;color:var(--amber-300);margin-left:8px;letter-spacing:-.01em}
+.hp-total .cap{font-size:13px;color:var(--t-mid);margin-top:10px}
+.hp-bars{margin-top:22px;display:flex;flex-direction:column;gap:13px}
+.hp-bar-row{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:13px}
+.hp-bar-row .lb{color:var(--t-mid)}
+.hp-bar-row .vl{color:#fff;font-weight:600}
+.hp-track{grid-column:1/-1;height:6px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden}
+.hp-fill{height:100%;border-radius:3px;transition:width .7s cubic-bezier(.22,.9,.3,1)}
+
+/* ============================================================
+   CALCULATOR
+   ============================================================ */
+.calc-sec{background:linear-gradient(180deg,var(--ink-900) 0%,var(--ink-850) 100%)}
+.calc-grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:26px;align-items:start}
+.card-white{background:var(--paper);border-radius:var(--r-lg);box-shadow:var(--shadow-card);color:var(--t-ink)}
+.calc-panel{padding:28px}
+.calc-panel h3{font-size:21px}
+.badge-model{
+  display:inline-flex;align-items:center;gap:7px;margin-bottom:14px;
+  padding:6px 12px;border-radius:4px;background:var(--amber-100);color:var(--amber-600);
+  font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+}
+.calc-note{font-size:13px;color:var(--t-faint);margin-top:8px;line-height:1.5}
+.fields{margin-top:22px;display:flex;flex-direction:column;gap:16px}
+.field label{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--t-body);font-weight:600;margin-bottom:7px}
+.tip{position:relative;display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;border:1px solid #C3CDDE;color:#8A97AC;font-size:10px;font-weight:700;cursor:help;flex:none}
+.tip:hover .tip-box,.tip:focus-visible .tip-box{opacity:1;visibility:visible;transform:translate(-50%,-6px)}
+.tip-box{
+  position:absolute;bottom:100%;left:50%;transform:translate(-50%,0);
+  width:232px;padding:10px 12px;border-radius:6px;background:var(--ink-800);color:var(--t-hi);
+  font-size:12px;font-weight:400;line-height:1.45;letter-spacing:0;text-align:left;
+  opacity:0;visibility:hidden;transition:opacity .15s,transform .15s;z-index:20;
+  box-shadow:0 14px 30px -14px rgba(0,0,0,.7);
+}
+.inp-shell{display:flex;align-items:stretch;border:1px solid var(--line-light);border-radius:6px;background:var(--paper-2);transition:border-color .15s,box-shadow .15s;overflow:hidden}
+.inp-shell:focus-within{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,138,0,.13);background:#fff}
+.inp-shell.bad{border-color:var(--rust);box-shadow:0 0 0 3px rgba(216,67,21,.12)}
+.inp-shell input{
+  flex:1;min-width:0;border:0;background:transparent;padding:12px 12px;
+  font-size:17px;font-weight:600;letter-spacing:-.015em;color:var(--t-ink);
+}
+.inp-shell input:focus{outline:none}
+.unit{display:grid;place-items:center;padding:0 11px;font-size:12.5px;color:var(--t-faint);border-left:1px solid var(--line-light);background:#fff;white-space:nowrap}
+.steps{display:flex;flex-direction:column;border-left:1px solid var(--line-light)}
+.steps button{width:34px;flex:1;display:grid;place-items:center;color:#7E8CA3;background:#fff;transition:background .12s,color .12s}
+.steps button:hover{background:var(--amber-100);color:var(--amber-600)}
+.steps button:first-child{border-bottom:1px solid var(--line-light)}
+.err{font-size:12px;color:var(--rust);margin-top:6px;display:none}
+.err.show{display:block}
+.calc-actions{display:flex;gap:10px;margin-top:24px}
+.calc-actions .btn{flex:1}
+.calc-foot{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line-light);font-size:12.5px;color:var(--t-faint);line-height:1.55}
+
+/* results */
+.res-col{display:flex;flex-direction:column;gap:22px}
+.res-hero{
+  position:relative;overflow:hidden;padding:30px;border-radius:var(--r-lg);
+  border:1px solid rgba(255,138,0,.22);
+  background:linear-gradient(140deg,#2A1B0E 0%,#150D06 62%,#1F1610 100%);
+}
+.res-hero::before{
+  content:"";position:absolute;right:-90px;top:-110px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,138,0,.15),transparent 66%);
+}
+.res-hero-in{position:relative;z-index:2}
+.res-label{font-size:13px;color:var(--t-mid);text-transform:uppercase;letter-spacing:.05em}
+.res-total{display:flex;align-items:baseline;gap:12px;margin-top:10px;flex-wrap:wrap}
+.res-total .big{font-size:clamp(46px,6.4vw,74px);font-weight:600;letter-spacing:-.045em;line-height:1;color:#fff}
+.res-total .per{font-size:16px;color:var(--t-mid)}
+.res-delta{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:7px 13px;border-radius:4px;
+  background:rgba(0,150,136,.14);border:1px solid rgba(0,150,136,.32);color:#4DB6AC;font-size:13px;
+}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.kpi{padding:16px;border-radius:var(--r-sm);background:rgba(255,255,255,.045);border:1px solid var(--line-dark)}
+.kpi .ic{width:30px;height:30px;border-radius:6px;display:grid;place-items:center;margin-bottom:12px}
+.kpi .val{font-size:25px;font-weight:600;letter-spacing:-.03em;color:#fff;line-height:1.1}
+.kpi .nm{font-size:12.5px;color:var(--t-mid);margin-top:5px;line-height:1.35}
+.kpi .sh{font-size:11.5px;color:var(--t-low);margin-top:7px;text-transform:uppercase;letter-spacing:.02em}
+
+/* impact tiles */
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{padding:20px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1px solid var(--line-dark);display:flex;gap:14px}
+.tile .ic{width:38px;height:38px;border-radius:6px;display:grid;place-items:center;flex:none;background:rgba(255,138,0,.15);color:var(--amber-300)}
+.tile b{display:block;font-size:23px;font-weight:600;letter-spacing:-.03em;color:#fff;line-height:1.15}
+.tile p{font-size:13px;color:var(--t-mid);margin-top:4px}
+.tile em{font-style:normal;font-size:12px;color:var(--t-low);display:block;margin-top:6px}
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+.chart-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:22px}
+.chart-card{padding:24px;border-radius:var(--r-lg);background:rgba(255,255,255,.035);border:1px solid var(--line-dark)}
+.chart-card.tall{grid-column:1/-1}
+.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:6px}
+.chart-head h4{font-size:16.5px}
+.chart-head p{font-size:13px;color:var(--t-low);margin-top:5px;max-width:52ch}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--t-mid);margin-top:14px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:7px;vertical-align:-1px}
+.chart-box{margin-top:16px}
+.chart-box svg{width:100%;height:auto;display:block;overflow:visible}
+.ax{font-size:11.5px;fill:var(--t-low)}
+.ax-strong{font-size:12px;fill:var(--t-mid)}
+.grid-line{stroke:rgba(200,220,210,.1);stroke-width:1}
+.bar-val{font-size:12.5px;font-weight:600;fill:#fff}
+.bar-r{transition:height .6s cubic-bezier(.22,.9,.3,1),y .6s cubic-bezier(.22,.9,.3,1)}
+
+/* ============================================================
+   BEFORE / AFTER
+   ============================================================ */
+.ba-card{padding:8px;border-radius:var(--r-lg);background:rgba(255,255,255,.035);border:1px solid var(--line-dark)}
+table.ba{width:100%;border-collapse:collapse}
+table.ba th,table.ba td{padding:16px 18px;text-align:left;font-size:14.5px}
+table.ba thead th{font-size:12.5px;color:var(--t-low);font-weight:600;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid var(--line-dark)}
+table.ba thead th.r,table.ba td.r{text-align:right}
+table.ba tbody tr+tr td{border-top:1px solid rgba(200,220,210,.08)}
+table.ba td.kpi-name{color:var(--t-hi);font-weight:500}
+table.ba td.cur{color:var(--t-mid)}
+table.ba td.proj{color:#fff;font-weight:600}
+.chip-up{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:4px;font-size:12px;font-weight:600;background:rgba(0,150,136,.14);color:#4DB6AC}
+.chip-dn{background:rgba(255,138,0,.13);color:#FFB055}
+
+/* ============================================================
+   EXEC SUMMARY
+   ============================================================ */
+.exec-wrap{display:grid;grid-template-columns:1.35fr .65fr;gap:24px;align-items:start}
+.exec-doc{padding:38px 40px;border-radius:var(--r-lg);background:var(--paper);color:var(--t-ink);box-shadow:var(--shadow-card);position:relative}
+.exec-doc::before{content:"";position:absolute;left:0;top:38px;bottom:38px;width:4px;background:linear-gradient(180deg,var(--amber),#F57C00)}
+.exec-meta{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:12.5px;color:var(--t-faint);padding-bottom:18px;border-bottom:1px solid var(--line-light);flex-wrap:wrap}
+.exec-doc h3{font-size:23px;margin:20px 0 16px}
+.exec-body{font-family:var(--serif);font-size:17px;line-height:1.72;color:#2C3D38;max-width:70ch}
+.exec-body p+p{margin-top:15px}
+.exec-body b{font-weight:600;color:var(--t-ink)}
+.exec-points{margin-top:26px;padding-top:22px;border-top:1px solid var(--line-light);display:grid;gap:14px}
+.exec-point{display:flex;gap:12px;font-size:14px;color:var(--t-body);line-height:1.5}
+.exec-point .bl{width:22px;height:22px;border-radius:4px;background:var(--amber-100);color:var(--amber-600);display:grid;place-items:center;flex:none;font-size:11px;font-weight:700}
+.exec-side{display:flex;flex-direction:column;gap:14px}
+.side-card{padding:22px;border-radius:var(--r-md);border:1px solid var(--line-dark);background:rgba(255,255,255,.04)}
+.side-card h5{font-size:13.5px;font-weight:600;color:var(--t-hi);margin:0 0 14px;text-transform:uppercase;letter-spacing:.03em}
+.side-row{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:9px 0;border-top:1px solid rgba(200,220,210,.08)}
+.side-row:first-of-type{border-top:0}
+.side-row span{color:var(--t-mid)}
+.side-row b{color:#fff;font-weight:600}
+
+/* ============================================================
+   DRIVERS / USE CASES
+   ============================================================ */
+.driver-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.driver{padding:26px;border-radius:var(--r-md);background:linear-gradient(170deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid var(--line-dark)}
+.driver .ic{width:42px;height:42px;border-radius:6px;display:grid;place-items:center;margin-bottom:18px}
+.driver h4{font-size:17px}
+.driver p{margin-top:9px;font-size:14px;color:var(--t-mid);line-height:1.55}
+.driver .metric{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-dark);font-size:12.5px;color:var(--t-low)}
+.driver .metric b{color:var(--amber-300);font-weight:600}
+
+.uc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.uc{padding:22px;border-radius:var(--r-sm);background:var(--paper);color:var(--t-ink);box-shadow:var(--shadow-soft);border-top:3px solid var(--amber)}
+.uc .ic{width:34px;height:34px;border-radius:4px;background:var(--amber-100);color:var(--amber-600);display:grid;place-items:center;margin-bottom:14px}
+.uc h4{font-size:15.5px}
+.uc p{margin-top:8px;font-size:13.5px;color:var(--t-body);line-height:1.5}
+.uc .tagv{margin-top:14px;font-size:12px;font-weight:700;color:var(--amber-600);text-transform:uppercase;letter-spacing:.02em}
+
+/* ============================================================
+   JOURNEY
+   ============================================================ */
+.journey{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:44px}
+.jline{position:absolute;left:6%;right:6%;top:26px;height:2px;background:rgba(200,220,210,.12);overflow:hidden}
+.jline i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width 1.6s cubic-bezier(.3,.85,.35,1)}
+.journey.go .jline i{width:100%}
+.jstep{position:relative;text-align:left;padding-right:18px}
+.jstep .node{
+  width:54px;height:54px;border-radius:8px;display:grid;place-items:center;
+  background:var(--ink-800);border:1px solid var(--line-dark);color:var(--t-mid);
+  font-size:14px;font-weight:700;position:relative;z-index:2;transition:all .45s ease;
+}
+.journey.go .jstep .node{background:linear-gradient(140deg,#382512,#1F1610);border-color:rgba(255,176,85,.5);color:#fff;box-shadow:0 10px 24px -10px rgba(255,138,0,.6)}
+.jstep h4{font-size:15.5px;margin-top:18px}
+.jstep p{font-size:13px;color:var(--t-low);margin-top:7px;line-height:1.5;max-width:22ch}
+
+/* ============================================================
+   MODULE TABS (additional calculators)
+   ============================================================ */
+.mod-sec{background:linear-gradient(180deg,var(--ink-850) 0%,var(--ink-900) 100%)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;padding:6px;border:1px solid var(--line-dark);border-radius:8px;background:rgba(255,255,255,.03)}
+.tab{
+  flex:1;min-width:190px;display:flex;gap:12px;align-items:center;text-align:left;
+  padding:13px 15px;border-radius:4px;color:var(--t-mid);transition:background .16s,color .16s;
+}
+.tab .ic{width:32px;height:32px;border-radius:4px;display:grid;place-items:center;background:rgba(255,255,255,.06);flex:none;transition:background .16s,color .16s}
+.tab b{display:block;font-size:14px;font-weight:600;color:var(--t-hi);letter-spacing:-.01em}
+.tab span{font-size:12px;color:var(--t-low)}
+.tab:hover{background:rgba(255,255,255,.05)}
+.tab.on{background:linear-gradient(140deg,#3E2914,#1B1410);color:#fff;box-shadow:0 8px 20px -10px rgba(255,138,0,.6)}
+.tab.on .ic{background:var(--amber);color:#fff}
+.tab.on span{color:var(--amber-300)}
+.mod-panel{display:none}
+.mod-panel.on{display:block}
+.mod-grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:22px;align-items:start}
+.mod-inputs{padding:26px}
+.mod-inputs h4{font-size:18px}
+.mod-inputs .sub{font-size:13px;color:var(--t-faint);margin-top:7px;line-height:1.5}
+.mod-out{padding:28px;border-radius:var(--r-lg);border:1px solid var(--line-dark);background:linear-gradient(150deg,rgba(35,48,43,.72),rgba(15,23,20,.9))}
+.mod-total{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--line-dark)}
+.mod-total .lab{font-size:13px;color:var(--t-mid);text-transform:uppercase;letter-spacing:.04em}
+.mod-total .big{font-size:clamp(36px,4.6vw,52px);font-weight:600;letter-spacing:-.04em;color:#fff;line-height:1;margin-top:8px}
+.mod-total .note{font-size:12.5px;color:var(--t-low);max-width:34ch;text-align:right}
+.mod-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.mcard{padding:17px;border-radius:var(--r-sm);background:rgba(255,255,255,.05);border:1px solid var(--line-dark)}
+.mcard .v{font-size:23px;font-weight:600;letter-spacing:-.03em;color:#fff;line-height:1.1}
+.mcard .n{font-size:12.5px;color:var(--t-mid);margin-top:6px}
+.mcard .d{font-size:11.5px;color:var(--t-low);margin-top:8px;line-height:1.45}
+.mod-split{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+.assump{padding:18px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px dashed var(--line-dark)}
+.assump h5{font-size:12.5px;color:var(--t-mid);font-weight:600;margin:0 0 12px;text-transform:uppercase;letter-spacing:.02em}
+.assump ul{margin:0;padding:0;list-style:none;display:grid;gap:9px}
+.assump li{display:flex;justify-content:space-between;gap:14px;font-size:12.5px;color:var(--t-low)}
+.assump li b{color:var(--t-hi);font-weight:600;white-space:nowrap}
+.narr{font-size:14px;color:var(--t-mid);line-height:1.65}
+.narr b{color:#fff;font-weight:600}
+.hbar{display:grid;gap:12px;margin-top:4px}
+.hbar-row .t{display:flex;justify-content:space-between;font-size:12.5px;color:var(--t-mid);margin-bottom:6px}
+.hbar-row .t b{color:#fff;font-weight:600}
+.hbar-track{height:9px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden}
+.hbar-fill{height:100%;border-radius:2px;transition:width .65s cubic-bezier(.22,.9,.3,1)}
+
+/* ============================================================
+   SOLUTION RECOMMENDATIONS
+   ============================================================ */
+.sol-intro{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px}
+.crit{padding:18px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);border:1px solid var(--line-dark)}
+.crit b{display:block;font-size:13.5px;color:var(--t-hi);font-weight:600;margin-bottom:7px}
+.crit p{font-size:12.5px;color:var(--t-low);line-height:1.5}
+.sol-list{display:flex;flex-direction:column;gap:12px}
+.sol{border:1px solid var(--line-dark);border-radius:var(--r-md);background:rgba(255,255,255,.035);overflow:hidden;transition:border-color .2s,background .2s}
+.sol.open{border-color:rgba(255,176,85,.42);background:linear-gradient(165deg,rgba(46,31,17,.5),rgba(255,255,255,.02))}
+.sol-head{width:100%;display:grid;grid-template-columns:38px 1fr auto 20px;gap:16px;align-items:center;padding:20px 22px;text-align:left}
+.sol-head:hover{background:rgba(255,255,255,.03)}
+.sol-n{width:38px;height:38px;border-radius:4px;display:grid;place-items:center;background:rgba(255,138,0,.15);color:var(--amber-300);font-size:13px;font-weight:700;flex:none}
+.sol.open .sol-n{background:var(--amber);color:#fff}
+.sol-q{font-size:16.5px;font-weight:600;letter-spacing:-.018em;color:var(--t-hi);line-height:1.3}
+.sol-t{font-size:12.5px;color:var(--t-low);margin-top:5px;text-transform:uppercase;letter-spacing:.02em}
+.sol-v{text-align:right;white-space:nowrap}
+.sol-v b{display:block;font-size:19px;font-weight:600;letter-spacing:-.025em;color:var(--amber-300);line-height:1.1}
+.sol-v span{font-size:11.5px;color:var(--t-low);text-transform:uppercase;letter-spacing:.02em}
+.sol-chev{color:var(--t-low);transition:transform .24s ease}
+.sol.open .sol-chev{transform:rotate(90deg);color:var(--amber-300)}
+.sol-body{display:none;padding:4px 22px 24px;grid-template-columns:1fr 1.15fr 1.15fr;gap:24px;border-top:1px solid var(--line-dark);margin-top:0;padding-top:22px}
+.sol.open .sol-body{display:grid}
+.sol-blk h6{font-size:12px;font-weight:700;color:var(--amber-300);margin:0 0 12px;letter-spacing:.03em;text-transform:uppercase}
+.sol-blk p{font-size:13.5px;color:var(--t-mid);line-height:1.6}
+.stack{display:flex;flex-direction:column;gap:9px}
+.stack-item{display:flex;gap:10px;font-size:13px;color:var(--t-mid);line-height:1.5}
+.stack-item i{width:5px;height:5px;border-radius:1px;background:var(--amber-300);margin-top:8px;flex:none}
+.stack-item b{color:var(--t-hi);font-weight:600}
+.alt{padding:12px 14px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--line-dark)}
+.alt+.alt{margin-top:9px}
+.alt b{display:block;font-size:13px;color:var(--t-hi);font-weight:600}
+.alt span{font-size:12px;color:var(--t-low);display:block;margin-top:4px;line-height:1.5}
+.oc{margin-top:16px;padding-top:15px;border-top:1px dashed var(--line-dark);display:flex;flex-wrap:wrap;gap:8px}
+.oc-chip{padding:6px 11px;border-radius:4px;font-size:11.5px;font-weight:600;background:rgba(0,150,136,.13);color:#4DB6AC;border:1px solid rgba(0,150,136,.28)}
+.oc-chip.b{background:rgba(255,138,0,.12);color:#FFB055;border-color:rgba(255,176,85,.25)}
+.lead-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:3px;font-size:10.5px;font-weight:800;background:var(--amber-300);color:#3A1B00;margin-left:8px;vertical-align:2px;text-transform:uppercase;letter-spacing:.04em}
+
+.matrix-card{margin-top:34px;padding:8px;border-radius:var(--r-lg);border:1px solid var(--line-dark);background:rgba(255,255,255,.035);overflow-x:auto}
+table.mx{width:100%;border-collapse:collapse;min-width:820px}
+table.mx th,table.mx td{padding:14px 16px;text-align:left;font-size:13.5px;vertical-align:top}
+table.mx thead th{font-size:12px;color:var(--t-low);font-weight:600;text-transform:uppercase;letter-spacing:.02em;border-bottom:1px solid var(--line-dark)}
+table.mx tbody tr+tr td{border-top:1px solid rgba(200,220,210,.08)}
+table.mx td.dom{color:var(--t-hi);font-weight:600;white-space:nowrap}
+table.mx td.pri{color:#fff;font-weight:600}
+table.mx td.alts,table.mx td.trg{color:var(--t-mid);font-size:13px;line-height:1.5}
+@media (max-width:1080px){
+  .sol-intro{grid-template-columns:1fr 1fr}
+  .sol-body{grid-template-columns:1fr;gap:20px}
+  .sol-head{grid-template-columns:34px 1fr 18px;row-gap:12px}
+  .sol-v{grid-column:2/4;text-align:left}
+}
+@media (max-width:720px){ .sol-intro{grid-template-columns:1fr} }
+
+
+/* ============================================================
+   CONTACT ATTRIBUTION
+   ============================================================ */
+.cta-contact{display:flex;align-items:center;gap:14px;margin-top:28px;padding-top:24px;border-top:1px solid rgba(255,176,85,.18)}
+.cc-av{width:46px;height:46px;border-radius:6px;flex:none;display:grid;place-items:center;font-size:15px;font-weight:700;letter-spacing:-.02em;color:#fff;background:linear-gradient(140deg,var(--teal),var(--amber));box-shadow:0 8px 20px -10px rgba(0,150,136,.6)}
+.cc-t b{display:block;font-size:15.5px;font-weight:600;letter-spacing:-.02em;color:#fff;line-height:1.25}
+.cc-t span{display:block;font-size:12.5px;color:var(--t-mid);margin-top:3px}
+.cc-t a{display:inline-flex;align-items:center;gap:7px;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--amber-300);border-bottom:1px solid rgba(255,176,85,.3);padding-bottom:2px}
+.cc-t a svg{width:14px;height:14px}
+.cc-t a:hover{color:#fff;border-color:#fff}
+.foot-in{align-items:flex-start}
+.foot-c{display:flex;align-items:center;gap:13px}
+.foot-c .cc-av{width:40px;height:40px;border-radius:4px;font-size:13.5px;box-shadow:none}
+.foot-c b{display:block;font-size:14px;font-weight:600;color:var(--t-hi);letter-spacing:-.015em}
+.foot-c span{display:block;font-size:12px;color:var(--t-low);margin-top:2px;line-height:1.45}
+.foot-c a{display:inline-block;margin-top:5px;font-size:13px;font-weight:600;color:var(--amber-300)}
+.foot-c a:hover{color:var(--t-hi)}
+.foot-r{text-align:right;max-width:44ch;font-size:12.5px;line-height:1.6}
+@media (max-width:720px){ .foot-r{text-align:left} }
+
+/* ============================================================
+   CTA / FOOTER / MISC
+   ============================================================ */
+.cta-band{
+  position:relative;overflow:hidden;border-radius:var(--r-lg);padding:52px 48px;
+  background:linear-gradient(130deg,#2D1D10 0%,#192521 46%,#101715 100%);
+  border:1px solid rgba(255,176,85,.2);
+}
+.cta-band::before{content:"";position:absolute;right:-120px;bottom:-160px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,138,0,.15),transparent 65%)}
+.cta-in{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.cta-in h2{font-size:clamp(25px,3vw,35px)}
+.cta-in p{margin-top:14px;color:var(--t-mid);font-size:16px;max-width:50ch}
+.cta-btns{display:flex;flex-direction:column;gap:11px}
+.cta-btns .btn{width:100%}
+.disclaimer{margin-top:34px;padding:22px 24px;border-radius:var(--r-sm);border:1px dashed var(--line-dark);background:rgba(255,255,255,.025);font-size:13px;color:var(--t-low);line-height:1.65}
+.disclaimer b{color:var(--t-mid);text-transform:uppercase;letter-spacing:.04em;font-size:11px}
+.foot{border-top:1px solid var(--line-dark);padding:30px 0;margin-top:64px}
+.foot-in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--t-low)}
+
+.toast{
+  position:fixed;left:50%;bottom:30px;transform:translate(-50%,26px);z-index:200;
+  display:flex;align-items:center;gap:11px;padding:13px 20px;border-radius:6px;
+  background:var(--ink-700);border:1px solid rgba(255,176,85,.3);color:var(--t-hi);
+  font-size:14px;box-shadow:0 24px 50px -20px rgba(0,0,0,.8);
+  opacity:0;visibility:hidden;transition:all .28s cubic-bezier(.22,.9,.3,1);
+}
+.toast.on{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.28);border-top-color:var(--amber);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.calc-busy{position:relative;pointer-events:none}
+.calc-busy::after{content:"absolute";position:absolute;inset:0;border-radius:var(--r-lg);background:rgba(10,15,13,.4);backdrop-filter:blur(1px)}
+
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s cubic-bezier(.22,.9,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1080px){
+  .hero-in{grid-template-columns:1fr;gap:44px;padding:70px 0 64px}
+  .calc-grid,.mod-grid,.exec-wrap,.cta-in{grid-template-columns:1fr}
+  .chart-grid{grid-template-columns:1fr}
+  .driver-grid,.uc-grid{grid-template-columns:repeat(2,1fr)}
+  .journey{grid-template-columns:repeat(3,1fr);row-gap:34px}
+  .jline{display:none}
+  .nav-links{display:none}
+}
+@media (max-width:720px){
+  .wrap{padding:0 18px}
+  .sec-pad{padding:64px 0}
+  .kpi-grid,.impact-grid,.mod-cards,.mod-split{grid-template-columns:1fr 1fr}
+  .mod-split{grid-template-columns:1fr}
+  .driver-grid,.uc-grid{grid-template-columns:1fr}
+  .journey{grid-template-columns:repeat(2,1fr)}
+  .exec-doc{padding:26px 22px}
+  .cta-band{padding:32px 22px}
+  .tab{min-width:100%}
+  table.ba th,table.ba td{padding:12px 10px;font-size:13px}
+  .hero-facts{gap:22px}
+}
+@media (max-width:420px){
+  .kpi-grid,.impact-grid,.mod-cards{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+}
+
+/* ============================================================
+   PRINT — business case document
+   ============================================================ */
+.print-only{display:none}
+@media print{
+  @page{size:A4;margin:14mm 13mm}
+  body{background:#fff;color:#212529;font-size:10.5pt;font-family:Helvetica,Arial,sans-serif}
+  .nav,.hero,.no-print,.foot,.toast,.cta-band{display:none !important}
+  .print-only{display:block}
+  .screen-only{display:none !important}
+  .print-doc{padding:0}
+  .print-doc h1{font-size:20pt;color:#212529;letter-spacing:-.02em}
+  .print-doc h2{font-size:12.5pt;color:#E65100;margin:16pt 0 7pt;padding-bottom:4pt;border-bottom:1px solid #DEE2E6;text-transform:uppercase;letter-spacing:.03em}
+  .print-doc .lead{color:#495057;font-size:10pt;margin-top:6pt}
+  .print-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:20pt;padding-bottom:10pt;border-bottom:2px solid #E65100}
+  .print-total{display:flex;align-items:baseline;gap:10pt;margin:10pt 0;padding:12pt 14pt;background:#FFF3E0;border-left:4px solid #E65100;border-radius:0}
+  .print-total b{font-size:26pt;letter-spacing:-.03em;color:#212529;line-height:1}
+  table.pt{width:100%;border-collapse:collapse;margin-top:6pt}
+  table.pt th,table.pt td{border:1px solid #DEE2E6;padding:5pt 7pt;text-align:left;font-size:9.5pt}
+  table.pt th{background:#F8F9FA;color:#212529;font-weight:600;text-transform:uppercase;letter-spacing:.02em;font-size:8.5pt}
+  table.pt td.r,table.pt th.r{text-align:right}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10pt}
+  .print-note{font-size:8.5pt;color:#6C757D;line-height:1.5;margin-top:10pt;border-top:1px solid #DEE2E6;padding-top:7pt}
+  .print-doc svg{max-width:100%;height:auto}
+  .pchart{border:1px solid #DEE2E6;border-radius:2pt;padding:8pt;margin-top:6pt}
+  .pbreak{page-break-before:always}
+}
+</style>
+</head>
+<body>
+<!-- SVG Sprites (Industrial focus) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="i-factory"><path d="M2 20h20M4 20V9l5 3v-5l5 3v-5l5 3v12M4 20h16M9 20v-5M14 20v-5"/></g>
+<g id="i-settings"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></g>
+<g id="i-package"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></g>
+<g id="i-truck"><path d="M10 17h4M3 17h2M18 17h2M4 17a2 2 0 100-4 2 2 0 000 4zm14 0a2 2 0 100-4 2 2 0 000 4z"/><path d="M14 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8h12z"/><path d="M14 8h4l3 3v2h-7V8z"/></g>
+<g id="i-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></g>
+<g id="i-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></g>
+<g id="i-cpu"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></g>
+<g id="i-server"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></g>
+<g id="i-trending-down"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></g>
+<g id="i-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></g>
+<g id="i-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></g>
+<g id="i-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></g>
+<g id="i-wifi"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></g>
+<g id="i-tool"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></g>
+<g id="i-refresh"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></g>
+<g id="i-download"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></g>
+<g id="i-file-text"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></g>
+<g id="i-check"><polyline points="20 6 9 17 4 12"/></g>
+<g id="i-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></g>
+<g id="i-minus"><line x1="5" y1="12" x2="19" y2="12"/></g>
+<g id="i-database"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></g>
+<g id="i-chevron-right"><polyline points="9 18 15 12 9 6"/></g>
+<g id="i-target"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></g>
+<g id="i-users"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></g>
+<g id="i-phone"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></g>
+<g id="i-percent"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></g>
+<g id="i-bar-chart"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></g>
+</defs></svg>
+
+<a class="skip no-print" href="#calculator">Skip to the calculator</a>
+
+<!-- ================= NAV ================= -->
+<header class="nav no-print">
+  <div class="wrap nav-in">
+    <div class="brand">
+      <div class="brand-mark">TC</div>
+      <div>Business Value Advisory<small>Team Computers · Manufacturing Practice</small></div>
+    </div>
+    <nav class="nav-links">
+      <a href="#calculator">Calculator</a>
+      <a href="#results">Results</a>
+      <a href="#summary">Executive summary</a>
+      <a href="#solutions">Recommendations</a>
+      <a href="#modules">More value models</a>
+      <a href="#usecases">Use cases</a>
+    </nav>
+    <button class="btn btn-primary btn-sm nav-cta" data-scroll="#calculator">Calculate business value</button>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero no-print">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <div>
+      <div class="hero-tag"><i class="dot-live"></i> Illustrative Manufacturing Value Model</div>
+      <h1>Quantify the business value of IT/OT convergence</h1>
+      <p class="hero-sub">Translate edge analytics, supply chain modernisation, and resilient shop-floor infrastructure into measurable improvements in yield, throughput, and operating margin.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" data-scroll="#calculator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-activity"/></svg>Calculate business value</button>
+        <button class="btn btn-ghost" data-scroll="#summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-file-text"/></svg>View executive summary</button>
+      </div>
+      <div class="hero-facts">
+        <div class="hero-fact"><b>7</b><span>Production parameters</span></div>
+        <div class="hero-fact"><b>5</b><span>Value models</span></div>
+        <div class="hero-fact"><b>4</b><span>Benefit drivers</span></div>
+        <div class="hero-fact"><b>0</b><span>Data leaves this page</span></div>
+      </div>
+    </div>
+
+    <aside class="hero-panel" aria-live="polite">
+      <div class="hp-top"><span>Annual business benefit</span><span id="heroProfile">14 Plants · ₹3,200 Cr Rev</span></div>
+      <div class="hp-total">
+        <div class="amt">₹<span id="heroTotal">45.0</span><em>Cr / year</em></div>
+        <p class="cap">Modelled from your parameters. Values update instantly as you edit.</p>
+      </div>
+      <div class="hp-bars" id="heroBars"></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= CALCULATOR + RESULTS ================= -->
+<section class="calc-sec sec-pad screen-only" id="calculator">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Business value calculator</span>
+      <h2 class="sec-title">Enter your production parameters</h2>
+      <p class="sec-sub">Define the scale and efficiency of your manufacturing operations. The model normalises these against industry benchmarks to estimate the potential impact of modernising infrastructure from the core to the edge.</p>
+    </div>
+
+    <div class="calc-grid">
+      <!-- INPUT PANEL -->
+      <div class="card-white calc-panel" id="calcPanel">
+        <div class="badge-model"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-factory"/></svg> Enterprise Manufacturing Model</div>
+        <h3>Your operating profile</h3>
+        <p class="calc-note">Defaults represent a mid-size industrial/discrete manufacturer in India. Adjust to reflect your specific operation.</p>
+
+        <div class="fields" id="fields">
+          <div class="field" data-field="revenue">
+            <label for="f-revenue">Annual revenue
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Total annual revenue. Used as the baseline for calculating yield improvements, scrap reduction, and overall margin impact.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-revenue" type="text" inputmode="numeric" value="3,200" data-key="revenue" data-step="100" data-min="10" data-max="500000" data-dec="0" aria-describedby="e-revenue">
+              <div class="unit">₹ Cr</div>
+              <div class="steps"><button type="button" data-inc="revenue" aria-label="Increase revenue"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="revenue" aria-label="Decrease revenue"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-revenue"></p>
+          </div>
+
+          <div class="field" data-field="plants">
+            <label for="f-plants">Manufacturing plants
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Total number of active production facilities. Drives the scale of edge infrastructure, networking needs, and decentralised operations cost.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-plants" type="text" inputmode="numeric" value="14" data-key="plants" data-step="1" data-min="1" data-max="500" data-dec="0" aria-describedby="e-plants">
+              <div class="unit">sites</div>
+              <div class="steps"><button type="button" data-inc="plants" aria-label="Increase plants"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="plants" aria-label="Decrease plants"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-plants"></p>
+          </div>
+
+          <div class="field" data-field="cogs">
+            <label for="f-cogs">Cost of Goods Sold (COGS)
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Direct costs attributable to production, expressed as a percentage of revenue. Used to calculate savings from supply chain and material efficiency.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-cogs" type="text" inputmode="decimal" value="68.5" data-key="cogs" data-step="0.5" data-min="10" data-max="95" data-dec="1" aria-describedby="e-cogs">
+              <div class="unit">% of rev</div>
+              <div class="steps"><button type="button" data-inc="cogs" aria-label="Increase COGS"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="cogs" aria-label="Decrease COGS"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-cogs"></p>
+          </div>
+
+          <div class="field" data-field="oeeNow">
+            <label for="f-oeeNow">Current OEE (Est.)
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Overall Equipment Effectiveness. A measure of manufacturing productivity (Availability × Performance × Quality). World-class is generally >85%.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-oeeNow" type="text" inputmode="decimal" value="65.0" data-key="oeeNow" data-step="1" data-min="10" data-max="99" data-dec="1" aria-describedby="e-oeeNow">
+              <div class="unit">%</div>
+              <div class="steps"><button type="button" data-inc="oeeNow" aria-label="Increase OEE"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="oeeNow" aria-label="Decrease OEE"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-oeeNow"></p>
+          </div>
+
+          <div class="field" data-field="downtimeHr">
+            <label for="f-downtimeHr">Cost of downtime
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Estimated financial impact of one hour of unplanned production stoppage across a typical facility (lost output, idle labor, recovery cost).</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-downtimeHr" type="text" inputmode="numeric" value="4.5" data-key="downtimeHr" data-step="0.5" data-min="0.1" data-max="1000" data-dec="1" aria-describedby="e-downtimeHr">
+              <div class="unit">₹ Lakh / hr</div>
+              <div class="steps"><button type="button" data-inc="downtimeHr" aria-label="Increase downtime cost"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="downtimeHr" aria-label="Decrease downtime cost"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-downtimeHr"></p>
+          </div>
+          
+          <div class="field" data-field="employees">
+            <label for="f-employees">Total headcount
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Total workforce including shop floor, supply chain, and corporate. Drives calculations for worker productivity and safety monitoring impact.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-employees" type="text" inputmode="numeric" value="4,200" data-key="employees" data-step="100" data-min="50" data-max="500000" data-dec="0" aria-describedby="e-employees">
+              <div class="unit">staff</div>
+              <div class="steps"><button type="button" data-inc="employees" aria-label="Increase headcount"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="employees" aria-label="Decrease headcount"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-employees"></p>
+          </div>
+
+          <div class="field" data-field="itBudget">
+            <label for="f-itBudget">Annual IT/OT budget
+              <span class="tip" tabindex="0" role="note">i<span class="tip-box">Estimated combined spend on corporate IT and shop-floor OT (hardware, software, services). Used to baseline infrastructure consolidation savings.</span></span>
+            </label>
+            <div class="inp-shell">
+              <input id="f-itBudget" type="text" inputmode="numeric" value="48" data-key="itBudget" data-step="1" data-min="1" data-max="10000" data-dec="0" aria-describedby="e-itBudget">
+              <div class="unit">₹ Cr</div>
+              <div class="steps"><button type="button" data-inc="itBudget" aria-label="Increase IT budget"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-plus"/></svg></button><button type="button" data-dec="itBudget" aria-label="Decrease IT budget"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><use href="#i-minus"/></svg></button></div>
+            </div>
+            <p class="err" id="e-itBudget"></p>
+          </div>
+        </div>
+
+        <div class="calc-actions">
+          <button class="btn btn-primary" id="btnCalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg>Calculate</button>
+          <button class="btn btn-outline" id="btnReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-refresh"/></svg>Reset</button>
+        </div>
+        <p class="calc-foot">The assumptions applied are illustrative manufacturing benchmarks. Adjust inputs to reflect your specific operation. Results update live.</p>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="res-col" id="results">
+        <div class="res-hero">
+          <div class="res-hero-in">
+            <p class="res-label">Estimated transformation value</p>
+            <div class="res-total">
+              <div class="big">₹<span id="totalVal">45.0</span> Cr</div>
+              <span class="per">per year</span>
+            </div>
+            <div class="res-delta"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trending-up"/></svg><span id="deltaNote">Equivalent to a +1.4% improvement in net operating margin</span></div>
+
+            <div class="kpi-grid">
+              <div class="kpi">
+                <div class="ic" style="background:rgba(255,138,0,.15);color:var(--amber-300)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-activity"/></svg></div>
+                <div class="val">₹<span id="kYield">18.5</span> Cr</div>
+                <p class="nm">Yield & Quality Uplift</p>
+                <p class="sh" id="kYieldShare">41% of benefit</p>
+              </div>
+              <div class="kpi">
+                <div class="ic" style="background:rgba(0,150,136,.15);color:var(--teal-300)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-package"/></svg></div>
+                <div class="val">₹<span id="kSupply">14.2</span> Cr</div>
+                <p class="nm">Supply Chain Efficiency</p>
+                <p class="sh" id="kSupplyShare">32% of benefit</p>
+              </div>
+              <div class="kpi">
+                <div class="ic" style="background:rgba(216,67,21,.15);color:#FF8A65"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-clock"/></svg></div>
+                <div class="val">₹<span id="kDown">8.4</span> Cr</div>
+                <p class="nm">Downtime Reduction</p>
+                <p class="sh" id="kDownShare">19% of benefit</p>
+              </div>
+              <div class="kpi">
+                <div class="ic" style="background:rgba(96,125,139,.15);color:#90A4AE"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-server"/></svg></div>
+                <div class="val">₹<span id="kIT">3.9</span> Cr</div>
+                <p class="nm">IT/OT Cost Optimisation</p>
+                <p class="sh" id="kITShare">8% of benefit</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMPACT TILES -->
+        <div class="impact-grid">
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bar-chart"/></svg></div><div><b id="tOeeUp">+3.5 pts</b><p>OEE Improvement</p><em id="tOeeVal">65.0% → 68.5% equipment effectiveness</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trending-down"/></svg></div><div><b>-18%</b><p>Scrap & Rework</p><em>Driven by real-time edge computer vision & AI</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-package"/></svg></div><div><b>-4.5%</b><p>Inventory Carrying</p><em>Better forecasting and supply chain visibility</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-tool"/></svg></div><div><b>-25%</b><p>Unplanned Downtime</p><em id="tDownHr">Shift to predictive maintenance via IoT</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg></div><div><b id="tRisk">-30%</b><p>Cyber Risk Exposure</p><em>IT/OT segmentation & air-gapped recovery</em></div></div>
+          <div class="tile"><div class="ic"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-server"/></svg></div><div><b>15% lower</b><p>Edge IT Run Cost</p><em>Consolidating IPCs to hyperconverged edge</em></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHARTS ================= -->
+<section class="sec-pad screen-only" id="charts" style="background:var(--ink-850)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Value visualisation</span>
+      <h2 class="sec-title">Where the margin is created</h2>
+      <p class="sec-sub">Visualising the financial impact across operational domains. Charts update dynamically.</p>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-head"><div><h4>Annual Benefit by Driver</h4><p>Financial contribution by category, in ₹ crore.</p></div></div>
+        <div class="chart-box" id="chartBenefit"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-head"><div><h4>OEE Trajectory</h4><p>Current vs projected Overall Equipment Effectiveness.</p></div></div>
+        <div class="chart-box" id="chartGrowth"></div>
+        <div class="legend"><span><i style="background:var(--steel)"></i>Current Baseline</span><span><i style="background:linear-gradient(135deg,var(--amber),#FF5722)"></i>Projected Target</span></div>
+      </div>
+
+      <div class="chart-card tall">
+        <div class="chart-head"><div><h4>Smart Factory Maturity Index</h4><p>Relative maturity across five Industry 4.0 dimensions (0–100 scale), before and after IT/OT modernisation.</p></div></div>
+        <div class="chart-box" id="chartRadar"></div>
+        <div class="legend"><span><i style="background:var(--steel)"></i>Current state</span><span><i style="background:var(--amber)"></i>Target state</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BEFORE / AFTER ================= -->
+<section class="sec-pad screen-only" id="beforeafter">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Before and after</span>
+      <h2 class="sec-title">Operational metrics comparison</h2>
+    </div>
+    <div class="ba-card">
+      <table class="ba">
+        <thead><tr><th>Performance Metric</th><th class="r">Current Estimate</th><th class="r">Projected Target</th><th class="r">Change</th></tr></thead>
+        <tbody id="baBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXECUTIVE SUMMARY ================= -->
+<section class="sec-pad screen-only" id="summary" style="background:linear-gradient(180deg,var(--ink-900),var(--ink-850))">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">For the board pack</span>
+      <h2 class="sec-title">Executive business summary</h2>
+      <p class="sec-sub">A synthesised view of the transformation business case, ready for management review.</p>
+    </div>
+
+    <div class="exec-wrap">
+      <article class="exec-doc">
+        <div class="exec-meta">
+          <span>Prepared by Manufacturing Solutions Practice · Team Computers Pvt. Ltd.</span>
+          <span id="execDate">—</span>
+        </div>
+        <h3>Industry 4.0 Value Assessment</h3>
+        <div class="exec-body" id="execBody"></div>
+        <div class="exec-points" id="execPoints"></div>
+        <div style="display:flex;gap:10px;margin-top:26px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" id="btnCopy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-file-text"/></svg>Copy summary</button>
+          <button class="btn btn-outline btn-sm" data-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-download"/></svg>Download report</button>
+        </div>
+      </article>
+
+      <aside class="exec-side">
+        <div class="side-card">
+          <h5>Scale Parameters</h5>
+          <div class="side-row"><span>Annual Revenue</span><b id="srRev">₹3,200 Cr</b></div>
+          <div class="side-row"><span>COGS Basis</span><b id="srCogs">₹2,192 Cr</b></div>
+          <div class="side-row"><span>Manufacturing Sites</span><b id="srPlants">14</b></div>
+          <div class="side-row"><span>Total Headcount</span><b id="srEmp">4,200</b></div>
+        </div>
+        <div class="side-card">
+          <h5>Value Indicators</h5>
+          <div class="side-row"><span>Target OEE Uplift</span><b id="srOeeUp">+3.5 pts</b></div>
+          <div class="side-row"><span>Downtime Cost/Hr</span><b id="srDownHr">₹4.5 L</b></div>
+          <div class="side-row"><span>Value per Plant</span><b id="srVpp">₹3.2 Cr</b></div>
+          <div class="side-row"><span>Margin Expansion</span><b id="srMargin">+1.41%</b></div>
+        </div>
+        <div class="side-card" style="border-color:rgba(255,138,0,.28);background:rgba(255,138,0,.06)">
+          <h5 style="color:var(--amber)">Model Assumptions</h5>
+          <div class="side-row"><span>Quality/Yield Defect Reduction</span><b>18%</b></div>
+          <div class="side-row"><span>Inventory Carrying Reduction</span><b>4.5%</b></div>
+          <div class="side-row"><span>Unplanned Downtime Drop</span><b>25%</b></div>
+          <div class="side-row"><span>Edge IT/OT Cost Consolidation</span><b>15%</b></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VALUE DRIVERS ================= -->
+<section class="sec-pad screen-only">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Value drivers</span>
+      <h2 class="sec-title">Four levers of manufacturing transformation</h2>
+    </div>
+    <div class="driver-grid">
+      <div class="driver">
+        <div class="ic" style="background:rgba(255,138,0,.15);color:var(--amber)"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-activity"/></svg></div>
+        <h4>Yield & Quality</h4>
+        <p>Using edge computer vision and AI to detect defects in real-time, reducing scrap, rework, and warranty claims.</p>
+        <p class="metric">Target defect drop: <b style="color:var(--amber-300)">18%</b></p>
+      </div>
+      <div class="driver">
+        <div class="ic" style="background:rgba(0,150,136,.15);color:var(--teal-300)"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-package"/></svg></div>
+        <h4>Supply Chain</h4>
+        <p>End-to-end visibility and demand forecasting to optimise inventory levels and reduce carrying costs.</p>
+        <p class="metric">Carrying cost drop: <b style="color:var(--teal-300)">4.5%</b></p>
+      </div>
+      <div class="driver">
+        <div class="ic" style="background:rgba(216,67,21,.15);color:#FF8A65"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-clock"/></svg></div>
+        <h4>Asset Uptime</h4>
+        <p>Transitioning from reactive to predictive maintenance using IoT sensors to prevent costly line stoppages.</p>
+        <p class="metric">Downtime reduction: <b style="color:#FF8A65">25%</b></p>
+      </div>
+      <div class="driver">
+        <div class="ic" style="background:rgba(96,125,139,.15);color:#B0BEC5"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-server"/></svg></div>
+        <h4>IT/OT Efficiency</h4>
+        <p>Consolidating disparate industrial PCs (IPCs) into a secure, centrally managed edge compute platform.</p>
+        <p class="metric">Run cost saving: <b style="color:#B0BEC5">15%</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= USE CASES ================= -->
+<section class="sec-pad screen-only on-light" id="usecases" style="background:linear-gradient(180deg,#F4F7F6,#E8ECEB)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Where value is created</span>
+      <h2 class="sec-title">Key Smart Manufacturing Use Cases</h2>
+    </div>
+    <div class="uc-grid">
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-target"/></svg></div><h4>Computer Vision Quality</h4><p>Automated visual inspection at the edge to catch defects instantly, preventing value-add on bad parts.</p><p class="tagv">Yield · Quality</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-tool"/></svg></div><h4>Predictive Maintenance</h4><p>Analyzing vibration and thermal data to service critical assets *before* they fail and stop the line.</p><p class="tagv">Uptime · OEE</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-server"/></svg></div><h4>Edge Consolidation</h4><p>Replacing aging, vulnerable IPCs with ruggedised hyperconverged infrastructure (VxRail/PowerEdge XR).</p><p class="tagv">IT/OT Efficiency</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg></div><h4>OT Security & Segmentation</h4><p>Securing the Purdue model. Isolating factory networks to prevent enterprise malware from halting production.</p><p class="tagv">Risk Mitigation</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-truck"/></svg></div><h4>Digital Supply Chain</h4><p>Integrating ERP data with edge logistics to optimise inbound materials and reduce safety stock bloat.</p><p class="tagv">Working Capital</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-database"/></svg></div><h4>Industrial Data Lake</h4><p>Centralising historian and SCADA data into a scalable Dell PowerScale repository for enterprise AI modeling.</p><p class="tagv">Analytics Scale</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-users"/></svg></div><h4>Connected Worker</h4><p>Delivering AR work instructions and real-time safety monitoring to shop-floor staff via robust edge Wi-Fi.</p><p class="tagv">Productivity · Safety</p></div>
+      <div class="uc"><div class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></div><h4>Energy Management</h4><p>Correlating production schedules with peak energy tariffs to optimise heavy asset runtime and cut utility bills.</p><p class="tagv">Sustainability · Cost</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RECOMMENDED SOLUTIONS ================= -->
+<section class="sec-pad screen-only" id="solutions" style="background:linear-gradient(180deg,#E8ECEB 0%,var(--ink-900) 16%,var(--ink-900) 100%)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Architecture approach</span>
+      <h2 class="sec-title">Recommended Dell Technologies stack</h2>
+      <p class="sec-sub">Bridging the IT/OT divide requires infrastructure built for harsh environments but managed with enterprise IT tooling.</p>
+    </div>
+
+    <div class="sol-intro">
+      <div class="crit"><b>Environmental harshness</b><p>Dust, temperature extremes, and vibration demand ruggedised edge nodes, not repurposed data center servers.</p></div>
+      <div class="crit"><b>Bandwidth constraints</b><p>Video streams for QA cannot traverse the WAN. Inference must happen at the edge, sending only metadata back.</p></div>
+      <div class="crit"><b>OT team autonomy</b><p>Plant managers need reliability. Edge infrastructure must be zero-touch provisioned and remotely managed by IT.</p></div>
+      <div class="crit"><b>Legacy protocol translation</b><p>Modern platforms must ingest data from decades-old PLCs (Modbus, OPC UA) without disrupting operations.</p></div>
+    </div>
+
+    <div class="sol-list" id="solList"></div>
+  </div>
+</section>
+
+<!-- ================= MODULE TABS ================= -->
+<section class="mod-sec sec-pad screen-only" id="modules">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-kicker">Deep Dive Models</span>
+      <h2 class="sec-title">Specific manufacturing business cases</h2>
+      <p class="sec-sub">Explore targeted ROI models for Edge AI and OT Security.</p>
+    </div>
+
+    <div class="tabs" id="modTabs" role="tablist"></div>
+    <div id="modPanels"></div>
+  </div>
+</section>
+
+<!-- ================= CTA / FOOTER ================= -->
+<section class="sec-pad screen-only" style="padding-top:24px">
+  <div class="wrap">
+    <div class="cta-band">
+      <div class="cta-in">
+        <div>
+          <h2>Ready to baseline your smart factory ROI?</h2>
+          <p>Let Team Computers assess your current OT landscape and build a validated business case for edge modernisation.</p>
+          <div class="cta-contact">
+            <div class="cc-av">MS</div>
+            <div class="cc-t">
+              <b>Manufacturing Solutions</b>
+              <span>Team Computers Pvt. Ltd.</span>
+              <a href="mailto:info@teamcomputers.com">Contact Practice Lead</a>
+            </div>
+          </div>
+        </div>
+        <div class="cta-btns">
+          <button class="btn btn-primary" id="btnRecalc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-refresh"/></svg>Recalculate</button>
+          <button class="btn btn-ghost" data-scroll="#summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-file-text"/></svg>View Summary</button>
+          <button class="btn btn-ghost" data-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-download"/></svg>Print Report</button>
+        </div>
+      </div>
+    </div>
+    <p class="disclaimer"><b>Disclaimer:</b> Illustrative manufacturing benchmarks used for demonstration purposes. Actual ROI depends on specific operational baselines.</p>
+  </div>
+</section>
+<footer style="text-align:center; padding: 24px 0; color: var(--t-low); font-size: 13.5px; border-top: 1px solid var(--line-dark); margin-top: 40px;">
+  Powered by Team Computers
+</footer>
+
+<div class="print-only print-doc" id="printDoc"></div>
+<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<script>
+"use strict";
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const IN = (n,d=0)=>new Intl.NumberFormat('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
+
+function num(v,d=0){ if(!isFinite(v)) return '—'; return IN(v,d); }
+function cr(v){ const a=Math.abs(v); if(a>=1000) return IN(v,0); if(a>=100) return IN(v,1); return IN(v,2).replace(/\.00$/,'.0'); }
+function crShort(v){ const a=Math.abs(v); return IN(v, a>=100?0:1); }
+function pct(v,d=0){ return IN(v,d)+'%'; }
+function parseNum(s){ if(typeof s==='number') return s; const c=String(s).replace(/[^0-9.\-]/g,''); const n=parseFloat(c); return isNaN(n)?NaN:n; }
+function svgIc(id,size,sw){ return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="'+(sw||2)+'" stroke-linecap="round" stroke-linejoin="round"><use href="#'+id+'"/></svg>'; }
+
+function toast(msg,busy){
+  const t=$('#toast'); $('#toastMsg').textContent=msg;
+  $('#toastIcon').innerHTML = busy ? '<span class="spin"></span>' : svgIc('i-check',16,2.4);
+  t.classList.add('on'); clearTimeout(toast._t);
+  toast._t=setTimeout(()=>t.classList.remove('on'), busy?1400:2600);
+}
+
+function countTo(el,to,dec,dur){
+  if(!el) return;
+  const from = parseFloat(String(el.dataset.v||el.textContent).replace(/,/g,''))||0;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || Math.abs(to-from)<0.005){
+    el.textContent=IN(to,dec); el.dataset.v=to; return;
+  }
+  const t0=performance.now(), D=dur||760;
+  cancelAnimationFrame(el._raf);
+  const tick=t=>{
+    const p=clamp((t-t0)/D,0,1), e=1-Math.pow(1-p,3);
+    el.textContent=IN(from+(to-from)*e,dec);
+    if(p<1) el._raf=requestAnimationFrame(tick); else el.dataset.v=to;
+  };
+  el._raf=requestAnimationFrame(tick);
+}
+
+/* ============================================================
+   1 · CORE MODEL (Manufacturing specific)
+   ============================================================ */
+const REF   = {revenue:3200, plants:14, cogs:68.5, oeeNow:65.0, downtimeHr:4.5, employees:4200, itBudget:48};
+const state = Object.assign({}, REF);
+
+// Benchmarks for improvements
+const ASM = {
+  yieldUpliftPct: 0.85,    // 0.85% improvement in overall yield/scrap
+  invCarryDropPct: 4.5,    // 4.5% reduction in inventory carrying cost
+  dtReductionPct: 25.0,    // 25% drop in unplanned downtime
+  itOtOptPct: 15.0         // 15% optimization on IT/OT budget
+};
+
+function model(s){
+  const revBase = s.revenue;
+  const cogsVal = revBase * (s.cogs/100);
+  
+  // 1. Yield & Quality: Small % improvement on COGS base due to less scrap
+  const vYield = cogsVal * (ASM.yieldUpliftPct/100);
+  
+  // 2. Supply Chain: Assume inventory carrying cost is ~15% of COGS, we save 4.5% of that
+  const invCarrying = cogsVal * 0.15;
+  const vSupply = invCarrying * (ASM.invCarryDropPct/100);
+  
+  // 3. Downtime: Assume avg 80 hrs unplanned downtime per plant/yr. Save 25%
+  const totalDtHrs = s.plants * 80;
+  const dtCostTotal = totalDtHrs * (s.downtimeHr / 100); // converting Lakh to Cr
+  const vDown = dtCostTotal * (ASM.dtReductionPct/100);
+  
+  // 4. IT/OT Eff: Savings on the entered budget
+  const vIT = s.itBudget * (ASM.itOtOptPct/100);
+
+  const total = vYield + vSupply + vDown + vIT;
+  
+  // Derived metrics
+  const marginUplift = total > 0 ? (total / revBase) * 100 : 0;
+  const oeeUplift = clamp(3.5 * (total / 45), 0.5, 8.0); // Rough proxy: 45Cr baseline -> 3.5pt uplift
+  const oeeTarget = s.oeeNow + oeeUplift;
+
+  // Radar Index (0-100)
+  const idx = {
+    now: {
+      visibility: 40,
+      quality: s.oeeNow,
+      uptime: 55,
+      agile: 45,
+      sec: 30
+    },
+    next: {
+      visibility: 85,
+      quality: oeeTarget,
+      uptime: 80,
+      agile: 75,
+      sec: 85
+    }
+  };
+
+  return { s, v: {yield:vYield, supply:vSupply, down:vDown, it:vIT, total}, d: {marginUplift, oeeUplift, oeeTarget, cogsVal}, idx };
+}
+
+/* ============================================================
+   2 · CHARTS
+   ============================================================ */
+const C_AMB='#FF8A00', C_TEAL='#009688', C_RUST='#D84315', C_STL='#607D8B';
+
+function niceMax(v){
+  if(v<=0) return 1;
+  const p=Math.pow(10,Math.floor(Math.log10(v))), n=v/p;
+  const step = n<=1?1 : n<=1.5?1.5 : n<=2?2 : n<=3?3 : n<=4?4 : n<=5?5 : n<=7.5?7.5 : 10;
+  return step*p;
+}
+
+function barChart(el,data){
+  const W=580,H=300,PL=54,PR=14,PT=26,PB=64;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const max=niceMax(Math.max.apply(null,data.map(d=>d.v))*1.15)||1;
+  const bw=Math.min(74, iw/data.length*0.52), gap=iw/data.length;
+  let g='';
+  for(let i=0;i<=4;i++){
+    const y=PT+ih-ih*i/4, val=max*i/4;
+    g+='<line class="grid-line" x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'"/>'
+     + '<text class="ax" x="'+(PL-10)+'" y="'+(y+4)+'" text-anchor="end">'+IN(val, max<12?1:0)+'</text>';
+  }
+  data.forEach((d,i)=>{
+    const h=Math.max(2, ih*(d.v/max)), x=PL+gap*i+(gap-bw)/2, y=PT+ih-h;
+    const gid='bgm'+i+'-'+Math.random().toString(36).slice(2,7);
+    g+='<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1">'
+     + '<stop offset="0%" stop-color="'+d.c+'" stop-opacity=".95"/><stop offset="100%" stop-color="'+d.c+'" stop-opacity=".38"/></linearGradient></defs>'
+     + '<rect class="bar-r" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="4" fill="url(#'+gid+')"/>'
+     + '<text class="bar-val" x="'+(x+bw/2)+'" y="'+(y-9)+'" text-anchor="middle">₹'+crShort(d.v)+' Cr</text>';
+    String(d.l).split('|').forEach((ln,k)=>{
+      g+='<text class="ax-strong" x="'+(x+bw/2)+'" y="'+(PT+ih+24+k*15)+'" text-anchor="middle">'+ln+'</text>';
+    });
+  });
+  g+='<line class="grid-line" x1="'+PL+'" y1="'+(PT+ih)+'" x2="'+(W-PR)+'" y2="'+(PT+ih)+'" stroke-opacity=".5"/>';
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'">'+g+'</svg>';
+}
+
+function groupChart(el,groups){
+  const W=560,H=300,PL=52,PR=14,PT=26,PB=58;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const max=100; // OEE is percentage 0-100
+  const gw=iw/groups.length, bw=Math.min(68,gw*0.3);
+  let g='';
+  for(let i=0;i<=4;i++){
+    const y=PT+ih-ih*i/4;
+    g+='<line class="grid-line" x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'"/>'
+     + '<text class="ax" x="'+(PL-10)+'" y="'+(y+4)+'" text-anchor="end">'+(25*i)+'%</text>';
+  }
+  groups.forEach((gr,i)=>{
+    const cx=PL+gw*i+gw/2;
+    [['a',C_STL,-bw-4],['b','url(#gGradM)',4]].forEach(([k,fill,off])=>{
+      const val=gr[k], h=Math.max(2,ih*(val/max)), x=cx+off, y=PT+ih-h;
+      g+='<rect class="bar-r" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="4" fill="'+fill+'"/>'
+       + '<text class="bar-val" x="'+(x+bw/2)+'" y="'+(y-9)+'" text-anchor="middle">'+IN(val,1)+'%</text>';
+    });
+    g+='<text class="ax-strong" x="'+cx+'" y="'+(PT+ih+26)+'" text-anchor="middle">'+gr.l+'</text>';
+  });
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'">'
+    +'<defs><linearGradient id="gGradM" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#FF5722"/><stop offset="100%" stop-color="#FF8A00"/></linearGradient></defs>'+g+'</svg>';
+}
+
+function radarChart(el,axes,now,next){
+  const W=700,H=380,cx=W/2,cy=H/2+6,R=126,n=axes.length;
+  const pt=(i,r)=>{const a=-Math.PI/2+i*2*Math.PI/n; return [cx+Math.cos(a)*r, cy+Math.sin(a)*r];};
+  let g='';
+  for(let ring=1;ring<=4;ring++){
+    const pts=[]; for(let i=0;i<n;i++) pts.push(pt(i,R*ring/4).map(v=>v.toFixed(1)).join(','));
+    g+='<polygon points="'+pts.join(' ')+'" fill="none" class="grid-line"/>';
+  }
+  for(let i=0;i<n;i++){ const p=pt(i,R); g+='<line class="grid-line" x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'"/>'; }
+  const poly=(vals,fill,stroke,op)=>{
+    const pts=vals.map((v,i)=>pt(i,R*clamp(v,0,100)/100).map(x=>x.toFixed(1)).join(',')).join(' ');
+    let s='<polygon points="'+pts+'" fill="'+fill+'" fill-opacity="'+op+'" stroke="'+stroke+'" stroke-width="2" stroke-linejoin="round"/>';
+    vals.forEach((v,i)=>{const p=pt(i,R*clamp(v,0,100)/100); s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3.4" fill="'+stroke+'"/>';});
+    return s;
+  };
+  g+=poly(now,C_STL,C_STL,.3)+poly(next,C_AMB,C_AMB,.2);
+  axes.forEach((a,i)=>{
+    const p=pt(i,R+34), anchor = Math.abs(p[0]-cx)<12 ? 'middle' : (p[0]>cx?'start':'end');
+    g+='<text class="ax-strong" x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" text-anchor="'+anchor+'">'+a+'</text>'
+     + '<text class="ax" x="'+p[0].toFixed(1)+'" y="'+(p[1]+16).toFixed(1)+'" text-anchor="'+anchor+'">'+Math.round(now[i])+' → '+Math.round(next[i])+'</text>';
+  });
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'">'+g+'</svg>';
+}
+
+/* ============================================================
+   3 · RENDER MAIN MODEL
+   ============================================================ */
+let M = model(state);
+
+function renderHero(){
+  const v=M.v;
+  countTo($('#heroTotal'), v.total, v.total>=100?0:1);
+  $('#heroProfile').textContent = num(M.s.plants)+' Plants · ₹'+crShort(M.s.revenue)+' Cr Rev';
+  
+  const bData = [
+    {k:'yield', l:'Yield Uplift', c:C_AMB},
+    {k:'supply',l:'Supply Chain', c:C_TEAL},
+    {k:'down',  l:'Downtime',     c:C_RUST},
+    {k:'it',    l:'IT/OT Eff.',   c:C_STL}
+  ];
+  
+  const box=$('#heroBars');
+  if(!box.dataset.built){
+    box.innerHTML = bData.map(b=>
+      '<div class="hp-bar-row"><span class="lb">'+b.l+'</span><span class="vl" data-hv="'+b.k+'">—</span>'
+      +'<span class="hp-track"><span class="hp-fill" data-f="'+b.k+'" style="background:'+b.c+'"></span></span></div>').join('');
+    box.dataset.built='1';
+  }
+  bData.forEach(b=>{
+    $('[data-hv="'+b.k+'"]',box).textContent='₹'+crShort(v[b.k])+' Cr';
+    $('[data-f="'+b.k+'"]',box).style.width=(v.total>0? clamp(v[b.k]/v.total*100,1.5,100):0)+'%';
+  });
+}
+
+function renderResults(){
+  const {v,d}=M;
+  countTo($('#totalVal'), v.total, v.total>=100?0:1);
+  [['kYield','yield','kYieldShare'],['kSupply','supply','kSupplyShare'],['kDown','down','kDownShare'],['kIT','it','kITShare']]
+    .forEach(([id,k,sh])=>{
+      countTo($('#'+id), v[k], v[k]>=100?0:1);
+      $('#'+sh).textContent = pct(v.total>0? v[k]/v.total*100:0)+' of benefit';
+    });
+  
+  $('#deltaNote').textContent = 'Equivalent to a +'+IN(d.marginUplift,2)+'% improvement in net operating margin';
+  
+  $('#tOeeUp').textContent = '+'+IN(d.oeeUplift,1)+' pts';
+  $('#tOeeVal').textContent = IN(M.s.oeeNow,1)+'% → '+IN(d.oeeTarget,1)+'% equipment effectiveness';
+}
+
+function renderCharts(){
+  const {v,d,idx}=M;
+  barChart($('#chartBenefit'),[
+    {l:'Yield & Quality|Uplift', v:v.yield,  c:C_AMB},
+    {l:'Supply Chain|Efficiency',v:v.supply, c:C_TEAL},
+    {l:'Downtime|Reduction',     v:v.down,   c:C_RUST},
+    {l:'IT/OT Cost|Optimisation',v:v.it,     c:C_STL}
+  ]);
+  groupChart($('#chartGrowth'),[
+    {l:'Overall Equipment Effectiveness (OEE)', a:M.s.oeeNow, b:d.oeeTarget}
+  ]);
+  const ax=['Data Visibility','Quality/Yield','Asset Uptime','Agility','OT Security'];
+  radarChart($('#chartRadar'),ax,
+    [idx.now.visibility, idx.now.quality, idx.now.uptime, idx.now.agile, idx.now.sec],
+    [idx.next.visibility, idx.next.quality, idx.next.uptime, idx.next.agile, idx.next.sec]
+  );
+}
+
+function baRows(){
+  const {s,d}=M;
+  return [
+    ['Net Operating Margin Impact', 'Baseline', '+'+IN(d.marginUplift,2)+'%', 'up','Margin expansion'],
+    ['Overall Equipment Effectiveness', IN(s.oeeNow,1)+'%', IN(d.oeeTarget,1)+'%', 'up','+'+IN(d.oeeUplift,1)+' pts'],
+    ['Defect / Scrap Rate', 'Baseline', '-18%', 'up','Quality uplift'],
+    ['Unplanned Downtime (Avg)', '100%', '75%', 'up','25% fewer stops'],
+    ['Edge IT/OT Infrastructure Cost', '₹'+crShort(s.itBudget)+' Cr', '₹'+crShort(s.itBudget - M.v.it)+' Cr', 'up','15% reduction']
+  ];
+}
+function renderBA(){
+  $('#baBody').innerHTML = baRows().map(r=>
+    '<tr><td class="kpi-name">'+r[0]+'</td><td class="cur r">'+r[1]+'</td><td class="proj r">'+r[2]+'</td>'
+    +'<td class="r"><span class="chip-up'+(r[3]==='dn'?' chip-dn':'')+'">'+r[4]+'</span></td></tr>').join('');
+}
+
+function execText(){
+  const {s,v,d}=M;
+  const p1='Based on a manufacturing profile of <b>'+num(s.plants)+' plants</b> generating <b>₹'+crShort(s.revenue)+' Cr</b> in annual revenue with an estimated COGS of <b>'+IN(s.cogs,1)+'%</b>, modernising edge infrastructure and converging IT/OT can deliver an estimated annual business value of <b>₹'+crShort(v.total)+' Cr</b>.';
+  const p2='This is equivalent to a <b>'+IN(d.marginUplift,2)+'% expansion in net operating margin</b>. The largest value driver is Yield & Quality (₹'+crShort(v.yield)+' Cr), achieved by applying computer vision and AI at the edge to reduce scrap and rework. Supply chain optimisation yields ₹'+crShort(v.supply)+' Cr by cutting inventory carrying costs via better visibility.';
+  const p3='Furthermore, deploying predictive maintenance on ruggedised edge nodes reduces unplanned downtime exposure by an estimated ₹'+crShort(v.down)+' Cr. Consolidating legacy IPCs into centrally managed hyperconverged edge platforms (like Dell VxRail or PowerEdge XR) removes ₹'+crShort(v.it)+' Cr in IT/OT run costs, while dramatically reducing OT cyber risk.';
+  return [p1,p2,p3];
+}
+function renderExec(){
+  const {s,v,d}=M;
+  $('#execBody').innerHTML = execText().map(p=>'<p>'+p+'</p>').join('');
+  $('#execDate').textContent = new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  
+  $('#srRev').textContent = '₹'+crShort(s.revenue)+' Cr';
+  $('#srCogs').textContent = '₹'+crShort(d.cogsVal)+' Cr';
+  $('#srPlants').textContent = num(s.plants);
+  $('#srEmp').textContent = num(s.employees);
+  
+  $('#srOeeUp').textContent = '+'+IN(d.oeeUplift,1)+' pts';
+  $('#srDownHr').textContent = '₹'+IN(s.downtimeHr,1)+' L';
+  $('#srVpp').textContent = '₹'+crShort(v.total / s.plants)+' Cr';
+  $('#srMargin').textContent = '+'+IN(d.marginUplift,2)+'%';
+  
+  const pts=[
+    ['1','Margin Expansion: Adds '+IN(d.marginUplift,2)+'% to operating margin without altering product mix.'],
+    ['2','OEE Uplift: Drives effectiveness from '+IN(s.oeeNow,1)+'% to '+IN(d.oeeTarget,1)+'%.'],
+    ['3','Consolidation: Replaces disparate IPCs with secure, IT-managed edge infrastructure.']
+  ];
+  $('#execPoints').innerHTML = pts.map(p=>'<div class="exec-point"><span class="bl">'+p[0]+'</span><span>'+p[1]+'</span></div>').join('');
+}
+
+function renderAll(){
+  M = model(state);
+  renderHero(); renderResults(); renderCharts(); renderBA(); renderExec();
+  if($('#solList') && $('#solList').children.length) updateSolutions();
+}
+
+/* ============================================================
+   4 · INPUT HANDLING
+   ============================================================ */
+function cfgOf(inp){ return {key:inp.dataset.key, step:parseFloat(inp.dataset.step), min:parseFloat(inp.dataset.min), max:parseFloat(inp.dataset.max), dec:parseInt(inp.dataset.dec,10)}; }
+function setErr(inp,msg){
+  const shell=inp.closest('.inp-shell'), e=$('#'+inp.getAttribute('aria-describedby'));
+  shell.classList.toggle('bad',!!msg);
+  if(e){ e.textContent=msg||''; e.classList.toggle('show',!!msg); }
+}
+function commit(inp,raw){
+  const c=cfgOf(inp); let n=parseNum(raw);
+  if(isNaN(n)){ setErr(inp,'Enter a number.'); return false; }
+  if(n<c.min){ setErr(inp,'Minimum is '+IN(c.min,c.dec)+'.'); n=c.min; }
+  else if(n>c.max){ setErr(inp,'Maximum is '+IN(c.max,c.dec)+'.'); n=c.max; }
+  else setErr(inp,'');
+  state[c.key]=n;
+  renderAll(); return true;
+}
+function format(inp){ const c=cfgOf(inp); inp.value=IN(state[c.key],c.dec); }
+
+$$('#fields input').forEach(inp=>{
+  inp.addEventListener('input',()=>commit(inp,inp.value));
+  inp.addEventListener('blur',()=>{ if(commit(inp,inp.value)) format(inp); });
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='ArrowUp'||e.key==='ArrowDown'){ e.preventDefault(); nudge(cfgOf(inp).key, e.key==='ArrowUp'?1:-1); }
+    if(e.key==='Enter') inp.blur();
+  });
+});
+function nudge(key,dir){
+  const inp=$('#f-'+key), c=cfgOf(inp);
+  const n=clamp(Math.round((state[key]+dir*c.step)*100)/100, c.min, c.max);
+  state[key]=n; inp.value=IN(n,c.dec); commit(inp,String(n)); format(inp);
+}
+$$('[data-inc]').forEach(b=>b.addEventListener('click',()=>nudge(b.dataset.inc,1)));
+$$('[data-dec]').forEach(b=>b.addEventListener('click',()=>nudge(b.dataset.dec,-1)));
+
+$('#btnReset').addEventListener('click',()=>{
+  Object.assign(state,REF);
+  $$('#fields input').forEach(i=>{ setErr(i,''); format(i); });
+  renderAll(); toast('Reset to benchmark profile.');
+});
+
+function runCalc(){
+  const p=$('#calcPanel'); p.classList.add('calc-busy'); toast('Recalculating value…',true);
+  setTimeout(()=>{
+    p.classList.remove('calc-busy');
+    ['#totalVal','#kYield','#kSupply','#kDown','#kIT'].forEach(id=>{ const el=$(id); if(el) el.dataset.v=0; });
+    renderAll();
+    document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+    toast('Business value updated.');
+  },500);
+}
+$('#btnCalc').addEventListener('click',runCalc);
+$('#btnRecalc').addEventListener('click',()=>{ $('#calculator').scrollIntoView({behavior:'smooth'}); setTimeout(runCalc,400); });
+
+$('#btnCopy').addEventListener('click',async()=>{
+  const txt='Smart Manufacturing Value Assessment — Team Computers\n\n'
+    + execText().map(p=>p.replace(/<[^>]+>/g,'')).join('\n\n');
+  try{ await navigator.clipboard.writeText(txt); toast('Summary copied.'); }
+  catch(e){ toast('Select the text manually to copy.'); }
+});
+
+
+/* ============================================================
+   5 · MODULES (Targeted ROI)
+   ============================================================ */
+const MODULES=[
+{
+  id:'edgeai', icon:'i-target', name:'Edge AI / Vision', sub:'Quality & Yield ROI',
+  title:'Edge Computer Vision ROI',
+  blurb:'Model the returns of replacing manual QA with Edge AI (e.g. Dell PowerEdge XR + NVIDIA) to catch defects in real-time.',
+  totalLabel:'Annual Vision AI Savings',
+  totalNote:'Scrap reduction + manual QA labor shifted to value-add.',
+  inputs:[
+    {k:'prodVol', l:'Annual production volume', u:'units', v:5000000, step:100000, min:1000, max:900000000, dec:0, tip:'Total units produced per year.'},
+    {k:'unitCost', l:'Cost per unit', u:'₹', v:450, step:10, min:1, max:500000, dec:0, tip:'Average manufacturing cost per unit.'},
+    {k:'scrapRate', l:'Current scrap/defect rate', u:'%', v:2.5, step:0.1, min:0.1, max:30, dec:2, tip:'Percentage of production discarded or requiring rework.'},
+    {k:'qaStaff', l:'Manual QA staff', u:'FTE', v:45, step:1, min:0, max:5000, dec:0, tip:'Staff dedicated to visual inspection.'}
+  ],
+  assumptions:[['Defect detection improvement','35%'],['QA labor automation / reallocation','60%'],['Cost per QA FTE (Annual)','₹6 Lakh']],
+  compute(x){
+    const scrapUnits = x.prodVol * (x.scrapRate/100);
+    const scrapCost = scrapUnits * x.unitCost / 1e7; // ₹ Cr
+    const scrapSave = scrapCost * 0.35;
+    
+    const laborCost = x.qaStaff * 6e5 / 1e7;
+    const laborSave = laborCost * 0.60;
+    
+    const total = scrapSave + laborSave;
+    return {
+      total,
+      cards:[
+        {v:'₹'+crShort(scrapSave)+' Cr', n:'Scrap Avoided', d:'35% drop in defective units reaching end-of-line'},
+        {v:num(Math.round(x.qaStaff*0.6))+' FTE', n:'Labor Reallocated', d:'Staff moved from inspection to value-add roles'}
+      ],
+      bars:[
+        {l:'Scrap / Rework Savings', v:scrapSave, c:C_AMB},
+        {l:'QA Labor Savings', v:laborSave, c:C_TEAL}
+      ],
+      narr:'By deploying low-latency Edge AI on ruggedised servers near the production line, you can catch defects instantly. This avoids adding value to bad parts, saving <b>₹'+crShort(scrapSave)+' Cr</b> in scrap and freeing up QA labor.'
+    };
+  }
+},
+{
+  id:'otsec', icon:'i-shield-check', name:'OT Security', sub:'Cyber risk reduction',
+  title:'OT Cyber Resilience',
+  blurb:'Value of segmenting the factory floor and protecting ICS/SCADA systems from enterprise ransomware creep.',
+  totalLabel:'Annual Risk Exposure Reduced',
+  totalNote:'Expected-value basis: Outage cost × Probability.',
+  inputs:[
+    {k:'plants', l:'Connected plants', u:'sites', v:14, step:1, min:1, max:500, dec:0, tip:'Number of facilities with IT/OT convergence.'},
+    {k:'dtCost', l:'Downtime cost per plant/hr', u:'₹ Lakh', v:4.5, step:0.5, min:0.1, max:1000, dec:1, tip:'Cost of a total plant stoppage.'},
+    {k:'recoveryHr', l:'Est. ransomware recovery', u:'hrs', v:96, step:12, min:24, max:720, dec:0, tip:'Time to rebuild OT systems from scratch today.'},
+    {k:'prob', l:'Annual incident probability', u:'%', v:15, step:1, min:1, max:100, dec:0, tip:'Likelihood of a major disruptive cyber event.'}
+  ],
+  assumptions:[['OT segmentation risk reduction','70%'],['Recovery time with Vault (Target)','12 hrs']],
+  compute(x){
+    // Current Exposure = Plants * DtCost * RecHr * Prob
+    const exposureNow = (x.plants * x.dtCost * 1e5 * x.recoveryHr) * (x.prob/100) / 1e7; // Cr
+    
+    // Future Exposure (Target RecHr + lower probability of spread due to segmentation)
+    const probTarget = x.prob * (1 - 0.70); // Segmentation stops 70% of IT->OT spread
+    const exposureNext = (x.plants * x.dtCost * 1e5 * 12) * (probTarget/100) / 1e7;
+    
+    const total = exposureNow - exposureNext;
+    return {
+      total,
+      cards:[
+        {v:'70% lower', n:'Attack Surface', d:'Purdue model segmentation stops lateral movement'},
+        {v:num(x.recoveryHr)+' → 12h', n:'Recovery Time Objective', d:'Using Dell Cyber Recovery for OT data'}
+      ],
+      bars:[
+        {l:'Expected Outage Loss Avoided', v:total, c:C_RUST}
+      ],
+      narr:'A ransomware event crossing from IT to OT could halt all <b>'+num(x.plants)+' plants</b> for <b>'+num(x.recoveryHr)+' hours</b>. Proper segmentation (VxRail edge) and a Cyber Recovery Vault reduces the likelihood of spread and cuts recovery time to hours, avoiding <b>₹'+crShort(total)+' Cr</b> in expected annual risk.'
+    };
+  }
+}
+];
+
+const modState={};
+MODULES.forEach(m=>{ modState[m.id]={}; m.inputs.forEach(i=>modState[m.id][i.k]=i.v); });
+
+function buildModules(){
+  $('#modTabs').innerHTML = MODULES.map((m,i)=>
+    '<button class="tab'+(i===0?' on':'')+'" role="tab" data-tab="'+m.id+'" aria-selected="'+(i===0)+'">'
+    +'<span class="ic">'+svgIc(m.icon,16,1.9)+'</span><span><b>'+m.name+'</b><span>'+m.sub+'</span></span></button>').join('');
+
+  $('#modPanels').innerHTML = MODULES.map((m,i)=>
+    '<div class="mod-panel'+(i===0?' on':'')+'" id="panel-'+m.id+'" role="tabpanel">'
+    +'<div class="mod-grid">'
+      +'<div class="card-white mod-inputs">'
+        +'<div class="badge-model">'+svgIc('i-target',13,2)+' Sub-model</div>'
+        +'<h4>'+m.title+'</h4><p class="sub">'+m.blurb+'</p>'
+        +'<div class="fields">'+m.inputs.map(ip=>
+           '<div class="field"><label for="m-'+m.id+'-'+ip.k+'">'+ip.l+'<span class="tip" tabindex="0" role="note">i<span class="tip-box">'+ip.tip+'</span></span></label>'
+           +'<div class="inp-shell"><input id="m-'+m.id+'-'+ip.k+'" type="text" inputmode="decimal" value="'+IN(ip.v,ip.dec)+'" '
+           +'data-mod="'+m.id+'" data-mk="'+ip.k+'" data-step="'+ip.step+'" data-min="'+ip.min+'" data-max="'+ip.max+'" data-dec="'+ip.dec+'">'
+           +'<div class="unit">'+ip.u+'</div>'
+           +'<div class="steps"><button type="button" data-mstep="1" data-mod="'+m.id+'" data-mk="'+ip.k+'">'+svgIc('i-plus',13,2.4)+'</button>'
+           +'<button type="button" data-mstep="-1" data-mod="'+m.id+'" data-mk="'+ip.k+'">'+svgIc('i-minus',13,2.4)+'</button></div></div></div>'
+        ).join('')+'</div>'
+        +'<div class="calc-actions"><button class="btn btn-outline" data-mreset="'+m.id+'">'+svgIc('i-refresh',16,1.8)+'Reset</button></div>'
+      +'</div>'
+      +'<div class="mod-out">'
+        +'<div class="mod-total"><div><p class="lab">'+m.totalLabel+'</p><div class="big">₹<span data-mtotal="'+m.id+'">0</span> Cr</div></div><p class="note">'+m.totalNote+'</p></div>'
+        +'<div class="mod-cards" data-mcards="'+m.id+'"></div>'
+        +'<div class="mod-split">'
+          +'<div><h5 style="font-size:12.5px;color:var(--t-mid);margin:0 0 14px">Value composition</h5><div class="hbar" data-mbars="'+m.id+'"></div></div>'
+          +'<div class="assump"><h5>Assumptions</h5><ul>'+m.assumptions.map(a=>'<li><span>'+a[0]+'</span><b>'+a[1]+'</b></li>').join('')+'</ul></div>'
+        +'</div>'
+        +'<p class="narr" style="margin-top:22px" data-mnarr="'+m.id+'"></p>'
+      +'</div>'
+    +'</div></div>').join('');
+
+  MODULES.forEach(m=>renderModule(m.id));
+
+  $$('#modTabs .tab').forEach(t=>t.addEventListener('click',()=>{
+    $$('#modTabs .tab').forEach(x=>{x.classList.remove('on');x.setAttribute('aria-selected','false');});
+    t.classList.add('on'); t.setAttribute('aria-selected','true');
+    $$('.mod-panel').forEach(p=>p.classList.remove('on'));
+    $('#panel-'+t.dataset.tab).classList.add('on');
+    renderModule(t.dataset.tab);
+  }));
+
+  $$('#modPanels input').forEach(inp=>{
+    const upd=()=>{
+      const c={min:parseFloat(inp.dataset.min),max:parseFloat(inp.dataset.max),dec:parseInt(inp.dataset.dec,10)};
+      let n=parseNum(inp.value);
+      const shell=inp.closest('.inp-shell');
+      if(isNaN(n)){ shell.classList.add('bad'); return; }
+      shell.classList.toggle('bad', n<c.min||n>c.max);
+      modState[inp.dataset.mod][inp.dataset.mk]=clamp(n,c.min,c.max);
+      renderModule(inp.dataset.mod);
+    };
+    inp.addEventListener('input',upd);
+    inp.addEventListener('blur',()=>{ upd(); inp.value=IN(modState[inp.dataset.mod][inp.dataset.mk],parseInt(inp.dataset.dec,10)); inp.closest('.inp-shell').classList.remove('bad'); });
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter') inp.blur(); });
+  });
+
+  $$('[data-mstep]').forEach(b=>b.addEventListener('click',()=>{
+    const inp=$('#m-'+b.dataset.mod+'-'+b.dataset.mk);
+    const st=parseFloat(inp.dataset.step), mn2=parseFloat(inp.dataset.min), mx=parseFloat(inp.dataset.max), dc=parseInt(inp.dataset.dec,10);
+    const n=clamp(Math.round((modState[b.dataset.mod][b.dataset.mk]+parseInt(b.dataset.mstep,10)*st)*100)/100, mn2, mx);
+    modState[b.dataset.mod][b.dataset.mk]=n; inp.value=IN(n,dc); renderModule(b.dataset.mod);
+  }));
+
+  $$('[data-mreset]').forEach(b=>b.addEventListener('click',()=>{
+    const m=MODULES.find(x=>x.id===b.dataset.mreset);
+    m.inputs.forEach(i=>{ modState[m.id][i.k]=i.v; const el=$('#m-'+m.id+'-'+i.k); el.value=IN(i.v,i.dec); el.closest('.inp-shell').classList.remove('bad'); });
+    renderModule(m.id); toast('Model reset.');
+  }));
+}
+
+function renderModule(id){
+  const m=MODULES.find(x=>x.id===id), r=m.compute(modState[id]);
+  countTo($('[data-mtotal="'+id+'"]'), r.total, Math.abs(r.total)>=100?0:1);
+  $('[data-mcards="'+id+'"]').innerHTML = r.cards.map(c=>
+    '<div class="mcard"><div class="v">'+c.v+'</div><p class="n">'+c.n+'</p><p class="d">'+c.d+'</p></div>').join('');
+  const mx=Math.max.apply(null,r.bars.map(b=>Math.abs(b.v)))||1;
+  $('[data-mbars="'+id+'"]').innerHTML = r.bars.map(b=>
+    '<div class="hbar-row"><div class="t"><span>'+b.l+'</span><b>'+(b.v<0?'−':'')+'₹'+crShort(Math.abs(b.v))+' Cr</b></div>'
+    +'<div class="hbar-track"><div class="hbar-fill" style="width:'+clamp(Math.abs(b.v)/mx*100,2,100)+'%;background:linear-gradient(90deg,'+b.c+'aa,'+b.c+')"></div></div></div>').join('');
+  $('[data-mnarr="'+id+'"]').innerHTML = r.narr;
+}
+
+/* ============================================================
+   6 · SOLUTIONS
+   ============================================================ */
+const SOLUTIONS=[
+{
+  q:'Factory edge infrastructure is fragile, unmanaged, and sprawled',
+  t:'IT/OT Efficiency · Uptime',
+  cause:'Shop floors run on a mix of aging commercial PCs and unpatched industrial PCs (IPCs). When one fails, the line stops until someone physically replaces it. OT teams are managing IT hardware without IT tools.',
+  stack:[
+    ['Dell VxRail VD-4000','Ruggedised hyperconverged edge nodes designed for harsh environments (dust, shock, temp).'],
+    ['Dell NativeEdge','Centralised edge operations software to securely onboard and manage devices at scale without local IT.'],
+    ['VMware Edge Compute Stack','Running VMs and containers at the edge with high availability so hardware failure doesn\'t stop production.']
+  ],
+  alts:[
+    ['Dell PowerEdge XR Series','When strict HCI is not needed but ruggedised, short-depth servers are required.'],
+    ['Lenovo ThinkEdge','Alternative rugged edge portfolio, often considered if Lenovo is the incumbent IT standard.']
+  ],
+  out:['Zero-touch provisioning','High Availability at Edge','IT-managed OT']
+},
+{
+  q:'Cannot run AI/Computer Vision models fast enough to catch defects',
+  t:'Yield · Quality · AI',
+  cause:'Sending high-definition video from the factory floor to the cloud for inference incurs latency. By the time the cloud says "defect," the part has already moved down the line.',
+  stack:[
+    ['Dell PowerEdge with NVIDIA L4/L40 GPUs','Dense GPU acceleration at the edge for millisecond-latency inference.'],
+    ['Dell PowerScale (Core)','Centralised, scalable unstructured storage for training computer vision models on petabytes of factory images.'],
+    ['NVIDIA Metropolis','Application framework for vision AI, streamlining the deployment of defect detection models.']
+  ],
+  alts:[
+    ['HPE Edgeline','Alternative rugged edge compute for IoT and AI.'],
+    ['Cloud AI (Azure/AWS)','Only viable for non-real-time analytics or if the factory has a guaranteed, massive-bandwidth pipe.']
+  ],
+  out:['Real-time defect detection','Reduced Scrap','Continuous Model Retraining']
+},
+{
+  q:'A malware infection on a corporate laptop could halt the assembly line',
+  t:'Cyber Resilience · OT Security',
+  cause:'Flat networks where IT and OT are merged. A phishing email in HR can propagate to the SCADA systems, locking up PLCs and stopping production entirely.',
+  stack:[
+    ['Dell PowerSwitch','Implementing strict network segmentation (Purdue Model) separating enterprise IT from shop-floor OT.'],
+    ['Dell Cyber Recovery Vault','Air-gapped, immutable backups of critical OT configurations, SCADA databases, and historian data.'],
+    ['VMware NSX / Micro-segmentation','Software-defined firewalling to prevent lateral movement within the factory network.']
+  ],
+  alts:[
+    ['Cisco Industrial Ethernet','Standard choice if Cisco is entrenched, focusing on hardware-level OT segmentation.'],
+    ['Claroty / Nozomi','OT-specific threat detection software (often deployed *on* Dell edge hardware).']
+  ],
+  out:['Air-gapped OT backups','Purdue Model alignment','Contained blast radius']
+}
+];
+
+function buildSolutions(){
+  $('#solList').innerHTML = SOLUTIONS.map((s,i)=>
+   '<div class="sol'+(i===0?' open':'')+'" data-sol="'+i+'">'
+   +'<button class="sol-head" aria-expanded="'+(i===0)+'" aria-controls="solb-'+i+'">'
+     +'<span class="sol-n">'+String(i+1).padStart(2,'0')+'</span>'
+     +'<span><span class="sol-q">'+s.q+'</span><span class="sol-t">'+s.t+'</span></span>'
+     +'<span class="sol-chev">'+svgIc('i-chevron-right',20,2)+'</span>'
+   +'</button>'
+   +'<div class="sol-body" id="solb-'+i+'">'
+     +'<div class="sol-blk"><h6>Why it happens</h6><p>'+s.cause+'</p>'
+       +'<div class="oc">'+s.out.map((o,k)=>'<span class="oc-chip'+(k===0?'':' b')+'">'+o+'</span>').join('')+'</div></div>'
+     +'<div class="sol-blk"><h6>Recommended Architecture</h6><div class="stack">'
+       +s.stack.map(t=>'<span class="stack-item"><i></i><span><b>'+t[0]+'</b> — '+t[1]+'</span></span>').join('')+'</div></div>'
+     +'<div class="sol-blk"><h6>Alternatives</h6>'
+       +s.alts.map(a=>'<div class="alt"><b>'+a[0]+'</b><span>'+a[1]+'</span></div>').join('')+'</div>'
+   +'</div></div>').join('');
+
+  $$('#solList .sol-head').forEach(h=>h.addEventListener('click',()=>{
+    const sol=h.closest('.sol'), open=sol.classList.contains('open');
+    $$('#solList .sol').forEach(x=>{ x.classList.remove('open'); $('.sol-head',x).setAttribute('aria-expanded','false'); });
+    if(!open){ sol.classList.add('open'); h.setAttribute('aria-expanded','true'); }
+  }));
+}
+
+/* ============================================================
+   7 · PRINTABLE BUSINESS CASE
+   ============================================================ */
+function buildPrint(){
+  const {s,v,d}=M;
+  const row=(a,b)=>'<tr><td>'+a+'</td><td class="r">'+b+'</td></tr>';
+  const profile=[
+    ['Annual Revenue','₹'+crShort(s.revenue)+' Cr'],['Manufacturing Plants',num(s.plants)],
+    ['COGS Basis',IN(s.cogs,1)+'%'],['Total Headcount',num(s.employees)],
+    ['Downtime Cost per Hour','₹'+IN(s.downtimeHr,1)+' Lakh'],['Annual IT/OT Budget','₹'+crShort(s.itBudget)+' Cr']
+  ].map(r=>row(r[0],r[1])).join('');
+  
+  const assume=[
+    ['Yield/Quality defect reduction','18%'],['Inventory carrying cost reduction','4.5%'],
+    ['Unplanned downtime reduction','25%'],['IT/OT edge cost optimisation','15%']
+  ].map(r=>row(r[0],r[1])).join('');
+
+  const benefit=[
+    ['Yield & Quality Uplift','Reduced scrap and rework via Edge AI','₹'+crShort(v.yield)+' Cr'],
+    ['Supply Chain Efficiency','Optimised inventory carrying cost','₹'+crShort(v.supply)+' Cr'],
+    ['Downtime Reduction','Predictive maintenance preventing stoppages','₹'+crShort(v.down)+' Cr'],
+    ['IT/OT Cost Optimisation','Consolidated edge infrastructure','₹'+crShort(v.it)+' Cr']
+  ].map(r=>'<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td class="r"><b>'+r[2]+'</b></td></tr>').join('');
+  
+  const ba=baRows().map(r=>'<tr><td>'+r[0]+'</td><td class="r">'+r[1]+'</td><td class="r"><b>'+r[2]+'</b></td><td class="r">'+r[4]+'</td></tr>').join('');
+
+  const c1=document.createElement('div'), c2=document.createElement('div');
+  barChart(c1,[{l:'Yield|Uplift',v:v.yield,c:C_AMB},{l:'Supply|Chain',v:v.supply,c:C_TEAL},
+               {l:'Downtime|Reduction',v:v.down,c:C_RUST},{l:'IT/OT|Optimisation',v:v.it,c:C_STL}]);
+  groupChart(c2,[{l:'Overall Equipment Effectiveness (OEE)', a:s.oeeNow, b:d.oeeTarget}]);
+
+  $('#printDoc').innerHTML =
+   '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15pt;">'
+   +'<img src="team-computers-logo.png" style="height: 40px; object-fit: contain;" />'
+   +'<img src="dell-logo.png" style="height: 40px; object-fit: contain;" /></div>'
+   +'<div class="print-hdr"><div><h1>Manufacturing Value Assessment</h1>'
+   +'<p class="lead">Smart Factory Business Case · Team Computers Pvt. Ltd.</p></div>'
+   +'<div style="text-align:right;font-size:9pt;color:#6C757D;line-height:1.5">'+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})
+   +'<br>Confidential — for discussion<br><b style="color:#212529">Manufacturing Practice</b><br>Team Computers</div></div>'
+
+   +'<div class="print-total"><span>Total estimated annual business benefit</span><b>₹'+crShort(v.total)+' Cr</b><span>per year</span></div>'
+
+   +'<h2>1 · Operational Profile</h2><div class="pgrid">'
+   +'<table class="pt"><tr><th>Parameter</th><th class="r">Value</th></tr>'+profile+'</table>'
+   +'<table class="pt"><tr><th>Model Assumption</th><th class="r">Benchmark</th></tr>'+assume+'</table></div>'
+
+   +'<h2>2 · Annual Benefit Breakdown</h2>'
+   +'<table class="pt"><tr><th>Value Driver</th><th>Mechanism</th><th class="r">Annual Value</th></tr>'
+   +benefit+'<tr><td colspan="2"><b>Total expected annual benefit</b></td><td class="r"><b>₹'+crShort(v.total)+' Cr</b></td></tr></table>'
+
+   +'<div class="pgrid" style="margin-top:10pt"><div class="pchart">'+c1.innerHTML+'</div><div class="pchart">'+c2.innerHTML+'</div></div>'
+
+   +'<div class="pbreak"></div><h2>3 · Projected Operational Impact</h2>'
+   +'<table class="pt"><tr><th>Performance Metric</th><th class="r">Current</th><th class="r">Target</th><th class="r">Impact</th></tr>'+ba+'</table>'
+
+   +'<h2>4 · Executive Summary</h2>'+execText().map(p=>'<p style="font-size:10pt;line-height:1.6;margin-top:6pt">'+p+'</p>').join('')
+
+   +'<p class="print-note"><b>Disclaimer.</b> This assessment uses illustrative manufacturing benchmarks. Actual business benefits, ROI, and margin impact will vary based on specific operational realities. Figures are not a guarantee of outcome.</p>';
+}
+
+$$('[data-print]').forEach(b=>b.addEventListener('click',()=>{
+  buildPrint(); toast('Preparing report…',true);
+  setTimeout(()=>window.print(),380);
+}));
+
+/* ============================================================
+   8 · HERO BACKGROUND — Canvas (Industrial nodes)
+   ============================================================ */
+(function heroNet(){
+  const cv=$('#heroCanvas'); if(!cv) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const ctx=cv.getContext('2d'); let W=0,Hh=0,dpr=1,nodes=[],links=[],pulses=[],raf=0,vis=true;
+
+  function build(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    const r=cv.getBoundingClientRect(); W=r.width; Hh=r.height;
+    cv.width=W*dpr; cv.height=Hh*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    const count=W<720?20:40;
+    nodes=[]; for(let i=0;i<count;i++){
+      nodes.push({x:Math.random()*W, y:Math.random()*Hh, vx:(Math.random()-.5)*.08, vy:(Math.random()-.5)*.08,
+                  r:Math.random()<.2?4:2, hub:Math.random()<.15});
+    }
+    links=[]; for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++) links.push([i,j]);
+    pulses=[];
+  }
+  function spawn(){
+    if(pulses.length>5||!links.length) return;
+    const near=links.filter(l=>dist(nodes[l[0]],nodes[l[1]])<150);
+    if(!near.length) return;
+    const l=near[(Math.random()*near.length)|0];
+    pulses.push({a:l[0],b:l[1],t:0,sp:0.005+Math.random()*0.005});
+  }
+  const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+
+  function frame(){
+    ctx.clearRect(0,0,W,Hh);
+    nodes.forEach(n=>{
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1; if(n.y<0||n.y>Hh) n.vy*=-1;
+    });
+    ctx.lineWidth=1;
+    links.forEach(([i,j])=>{
+      const a=nodes[i],b=nodes[j],d=dist(a,b);
+      if(d>150) return;
+      ctx.strokeStyle='rgba(255,138,0,'+(0.12*(1-d/150)).toFixed(3)+')';
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    });
+    pulses.forEach(p=>{
+      const a=nodes[p.a],b=nodes[p.b]; p.t+=p.sp;
+      const x=a.x+(b.x-a.x)*p.t, y=a.y+(b.y-a.y)*p.t;
+      const g=ctx.createRadialGradient(x,y,0,x,y,6);
+      g.addColorStop(0,'rgba(0,150,136,.9)'); g.addColorStop(1,'rgba(0,150,136,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,6,0,6.28); ctx.fill();
+    });
+    pulses=pulses.filter(p=>p.t<1);
+    nodes.forEach(n=>{
+      ctx.fillStyle=n.hub?'rgba(255,138,0,.8)':'rgba(96,125,139,.5)';
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,6.28); ctx.fill();
+    });
+    if(Math.random()<0.03) spawn();
+    raf=requestAnimationFrame(frame);
+  }
+  build(); frame();
+  addEventListener('resize',()=>{cancelAnimationFrame(raf);build();frame();});
+  new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting && !vis){ vis=true; frame(); }
+      else if(!e.isIntersecting && vis){ vis=false; cancelAnimationFrame(raf); }
+    });
+  },{threshold:0}).observe(cv);
+})();
+
+/* ============================================================
+   9 · INIT
+   ============================================================ */
+$$('[data-scroll]').forEach(b=>b.addEventListener('click',()=>{
+  const t=$(b.dataset.scroll); if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+}));
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}),{threshold:.18});
+$$('.driver,.uc,.tile,.chart-card').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
+
+const jo=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add('go'); jo.unobserve(e.target); }
+}),{threshold:.4});
+if($('#journey')) jo.observe($('#journey'));
+
+buildModules();
+buildSolutions();
+renderAll();
+$$('#fields input').forEach(format);
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<USER_REQUEST>
+when i click on bfsi card index3.html must open an when i click on manufacturing index.html must open .
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-09-10T20:01:35+05:30.
+
+The user's current state is as follows:
+Running terminal commands:
+- npm run dev (in /Users/swayam/Desktop/gitpull/dell/backend, running for 1h1m41s)
+</ADDITIONAL_METADATA>
