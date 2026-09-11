@@ -38,7 +38,7 @@ export default function HubPage() {
     if (industryId === 'BFSI') {
       window.location.href = '/index3.html';
     } else if (industryId === 'Manufacturing') {
-      window.location.href = '/index.html';
+      window.location.href = '/index1.html';
     } else if (industryId === 'Healthcare') {
       window.location.href = '/index2.html';
     } else if (industryId === 'Security') {
